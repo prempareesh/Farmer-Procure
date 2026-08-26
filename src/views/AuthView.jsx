@@ -1,39 +1,43 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User, Phone, Lock, ArrowRight, CheckCircle2, Building, ArrowLeft, UserPlus, KeyRound } from 'lucide-react';
+import { ShieldCheck, User, Phone, Lock, ArrowRight, CheckCircle2, Building, ArrowLeft, UserPlus, Camera, Wrench, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function AuthView() {
-  const { registerUser, loginUser, navigateTo } = useApp();
+  const { registerFarmer, loginUser, navigateTo, t } = useApp();
   
   const [isRegistering, setIsRegistering] = useState(false);
-  const [role, setRole] = useState('farmer'); // 'farmer' | 'admin'
+  const [role, setRole] = useState('farmer'); // 'farmer' | 'worker' | 'officer'
   const [authSuccessMessage, setAuthSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Login Form State
-  const [loginPhone, setLoginPhone] = useState('');
+  // Login Form
+  const [loginIdentifier, setLoginIdentifier] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  // Register Form State
+  // Register Form
   const [regForm, setRegForm] = useState({
     name: '',
     mobile: '',
     aadhaar: '',
     village: '',
+    district: 'Karnal',
     state: 'Haryana',
+    address: '',
+    faceImage: '/hero_farmer.jpg',
     password: '',
     confirmPassword: '',
   });
+
+  const [faceCaptured, setFaceCaptured] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (!regForm.name.trim()) {
-      setError('Farmer Name is required.');
+      setError('Full Name is required.');
       return;
     }
     if (!regForm.mobile || regForm.mobile.length < 10) {
@@ -42,6 +46,10 @@ export default function AuthView() {
     }
     if (!regForm.aadhaar || regForm.aadhaar.length < 12) {
       setError('Please enter a valid 12-digit Aadhaar number.');
+      return;
+    }
+    if (!faceCaptured) {
+      setError('Face image capture is mandatory for biometric registration.');
       return;
     }
     if (regForm.password.length < 4) {
@@ -55,14 +63,14 @@ export default function AuthView() {
 
     setLoading(true);
     try {
-      await registerUser(regForm);
+      const newFarmer = await registerFarmer(regForm);
       setLoading(false);
-      setAuthSuccessMessage('Account Created Successfully! Please login with your credentials.');
+      setAuthSuccessMessage(`Farmer registered successfully! Your Permanent ID is: ${newFarmer.farmerId}. Please sign in.`);
       setIsRegistering(false);
-      setLoginPhone(regForm.mobile);
+      setLoginIdentifier(newFarmer.farmerId);
     } catch {
       setLoading(false);
-      setError('Failed to create account. Please try again.');
+      setError('Registration failed. Please try again.');
     }
   };
 
@@ -70,29 +78,31 @@ export default function AuthView() {
     e.preventDefault();
     setError('');
 
-    if (!loginPhone) {
-      setError(role === 'admin' ? 'Officer ID / Mobile is required.' : 'Mobile number is required.');
+    if (!loginIdentifier) {
+      setError('Identifier / Mobile is required.');
       return;
     }
 
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      loginUser(loginPhone, loginPassword, role);
+      loginUser(loginIdentifier, loginPassword, role);
     }, 600);
   };
 
-  // Quick Demo Fill for Judging Demo
-  const fillDemoFarmer = () => {
-    setRole('farmer');
-    setLoginPhone('9876543210');
-    setLoginPassword('farmer2026');
-  };
-
-  const fillDemoAdmin = () => {
-    setRole('admin');
-    setLoginPhone('OFFICER-HR-402');
-    setLoginPassword('admin2026');
+  // Quick Demo Buttons for SIH Judging
+  const fillDemo = (demoRole) => {
+    setRole(demoRole);
+    if (demoRole === 'farmer') {
+      setLoginIdentifier('FRM-2026-000123');
+      setLoginPassword('farmer2026');
+    } else if (demoRole === 'worker') {
+      setLoginIdentifier('WRK-HR-108');
+      setLoginPassword('worker2026');
+    } else if (demoRole === 'officer') {
+      setLoginIdentifier('OFFICER-HR-402');
+      setLoginPassword('admin2026');
+    }
   };
 
   return (
@@ -102,7 +112,7 @@ export default function AuthView() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Back to Home Link */}
+        {/* Back Link */}
         <button
           onClick={() => navigateTo('home')}
           className="mb-4 flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors"
@@ -111,10 +121,10 @@ export default function AuthView() {
           <span>Back to Homepage</span>
         </button>
 
-        {/* Card Container */}
+        {/* Card */}
         <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
           
-          {/* Header Banner */}
+          {/* Top Banner */}
           <div className="bg-[#1B4318] text-white p-6">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-[#F9A825] shadow-xs">
@@ -122,10 +132,10 @@ export default function AuthView() {
               </div>
               <div>
                 <h2 className="text-lg font-bold">
-                  {isRegistering ? 'Farmer Registration' : 'Procure Intelligence Portal'}
+                  {isRegistering ? 'Farmer Registration' : 'AgriProcure Unified Portal'}
                 </h2>
                 <p className="text-xs text-[#A5D6A7]">
-                  {isRegistering ? 'Create your official SIH 2026 Kisan Account' : 'Unified Farmer & Mandi Officer Sign-In'}
+                  {isRegistering ? 'Permanent Biometric Kisan Identity (FRM-2026-XXXXXX)' : 'Sign in as Farmer, Staff, or Officer'}
                 </p>
               </div>
             </div>
@@ -133,7 +143,7 @@ export default function AuthView() {
 
           {/* Success Banner */}
           {authSuccessMessage && (
-            <div className="bg-green-50 p-4 border-b border-green-200 flex items-start gap-2.5 text-xs text-green-900 font-bold">
+            <div className="bg-green-50 p-4 border-b border-green-200 text-xs text-green-900 font-bold flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#2E7D32] shrink-0 mt-0.5" />
               <span>{authSuccessMessage}</span>
             </div>
@@ -148,73 +158,60 @@ export default function AuthView() {
 
           <div className="p-6">
             {!isRegistering ? (
-              /* LOGIN FORM */
-              <div className="space-y-5">
+              /* LOGIN FORM (3 ROLES) */
+              <div className="space-y-4">
+                
                 {/* Role Switcher */}
-                <div className="flex bg-[#F4F8F2] p-1 rounded-2xl border border-[#C8E6C9]">
+                <div className="grid grid-cols-3 bg-[#F4F8F2] p-1 rounded-2xl border border-[#C8E6C9] text-xs">
                   <button
                     type="button"
                     onClick={() => setRole('farmer')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                      role === 'farmer'
-                        ? 'bg-[#2E7D32] text-white shadow-xs'
-                        : 'text-gray-700 hover:text-[#2E7D32]'
+                    className={`py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1 ${
+                      role === 'farmer' ? 'bg-[#2E7D32] text-white shadow-xs' : 'text-gray-700'
                     }`}
                   >
-                    <User className="w-4 h-4" />
-                    <span>Farmer Login</span>
+                    <User className="w-3.5 h-3.5" />
+                    <span>Farmer</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRole('admin')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                      role === 'admin'
-                        ? 'bg-[#1B4318] text-white shadow-xs'
-                        : 'text-gray-700 hover:text-[#1B4318]'
+                    onClick={() => setRole('worker')}
+                    className={`py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1 ${
+                      role === 'worker' ? 'bg-[#2E7D32] text-white shadow-xs' : 'text-gray-700'
                     }`}
                   >
-                    <Building className="w-4 h-4" />
-                    <span>Mandi Officer / Admin</span>
+                    <Wrench className="w-3.5 h-3.5" />
+                    <span>Staff</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole('officer')}
+                    className={`py-2 rounded-xl font-bold transition-all flex items-center justify-center gap-1 ${
+                      role === 'officer' ? 'bg-[#1B4318] text-white shadow-xs' : 'text-gray-700'
+                    }`}
+                  >
+                    <Building className="w-3.5 h-3.5" />
+                    <span>Officer</span>
                   </button>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4 pt-1">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
-                      {role === 'farmer' ? 'Mobile Number' : 'Officer ID / SSO ID'}
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                      {role === 'farmer' ? 'Farmer ID or Mobile' : role === 'worker' ? 'Worker Staff ID' : 'Officer SSO ID'}
                     </label>
-                    <div className="relative">
-                      {role === 'farmer' ? (
-                        <>
-                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500">
-                            +91
-                          </span>
-                          <input
-                            type="tel"
-                            placeholder="98765 43210"
-                            value={loginPhone}
-                            onChange={(e) => setLoginPhone(e.target.value)}
-                            required
-                            maxLength="10"
-                            className="w-full pl-14 pr-4 py-3 rounded-xl border border-gray-300 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#2E7D32]"
-                          />
-                        </>
-                      ) : (
-                        <input
-                          type="text"
-                          placeholder="e.g. OFFICER-HR-402"
-                          value={loginPhone}
-                          onChange={(e) => setLoginPhone(e.target.value)}
-                          required
-                          className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#1B4318]"
-                        />
-                      )}
-                    </div>
+                    <input
+                      type="text"
+                      placeholder={role === 'farmer' ? 'FRM-2026-000123 or 9876543210' : role === 'worker' ? 'WRK-HR-108' : 'OFFICER-HR-402'}
+                      value={loginIdentifier}
+                      onChange={(e) => setLoginIdentifier(e.target.value)}
+                      required
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2] focus:outline-none focus:border-[#2E7D32]"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5 flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5 text-[#2E7D32]" />
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
                       Password / Security PIN
                     </label>
                     <input
@@ -223,162 +220,184 @@ export default function AuthView() {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2] focus:outline-none focus:border-[#2E7D32]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3.5 rounded-2xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-2xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
-                    {loading ? 'Authenticating...' : 'Sign In'}
+                    <span>{loading ? 'Authenticating...' : `Sign in as ${role === 'farmer' ? 'Farmer' : role === 'worker' ? 'Mandi Staff' : 'Field Officer'}`}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </form>
 
-                {/* Demo Logins Shortcut Bar for Judges */}
-                <div className="pt-2 border-t border-gray-100">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block text-center mb-2">
-                    ⚡ Quick Demo Fill for Judges
+                {/* 1-Click Demo Fill for Judges */}
+                <div className="pt-3 border-t border-gray-100">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-center mb-2">
+                    ⚡ 1-Click Demo Testing Credentials
                   </span>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5">
                     <button
                       type="button"
-                      onClick={fillDemoFarmer}
-                      className="px-3 py-2 rounded-xl bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#2E7D32] text-xs font-bold transition-colors"
+                      onClick={() => fillDemo('farmer')}
+                      className="p-2 rounded-xl bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#2E7D32] text-[10px] font-black text-center"
                     >
-                      Fill Demo Farmer
+                      Demo Farmer
                     </button>
                     <button
                       type="button"
-                      onClick={fillDemoAdmin}
-                      className="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold transition-colors"
+                      onClick={() => fillDemo('worker')}
+                      className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 text-[10px] font-black text-center"
                     >
-                      Fill Demo Officer
+                      Demo Staff
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => fillDemo('officer')}
+                      className="p-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-[10px] font-black text-center"
+                    >
+                      Demo Officer
                     </button>
                   </div>
                 </div>
 
-                {/* Switch to Registration */}
-                <div className="pt-2 text-center">
-                  <p className="text-xs text-gray-600 font-medium">
-                    New User?{' '}
-                    <button
-                      type="button"
-                      onClick={() => { setIsRegistering(true); setError(''); setAuthSuccessMessage(''); }}
-                      className="font-bold text-[#2E7D32] hover:underline"
-                    >
-                      Register Here
-                    </button>
-                  </p>
-                </div>
+                {role === 'farmer' && (
+                  <div className="text-center pt-2">
+                    <p className="text-xs text-gray-600 font-medium">
+                      New Farmer?{' '}
+                      <button
+                        type="button"
+                        onClick={() => { setIsRegistering(true); setError(''); }}
+                        className="font-bold text-[#2E7D32] hover:underline"
+                      >
+                        Register with Face Capture
+                      </button>
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
-              /* REGISTRATION FORM */
-              <form onSubmit={handleRegister} className="space-y-3.5">
+              /* REGISTRATION WITH MANDATORY FACE CAPTURE */
+              <form onSubmit={handleRegister} className="space-y-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Farmer Full Name *
-                  </label>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">Full Name *</label>
                   <input
                     type="text"
                     placeholder="e.g. Rameshwar Singh"
                     value={regForm.name}
                     onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      Mobile Number *
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Mobile (10-Digits) *</label>
                     <input
                       type="tel"
-                      placeholder="9876543210"
                       maxLength="10"
+                      placeholder="9876543210"
                       value={regForm.mobile}
                       onChange={(e) => setRegForm({ ...regForm, mobile: e.target.value })}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      Aadhaar Number *
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Aadhaar (12-Digits) *</label>
                     <input
                       type="text"
-                      placeholder="12-digit Aadhaar"
                       maxLength="12"
+                      placeholder="12-digit Aadhaar"
                       value={regForm.aadhaar}
                       onChange={(e) => setRegForm({ ...regForm, aadhaar: e.target.value })}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      Village / Tehsil
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Village / Tehsil</label>
                     <input
                       type="text"
                       placeholder="e.g. Taraori"
                       value={regForm.village}
                       onChange={(e) => setRegForm({ ...regForm, village: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      State
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">State</label>
                     <select
                       value={regForm.state}
                       onChange={(e) => setRegForm({ ...regForm, state: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold bg-white"
                     >
                       <option value="Haryana">Haryana</option>
                       <option value="Punjab">Punjab</option>
                       <option value="Telangana">Telangana</option>
                       <option value="Rajasthan">Rajasthan</option>
-                      <option value="Uttar Pradesh">Uttar Pradesh</option>
-                      <option value="Madhya Pradesh">Madhya Pradesh</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                {/* Mandatory Face Biometric Capture */}
+                <div className="p-3 bg-[#FAF8F2] rounded-2xl border border-[#A5D6A7] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black text-[#1B4318] uppercase flex items-center gap-1">
+                      <Camera className="w-3.5 h-3.5 text-[#2E7D32]" />
+                      Mandatory Face Capture
+                    </span>
+                    {faceCaptured && (
+                      <span className="px-2 py-0.5 rounded-full bg-green-100 text-[#2E7D32] text-[9px] font-black">
+                        CAPTURED
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gray-200 overflow-hidden border border-gray-300 shrink-0">
+                      <img src="/hero_farmer.jpg" alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFaceCaptured(true)}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                        faceCaptured ? 'bg-[#E8F5E9] text-[#2E7D32] border border-[#A5D6A7]' : 'bg-[#2E7D32] text-white'
+                      }`}
+                    >
+                      {faceCaptured ? 'Biometric Face Enrolled ✓' : 'Capture Live Face Frame'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      Create Password *
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Create Password *</label>
                     <input
                       type="password"
                       placeholder="••••••••"
                       value={regForm.password}
                       onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                      Confirm Password *
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Confirm Password *</label>
                     <input
                       type="password"
                       placeholder="••••••••"
                       value={regForm.confirmPassword}
                       onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold"
                     />
                   </div>
                 </div>
@@ -386,23 +405,19 @@ export default function AuthView() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-2xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 mt-2"
+                  className="w-full py-3 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all active:scale-95 mt-2"
                 >
-                  <UserPlus className="w-4 h-4" />
-                  <span>{loading ? 'Creating Account...' : 'Complete Farmer Registration'}</span>
+                  {loading ? 'Enrolling Farmer...' : 'Generate Permanent Farmer ID (FRM-2026-XXXXXX)'}
                 </button>
 
-                <div className="pt-2 text-center">
-                  <p className="text-xs text-gray-600 font-medium">
-                    Already registered?{' '}
-                    <button
-                      type="button"
-                      onClick={() => { setIsRegistering(false); setError(''); }}
-                      className="font-bold text-[#2E7D32] hover:underline"
-                    >
-                      Login here
-                    </button>
-                  </p>
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsRegistering(false)}
+                    className="text-xs font-bold text-[#2E7D32] hover:underline"
+                  >
+                    Back to Sign In
+                  </button>
                 </div>
               </form>
             )}

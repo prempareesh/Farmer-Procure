@@ -1,27 +1,30 @@
 import React from 'react';
 import { Users, Sprout, Clock, ShieldCheck } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export default function ImpactStrip() {
+  const { t } = useApp();
+
   const stats = [
     {
       icon: Users,
       value: '1.2M+',
-      label: 'Farmers Benefited',
+      label: t('statFarmers'),
     },
     {
       icon: Sprout,
       value: '850+',
-      label: 'Procurement Centres',
+      label: t('statCentres'),
     },
     {
       icon: Clock,
       value: '35%',
-      label: 'Reduction in Waiting Time',
+      label: t('statWait'),
     },
     {
       icon: ShieldCheck,
       value: '100%',
-      label: 'Transparent Transactions',
+      label: t('statAudit'),
     },
   ];
 

@@ -8,26 +8,29 @@ import NotificationDrawer from './components/NotificationDrawer';
 import AboutModal from './components/AboutModal';
 import HowItWorksModal from './components/HowItWorksModal';
 import ContactModal from './components/ContactModal';
+import LanguageModal from './components/LanguageModal';
 
-// Full Functional Views
+// Dedicated Role-Based Views
 import AuthView from './views/AuthView';
+import FarmerDashboardView from './views/FarmerDashboardView';
+import WorkerDashboardView from './views/WorkerDashboardView';
+import OfficerDashboardView from './views/OfficerDashboardView';
 import ProfileView from './views/ProfileView';
 import SlotBookingView from './views/SlotBookingView';
 import LiveQueueView from './views/LiveQueueView';
 import QRScannerView from './views/QRScannerView';
 import AuditChainView from './views/AuditChainView';
-import AdminDashboardView from './views/AdminDashboardView';
 
 function MainApp() {
-  const { currentView } = useApp();
+  const { currentView, languageModalOpen, setLanguageModalOpen } = useApp();
 
   return (
     <div className="min-h-screen w-screen bg-[#F4F8F2] text-[#1B1B1B] flex flex-col justify-between relative selection:bg-[#2E7D32] selection:text-white">
       
-      {/* 1. Universal Top Navigation Bar */}
+      {/* 1. Universal Header Navigation Bar */}
       <Header />
 
-      {/* 2. Main Content View Routing */}
+      {/* 2. Main Role Views & Routing */}
       {currentView === 'home' && (
         <div className="flex-1 flex flex-col justify-between overflow-hidden">
           <HeroSection />
@@ -37,18 +40,24 @@ function MainApp() {
       )}
 
       {currentView === 'auth' && <AuthView />}
+      {currentView === 'farmer-dash' && <FarmerDashboardView />}
+      {currentView === 'worker-dash' && <WorkerDashboardView />}
+      {currentView === 'officer-dash' && <OfficerDashboardView />}
       {currentView === 'profile' && <ProfileView />}
       {currentView === 'book-slot' && <SlotBookingView />}
       {currentView === 'queue' && <LiveQueueView />}
       {currentView === 'qr-scanner' && <QRScannerView />}
       {currentView === 'audit' && <AuditChainView />}
-      {currentView === 'dashboard' && <AdminDashboardView />}
 
-      {/* 3. Global Modals & Drawers */}
+      {/* 3. Global Modals & Notifications */}
       <NotificationDrawer />
       <AboutModal />
       <HowItWorksModal />
       <ContactModal />
+      <LanguageModal
+        isOpen={languageModalOpen}
+        onClose={() => setLanguageModalOpen(false)}
+      />
 
     </div>
   );

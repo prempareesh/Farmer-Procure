@@ -3,35 +3,35 @@ import { BarChart3, Target, ShieldCheck, Users } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function FeatureCards() {
-  const { navigateTo } = useApp();
+  const { navigateTo, t } = useApp();
 
   const cards = [
     {
       id: '01',
       icon: BarChart3,
-      title: 'AI-Powered Predictions',
-      description: 'Predict queue, wait time & congestion with high accuracy.',
+      title: t('feat1Title'),
+      description: t('feat1Desc'),
       action: () => navigateTo('queue'),
     },
     {
       id: '02',
       icon: Target,
-      title: 'Smart Interventions',
-      description: 'Detect bottlenecks & get optimal slot recommendations.',
+      title: t('feat2Title'),
+      description: t('feat2Desc'),
       action: () => navigateTo('book-slot'),
     },
     {
       id: '03',
       icon: ShieldCheck,
-      title: 'Trusted & Transparent',
-      description: 'Tamper-evident records & secure farmer verification.',
+      title: t('feat3Title'),
+      description: t('feat3Desc'),
       action: () => navigateTo('audit'),
     },
     {
       id: '04',
       icon: Users,
-      title: 'Farmer First',
-      description: 'Designed for ease, accessibility & better farming experience.',
+      title: t('feat4Title'),
+      description: t('feat4Desc'),
       action: () => navigateTo('profile'),
     },
   ];

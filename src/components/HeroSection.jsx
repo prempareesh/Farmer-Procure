@@ -3,7 +3,7 @@ import { User, BarChart2, Play, Sprout } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function HeroSection() {
-  const { navigateTo, setHowItWorksModalOpen } = useApp();
+  const { navigateTo, setHowItWorksModalOpen, t } = useApp();
 
   return (
     <section id="hero" className="relative flex-1 w-full flex items-center z-10 my-auto overflow-hidden bg-[#F4F8F2]">
@@ -31,15 +31,15 @@ export default function HeroSection() {
           {/* Small Pill Badge */}
           <div className="inline-block px-3.5 py-1 rounded-full bg-[#E8F5E9] border border-[#A5D6A7] shadow-xs">
             <span className="text-xs font-black tracking-widest text-[#2E7D32] uppercase">
-              PREDICT • PLAN • PROCURE • PROSPER
+              {t('heroBadge')}
             </span>
           </div>
 
           {/* Main Headline */}
           <div className="space-y-2.5">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1B1B1B] tracking-tight leading-[1.1]">
-              Smarter Procurement <br />
-              <span className="text-[#1B4318]">for Stronger Farmers</span>
+              {t('heroHeadline1')} <br />
+              <span className="text-[#1B4318]">{t('heroHeadline2')}</span>
             </h1>
 
             {/* Green Agricultural Flourish Accent Line */}
@@ -52,7 +52,7 @@ export default function HeroSection() {
 
           {/* Subheading Description */}
           <p className="text-xs sm:text-sm lg:text-base text-gray-700 font-semibold leading-relaxed max-w-md">
-            Our intelligent platform predicts queues, removes bottlenecks, and ensures transparent procurement – so farmers save time, get fair value, and harvest better futures.
+            {t('heroDescription')}
           </p>
 
           {/* 3 CTA Buttons */}
@@ -64,7 +64,7 @@ export default function HeroSection() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <User className="w-4 h-4 text-white" />
-              <span>Book Your Slot</span>
+              <span>{t('btnBookSlot')}</span>
             </button>
 
             {/* Secondary: Live Queue Status */}
@@ -73,7 +73,7 @@ export default function HeroSection() {
               className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white hover:bg-gray-50 text-gray-800 font-bold text-sm border border-[#D5E2D3] shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
             >
               <BarChart2 className="w-4 h-4 text-[#2E7D32]" />
-              <span>Live Queue Status</span>
+              <span>{t('btnLiveQueue')}</span>
             </button>
 
             {/* Tertiary: How It Works */}
@@ -82,7 +82,7 @@ export default function HeroSection() {
               className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-white hover:bg-gray-50 text-gray-800 font-bold text-sm border border-[#D5E2D3] shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 text-[#2E7D32] fill-[#2E7D32]" />
-              <span>How It Works</span>
+              <span>{t('btnHowItWorks')}</span>
             </button>
 
           </div>
