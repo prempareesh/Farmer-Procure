@@ -102,7 +102,14 @@ export function AppProvider({ children }) {
   const [authRedirectView, setAuthRedirectView] = useState(null);
 
   // 3. User Authentication State (3 Roles: 'farmer' | 'worker' | 'officer')
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('agri_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   // 4. Primary State Lists
   const [farmersList, setFarmersList] = useState([
@@ -263,11 +270,39 @@ export function AppProvider({ children }) {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
 
+  // Notification Helper
+  const addNotification = ({ title, message, type = 'info' }) => {
+    const newNotif = {
+      id: 'n-' + Date.now(),
+      title,
+      message,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      type,
+      read: false,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+
+    try {
+      supabase.from('notifications').insert([
+        {
+          title,
+          message,
+          is_read: false,
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
   // 5. Supabase Initial Data Fetch & Realtime Subscriptions
   useEffect(() => {
     async function loadSupabaseData() {
       try {
-        // Fetch Centres
         const { data: centresData } = await supabase.from('procurement_centres').select('*');
         if (centresData && centresData.length > 0) {
           setMandiCentres(
@@ -283,7 +318,6 @@ export function AppProvider({ children }) {
           );
         }
 
-        // Fetch Profiles
         const { data: profilesData } = await supabase.from('profiles').select('*');
         if (profilesData && profilesData.length > 0) {
           const formatted = profilesData.map((p) => ({
@@ -306,42 +340,38 @@ export function AppProvider({ children }) {
           if (formatted.length > 0) setFarmerProfile(formatted[0]);
         }
 
-        // Fetch Bookings
         const { data: bookingsData } = await supabase.from('bookings').select('*');
         if (bookingsData && bookingsData.length > 0) {
-          setBookings((prev) => {
-            const mapped = bookingsData.map((b) => ({
-              id: b.booking_id || b.id,
-              farmerId: 'FRM-2026-000123',
-              farmerName: 'Rameshwar Singh',
-              centreId: b.centre_id,
-              centreCode: 'P',
-              centreName: 'Karnal Central Grain Mandi',
-              tokenDisplay: 'P001',
-              tokenSeq: 1,
-              crop: 'Paddy (Basmati 1121)',
-              quantity: b.expected_quantity,
-              date: b.slot_date,
-              timeSlot: b.slot_time,
-              stage: b.status,
-              status: b.status,
-              stageStatus: 'IN_PROGRESS',
-              faceVerified: false,
-              paymentDetails: {
-                mspPerQtl: 2320,
-                grossAmount: b.expected_quantity * 2320,
-                dbtTxnId: 'DBT-PENDING',
-                disbursed: false,
-              },
-              qrData: `AGRI-PROCURE-${b.booking_id}-P001`,
-              createdHash: '0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a',
-              createdAt: '10:15 AM',
-            }));
-            return mapped;
-          });
+          const mapped = bookingsData.map((b) => ({
+            id: b.booking_id || b.id,
+            farmerId: 'FRM-2026-000123',
+            farmerName: 'Rameshwar Singh',
+            centreId: b.centre_id,
+            centreCode: 'P',
+            centreName: 'Karnal Central Grain Mandi',
+            tokenDisplay: 'P001',
+            tokenSeq: 1,
+            crop: 'Paddy (Basmati 1121)',
+            quantity: b.expected_quantity,
+            date: b.slot_date,
+            timeSlot: b.slot_time,
+            stage: b.status,
+            status: b.status,
+            stageStatus: 'IN_PROGRESS',
+            faceVerified: false,
+            paymentDetails: {
+              mspPerQtl: 2320,
+              grossAmount: b.expected_quantity * 2320,
+              dbtTxnId: 'DBT-PENDING',
+              disbursed: false,
+            },
+            qrData: `AGRI-PROCURE-${b.booking_id}-P001`,
+            createdHash: '0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a',
+            createdAt: '10:15 AM',
+          }));
+          setBookings(mapped);
         }
 
-        // Fetch Audit Logs
         const { data: auditData } = await supabase.from('audit_logs').select('*');
         if (auditData && auditData.length > 0) {
           setAuditChain(
@@ -366,7 +396,6 @@ export function AppProvider({ children }) {
 
     loadSupabaseData();
 
-    // Enable Realtime Subscriptions
     const channel = supabase
       .channel('procure-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, (payload) => {
@@ -397,36 +426,6 @@ export function AppProvider({ children }) {
       supabase.removeChannel(channel);
     };
   }, []);
-
-  // Notification Helper
-  const addNotification = ({ title, message, type = 'info' }) => {
-    const newNotif = {
-      id: 'n-' + Date.now(),
-      title,
-      message,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      type,
-      read: false,
-    };
-    setNotifications((prev) => [newNotif, ...prev]);
-
-    // Async persist to Supabase if connected
-    try {
-      supabase.from('notifications').insert([
-        {
-          title,
-          message,
-          is_read: false,
-        },
-      ]);
-    } catch {
-      // safe fallback
-    }
-  };
-
-  const markAllNotificationsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
 
   // Navigation Guard Helper
   const navigateTo = (view) => {
@@ -536,6 +535,7 @@ export function AppProvider({ children }) {
         zone: 'North Zone (Haryana & Punjab)',
       };
       setUser(officerUser);
+      localStorage.setItem('agri_user', JSON.stringify(officerUser));
       addNotification({
         title: 'Officer Access Granted',
         message: 'Signed in to Mandi Higher Authority & Command Tower.',
@@ -555,6 +555,7 @@ export function AppProvider({ children }) {
         mandiName: 'Karnal Central Grain Mandi',
       };
       setUser(workerUser);
+      localStorage.setItem('agri_user', JSON.stringify(workerUser));
       addNotification({
         title: 'Worker Portal Initialized',
         message: `Signed in as Procurement Staff (${workerUser.assignedStage} Stage).`,
@@ -571,6 +572,7 @@ export function AppProvider({ children }) {
     };
     setUser(farmerUser);
     setFarmerProfile(matchedFarmer);
+    localStorage.setItem('agri_user', JSON.stringify(farmerUser));
     addNotification({
       title: 'Farmer Sign-In Successful',
       message: `Welcome back, ${farmerUser.name}! (ID: ${farmerUser.farmerId})`,
@@ -583,6 +585,7 @@ export function AppProvider({ children }) {
 
   const logoutUser = () => {
     setUser(null);
+    localStorage.removeItem('agri_user');
     setCurrentView('home');
     addNotification({
       title: 'Logged Out',

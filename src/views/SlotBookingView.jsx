@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Sprout, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, QrCode, AlertCircle, ArrowLeft, Lock } from 'lucide-react';
+import { Calendar, Clock, MapPin, Sprout, Sparkles, CheckCircle2, ArrowRight, QrCode, ArrowLeft, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../context/AppContext';
 
@@ -14,11 +14,7 @@ export default function SlotBookingView() {
     timeSlots,
     bookSlot,
     navigateTo,
-    bookings,
-    t,
   } = useApp();
-
-  const selectedMandi = mandiCentres.find((m) => m.id === selectedMandiId) || mandiCentres[0];
 
   // Strictly bind to registered crops only
   const [selectedCrop, setSelectedCrop] = useState(crops[0]?.name || 'Paddy (Basmati 1121)');

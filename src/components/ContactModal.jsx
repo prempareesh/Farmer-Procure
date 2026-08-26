@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { X, Send, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function ContactModal() {

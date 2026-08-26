@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Sprout, Plus, Edit2, Trash2, ShieldCheck, MapPin, Phone, ArrowLeft, Check, X, Building } from 'lucide-react';
+import { User, Sprout, Plus, Edit2, Trash2, ShieldCheck, MapPin, Phone, ArrowLeft, Check, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function ProfileView() {
-  const { farmerProfile, setFarmerProfile, crops, addCrop, updateCrop, deleteCrop, navigateTo } = useApp();
+  const { farmerProfile, crops, addCrop, updateCrop, deleteCrop, navigateTo } = useApp();
 
   const [isAddingCrop, setIsAddingCrop] = useState(false);
   const [editingCropId, setEditingCropId] = useState(null);

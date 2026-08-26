@@ -1,13 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Clock, Users, ArrowRight, Play, CheckCircle2, RotateCw, ShieldCheck, QrCode, ArrowLeft, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Clock, Users, ArrowRight, Play, CheckCircle2, RotateCw, QrCode, ArrowLeft, Sparkles } from 'lucide-react';
 import { useApp, WORKFLOW_STAGES } from '../context/AppContext';
 
 export default function LiveQueueView() {
   const {
     activeBooking,
-    bookings,
-    setActiveBookingId,
     servingToken,
     setServingToken,
     autoQueueTicker,

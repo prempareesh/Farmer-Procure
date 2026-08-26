@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wrench, Search, QrCode, CheckCircle2, XCircle, AlertTriangle, ArrowLeft, ShieldCheck, Upload, FileText, User } from 'lucide-react';
-import { useApp, WORKFLOW_STAGES } from '../context/AppContext';
+import { Search, CheckCircle2, XCircle, AlertTriangle, ArrowLeft, User } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export default function WorkerDashboardView() {
   const {
@@ -23,7 +23,7 @@ export default function WorkerDashboardView() {
   const [rejectingBookingId, setRejectingBookingId] = useState(null);
   const [rejectReason, setRejectReason] = useState('Moisture content exceeds 17% threshold');
   const [rejectRemarks, setRejectRemarks] = useState('');
-  const [proofFileName, setProofFileName] = useState('lab_moisture_sensor_report.pdf');
+  const [proofFileName] = useState('lab_moisture_sensor_report.pdf');
 
   // Filter tasks for worker's assigned stage or all
   const filteredBookings = bookings.filter((b) => {

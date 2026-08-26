@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Building, Users, Search, ShieldCheck, CheckCircle2, AlertTriangle, Clock, TrendingUp, Sparkles, Wrench, ShieldAlert, ArrowLeft, ArrowRight, FileText, Check, DollarSign } from 'lucide-react';
+import { Users, Search, ShieldCheck, Clock, Sparkles, Wrench, ShieldAlert, ArrowLeft, DollarSign } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function OfficerDashboardView() {
   const {
     farmersList,
     bookings,
-    servingToken,
     peopleAhead,
     estimatedWaitMins,
-    congestionRisk,
     xaiFactors,
     bottlenecks,
     resolveBottleneck,
@@ -18,7 +15,6 @@ export default function OfficerDashboardView() {
     resolveFraudAlert,
     approveFinalPayment,
     searchFarmerById,
-    auditChain,
     navigateTo,
     t,
   } = useApp();

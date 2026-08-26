@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Eye, TrendingUp, HelpCircle, AlertTriangle, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, Eye, TrendingUp, HelpCircle, AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
 
 export default function HowItWorksModal({ isOpen, onClose }) {
   const [activeStep, setActiveStep] = useState(0);

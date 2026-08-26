@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, User, Phone, Lock, ArrowRight, CheckCircle2, Building, ArrowLeft, UserPlus, Camera, Wrench, Sparkles } from 'lucide-react';
+import { ShieldCheck, User, ArrowRight, CheckCircle2, Building, ArrowLeft, Camera, Wrench } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function AuthView() {
-  const { registerFarmer, loginUser, navigateTo, t } = useApp();
+  const { registerFarmer, loginUser, navigateTo } = useApp();
   
   const [isRegistering, setIsRegistering] = useState(false);
   const [role, setRole] = useState('farmer'); // 'farmer' | 'worker' | 'officer'

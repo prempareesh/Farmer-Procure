@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Sprout, Calendar, Clock, QrCode, ShieldCheck, CheckCircle2, AlertTriangle, ArrowRight, Camera, Sparkles, Plus, Edit2, Trash2, ArrowLeft, RefreshCw, FileText, Check } from 'lucide-react';
+import { User, Sprout, Calendar, Clock, QrCode, ShieldCheck, CheckCircle2, Camera, Sparkles, Plus, Trash2, ArrowLeft, FileText } from 'lucide-react';
 import { useApp, WORKFLOW_STAGES } from '../context/AppContext';
 
 export default function FarmerDashboardView() {
@@ -11,8 +11,6 @@ export default function FarmerDashboardView() {
     deleteCrop,
     bookings,
     activeBooking,
-    activeBookingId,
-    setActiveBookingId,
     servingToken,
     peopleAhead,
     estimatedWaitMins,

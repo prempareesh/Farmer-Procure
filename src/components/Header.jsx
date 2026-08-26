@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Calendar, Menu, X, Sprout, Bell, LogOut, ShieldCheck, LayoutDashboard, Globe, ChevronDown, Wrench, Building } from 'lucide-react';
+import { User, Menu, X, Sprout, Bell, LogOut, Globe, ChevronDown } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Header() {

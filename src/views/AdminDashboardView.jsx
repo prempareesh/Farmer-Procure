@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Building, Users, Calendar, Clock, AlertTriangle, ShieldCheck, CheckCircle2, TrendingUp, Sparkles, ArrowLeft, RefreshCw, Layers, ShieldAlert, Zap, Wrench } from 'lucide-react';
+import { Building, Users, Calendar, Clock, AlertTriangle, ShieldCheck, TrendingUp, Sparkles, ArrowLeft, ShieldAlert, Wrench } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function AdminDashboardView() {
@@ -16,7 +15,6 @@ export default function AdminDashboardView() {
     resolveBottleneck,
     fraudAlerts,
     resolveFraudAlert,
-    auditChain,
     navigateTo,
   } = useApp();
 
