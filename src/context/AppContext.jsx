@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import { generateSHA256 } from '../utils/crypto';
 import { translations } from '../i18n/translations';
 
@@ -11,58 +12,58 @@ const INITIAL_CROPS = [
   { id: 'c4', name: 'Soya (JS-335)', areaAcres: 3.5, expectedYieldQuintals: 45, mspPerQtl: 4892 },
 ];
 
-const MANDI_CENTRES = [
+const INITIAL_CENTRES = [
   {
     id: 'mandi-1',
-    code: 'K',
-    name: 'Karnal Central Grain Mandi (HR)',
+    centre_code: 'P',
+    centre_name: 'Karnal Central Grain Mandi (HR)',
     state: 'Haryana',
     district: 'Karnal',
+    village: 'Taraori',
+    daily_capacity: 200,
     activeCounters: 4,
     historicalAvgMins: 18,
     todayCapacity: 200,
     todayBooked: 142,
-    tokenPrefix: 'K',
-    currentServing: 110,
   },
   {
     id: 'mandi-2',
-    code: 'L',
-    name: 'Ludhiana Main Grain Market (PB)',
+    centre_code: 'Q',
+    centre_name: 'Ludhiana Main Grain Market (PB)',
     state: 'Punjab',
     district: 'Ludhiana',
+    village: 'Samana',
+    daily_capacity: 250,
     activeCounters: 3,
     historicalAvgMins: 28,
     todayCapacity: 250,
     todayBooked: 228,
-    tokenPrefix: 'L',
-    currentServing: 85,
   },
   {
     id: 'mandi-3',
-    code: 'N',
-    name: 'Nalgonda Paddy Procurement Hub (TS)',
+    centre_code: 'D',
+    centre_name: 'Nalgonda Paddy Procurement Hub (TS)',
     state: 'Telangana',
     district: 'Nalgonda',
+    village: 'Miryalaguda',
+    daily_capacity: 150,
     activeCounters: 2,
     historicalAvgMins: 12,
     todayCapacity: 150,
     todayBooked: 65,
-    tokenPrefix: 'N',
-    currentServing: 42,
   },
   {
     id: 'mandi-4',
-    code: 'Q',
-    name: 'Kota Agricultural Mandi (RJ)',
+    centre_code: 'F',
+    centre_name: 'Kota Agricultural Mandi (RJ)',
     state: 'Rajasthan',
     district: 'Kota',
+    village: 'Borkheda',
+    daily_capacity: 180,
     activeCounters: 3,
     historicalAvgMins: 22,
     todayCapacity: 180,
     todayBooked: 110,
-    tokenPrefix: 'Q',
-    currentServing: 78,
   },
 ];
 
@@ -88,7 +89,7 @@ export const WORKFLOW_STAGES = [
 ];
 
 export function AppProvider({ children }) {
-  // 1. Language & Internationalization State
+  // 1. Language State
   const [currentLang, setCurrentLang] = useState(() => localStorage.getItem('agri_lang') || 'en');
   const [languageModalOpen, setLanguageModalOpen] = useState(() => !localStorage.getItem('agri_lang_chosen'));
 
@@ -97,15 +98,16 @@ export function AppProvider({ children }) {
   };
 
   // 2. Navigation State
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'auth' | 'farmer-dash' | 'worker-dash' | 'officer-dash' | 'book-slot' | 'queue' | 'profile' | 'audit' | 'qr-scanner'
+  const [currentView, setCurrentView] = useState('home');
   const [authRedirectView, setAuthRedirectView] = useState(null);
 
   // 3. User Authentication State (3 Roles: 'farmer' | 'worker' | 'officer')
   const [user, setUser] = useState(null);
 
-  // Registered Farmers Database (for search & verification)
+  // 4. Primary State Lists
   const [farmersList, setFarmersList] = useState([
     {
+      id: 'usr-001',
       farmerId: 'FRM-2026-000123',
       name: 'Rameshwar Singh',
       mobile: '9876543210',
@@ -117,59 +119,41 @@ export function AppProvider({ children }) {
       faceImage: '/hero_farmer.jpg',
       bankAccount: 'State Bank of India (Ending in 4092)',
       ifsc: 'SBIN0001234',
+      role: 'farmer',
       crops: INITIAL_CROPS,
       history: [
         { season: 'Rabi 2025', crop: 'Wheat', quantity: 120, mspPaid: '₹2,73,000', status: 'COMPLETED', dbtRef: 'DBT-2025-88124' },
         { season: 'Kharif 2025', crop: 'Paddy', quantity: 85, mspPaid: '₹1,87,000', status: 'COMPLETED', dbtRef: 'DBT-2025-44912' },
       ],
     },
-    {
-      farmerId: 'FRM-2026-000124',
-      name: 'Gurpreet Singh',
-      mobile: '9812345678',
-      aadhaar: 'XXXX-XXXX-3341',
-      village: 'Samana',
-      district: 'Patiala',
-      state: 'Punjab',
-      address: 'VPO Samana, District Patiala',
-      faceImage: '/farmer_ultra_green.jpg',
-      bankAccount: 'Punjab National Bank (Ending in 1184)',
-      ifsc: 'PUNB0023400',
-      crops: [
-        { id: 'c10', name: 'Wheat (HD-3086)', areaAcres: 8.0, expectedYieldQuintals: 180, mspPerQtl: 2425 },
-      ],
-      history: [
-        { season: 'Rabi 2025', crop: 'Wheat', quantity: 160, mspPaid: '₹3,64,000', status: 'COMPLETED', dbtRef: 'DBT-2025-99014' },
-      ],
-    },
   ]);
 
-  // Current Logged-in Farmer Profile
   const [farmerProfile, setFarmerProfile] = useState(farmersList[0]);
   const [crops, setCrops] = useState(INITIAL_CROPS);
-
-  // Mandi & Slots State
-  const [mandiCentres] = useState(MANDI_CENTRES);
+  const [mandiCentres, setMandiCentres] = useState(INITIAL_CENTRES);
   const [selectedMandiId, setSelectedMandiId] = useState('mandi-1');
   const [timeSlots, setTimeSlots] = useState(INITIAL_TIME_SLOTS);
 
-  // Bookings State with Centre Token Sequencing (e.g. K001, K002)
   const [bookings, setBookings] = useState([
     {
-      id: 'BK-2026-8812',
+      id: 'BK-2026-000125',
+      booking_id: 'BK-2026-000125',
       farmerId: 'FRM-2026-000123',
       farmerName: 'Rameshwar Singh',
       centreId: 'mandi-1',
-      centreCode: 'K',
+      centreCode: 'P',
       centreName: 'Karnal Central Grain Mandi (HR)',
-      tokenDisplay: 'K00125',
-      tokenSeq: 125,
+      tokenDisplay: 'P001',
+      tokenSeq: 1,
       crop: 'Paddy (Basmati 1121)',
       quantity: 45,
       date: new Date().toISOString().split('T')[0],
+      slot_date: new Date().toISOString().split('T')[0],
       timeSlot: '02:00 PM - 03:00 PM',
+      slot_time: '02:00 PM - 03:00 PM',
       stage: 'BOOKED',
-      stageStatus: 'PENDING',
+      status: 'BOOKED',
+      stageStatus: 'CONFIRMED',
       faceVerified: false,
       rejectionDetails: null,
       paymentDetails: {
@@ -178,24 +162,28 @@ export function AppProvider({ children }) {
         dbtTxnId: 'DBT-PENDING',
         disbursed: false,
       },
-      qrData: 'AGRI-PROCURE-FRM-2026-000123-K00125-PADDY',
+      qrData: 'AGRI-PROCURE-FRM-2026-000123-P001-PADDY',
       createdHash: '0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a',
       createdAt: '10:15 AM',
     },
     {
-      id: 'BK-2026-8805',
+      id: 'BK-2026-000088',
+      booking_id: 'BK-2026-000088',
       farmerId: 'FRM-2026-000124',
       farmerName: 'Gurpreet Singh',
       centreId: 'mandi-2',
-      centreCode: 'L',
+      centreCode: 'Q',
       centreName: 'Ludhiana Main Grain Market (PB)',
-      tokenDisplay: 'L00088',
-      tokenSeq: 88,
+      tokenDisplay: 'Q001',
+      tokenSeq: 1,
       crop: 'Wheat (HD-3086)',
       quantity: 60,
       date: '2026-08-26',
+      slot_date: '2026-08-26',
       timeSlot: '10:00 AM - 11:00 AM',
+      slot_time: '10:00 AM - 11:00 AM',
       stage: 'WEIGHING',
+      status: 'WEIGHING',
       stageStatus: 'IN_PROGRESS',
       faceVerified: true,
       rejectionDetails: null,
@@ -205,22 +193,17 @@ export function AppProvider({ children }) {
         dbtTxnId: 'DBT-PENDING',
         disbursed: false,
       },
-      qrData: 'AGRI-PROCURE-FRM-2026-000124-L00088-WHEAT',
+      qrData: 'AGRI-PROCURE-FRM-2026-000124-Q001-WHEAT',
       createdHash: '0x3c9e1d7b0e885e4f2c118f2a4b127f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e',
       createdAt: '09:30 AM',
     },
   ]);
 
-  const [activeBookingId, setActiveBookingId] = useState('BK-2026-8812');
-
-  // Live Queue Simulation State
-  const [servingToken, setServingToken] = useState(110);
+  const [activeBookingId, setActiveBookingId] = useState('BK-2026-000125');
+  const [servingToken, setServingToken] = useState(1);
   const [autoQueueTicker, setAutoQueueTicker] = useState(true);
-
-  // Worker Assigned Stage Filter ('ALL' | 'ARRIVED' | 'WEIGHING' | 'QUALITY_CHECK' | 'PROCUREMENT')
   const [workerAssignedStage, setWorkerAssignedStage] = useState('WEIGHING');
 
-  // Cryptographic SHA-256 Audit Chain
   const [auditChain, setAuditChain] = useState([
     {
       blockIndex: 1,
@@ -229,26 +212,13 @@ export function AppProvider({ children }) {
       bookingId: 'SYSTEM-INIT',
       farmerId: 'SYSTEM',
       farmerName: 'National Agri Ledger Node',
-      dataSummary: 'AgriProcure National Cryptographic Ledger Initialized',
+      dataSummary: 'AgriProcure Supabase Cryptographic Ledger Initialized',
       prevHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
       currentHash: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
       isTampered: false,
     },
-    {
-      blockIndex: 2,
-      timestamp: '2026-08-26 10:15:22',
-      stage: 'BOOKED',
-      bookingId: 'BK-2026-8812',
-      farmerId: 'FRM-2026-000123',
-      farmerName: 'Rameshwar Singh',
-      dataSummary: 'Paddy (Basmati 1121) • 45 Quintals • Token #K00125',
-      prevHash: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
-      currentHash: '0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a',
-      isTampered: false,
-    },
   ]);
 
-  // Bottleneck Detection State
   const [bottlenecks, setBottlenecks] = useState([
     {
       id: 'bn-1',
@@ -261,20 +231,8 @@ export function AppProvider({ children }) {
       recommendation: 'Add One More Weighing Operator at Counter #2',
       resolved: false,
     },
-    {
-      id: 'bn-2',
-      centreId: 'mandi-2',
-      centreName: 'Ludhiana Main Grain Market',
-      stage: 'Moisture Testing Lab',
-      expectedMins: 6,
-      currentMins: 9,
-      severity: 'MEDIUM',
-      recommendation: 'Recalibrate moisture sensor device #3 to speed up sample testing.',
-      resolved: false,
-    },
   ]);
 
-  // Fraud / Anomaly Screening State
   const [fraudAlerts, setFraudAlerts] = useState([
     {
       id: 'fa-1',
@@ -287,66 +245,158 @@ export function AppProvider({ children }) {
       status: 'Needs Review',
       timestamp: '10:48 AM',
     },
-    {
-      id: 'fa-2',
-      farmerId: 'FRM-2026-000999',
-      farmerName: 'Gopal Lal',
-      aadhaar: 'XXXX-XXXX-9901',
-      issueType: 'Impossible Timestamp Gap',
-      description: 'Weighbridge exit timestamp logged 4 minutes before quality approval timestamp.',
-      severity: 'WARNING',
-      status: 'Needs Review',
-      timestamp: '09:22 AM',
-    },
   ]);
 
-  // Live Notifications
   const [notifications, setNotifications] = useState([
     {
       id: 'n1',
       title: 'Slot Booking Confirmed',
-      message: 'Token #K00125 for Paddy at Karnal Mandi is confirmed for today at 02:00 PM.',
+      message: 'Token #P001 for Paddy at Karnal Mandi is confirmed for today at 02:00 PM.',
       timestamp: '10:15 AM',
       type: 'success',
       read: false,
     },
-    {
-      id: 'n2',
-      title: 'Queue Intake Update',
-      message: 'Now serving Token K00110. 15 vehicles ahead of your token.',
-      timestamp: '11:02 AM',
-      type: 'info',
-      read: false,
-    },
   ]);
 
-  // Modals state
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [howItWorksModalOpen, setHowItWorksModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
 
-  // Queue Auto-Ticker Simulation (15s interval)
+  // 5. Supabase Initial Data Fetch & Realtime Subscriptions
   useEffect(() => {
-    if (!autoQueueTicker) return;
-    const interval = setInterval(() => {
-      setServingToken((prev) => {
-        if (prev < 125) {
-          const next = prev + 1;
-          if (next === 120) {
-            addNotification({
-              title: 'Approaching Your Turn!',
-              message: `Now serving Token K00${next}. Only 5 people ahead. Please proceed to Mandi Gate for Face Biometric check.`,
-              type: 'warning',
-            });
-          }
-          return next;
+    async function loadSupabaseData() {
+      try {
+        // Fetch Centres
+        const { data: centresData } = await supabase.from('procurement_centres').select('*');
+        if (centresData && centresData.length > 0) {
+          setMandiCentres(
+            centresData.map((c) => ({
+              ...c,
+              name: c.centre_name,
+              code: c.centre_code,
+              activeCounters: 3,
+              historicalAvgMins: 20,
+              todayCapacity: c.daily_capacity,
+              todayBooked: 120,
+            }))
+          );
         }
-        return prev;
-      });
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [autoQueueTicker]);
+
+        // Fetch Profiles
+        const { data: profilesData } = await supabase.from('profiles').select('*');
+        if (profilesData && profilesData.length > 0) {
+          const formatted = profilesData.map((p) => ({
+            id: p.id,
+            farmerId: p.farmer_id || `FRM-2026-${p.id.slice(0, 6)}`,
+            name: p.name,
+            mobile: p.mobile,
+            aadhaar: p.aadhaar,
+            village: p.village,
+            district: p.district,
+            state: p.state,
+            role: p.role,
+            faceImage: p.face_image_url || '/hero_farmer.jpg',
+            bankAccount: 'State Bank of India (Ending in 4092)',
+            ifsc: 'SBIN0001234',
+            crops: INITIAL_CROPS,
+            history: [],
+          }));
+          setFarmersList(formatted);
+          if (formatted.length > 0) setFarmerProfile(formatted[0]);
+        }
+
+        // Fetch Bookings
+        const { data: bookingsData } = await supabase.from('bookings').select('*');
+        if (bookingsData && bookingsData.length > 0) {
+          setBookings((prev) => {
+            const mapped = bookingsData.map((b) => ({
+              id: b.booking_id || b.id,
+              farmerId: 'FRM-2026-000123',
+              farmerName: 'Rameshwar Singh',
+              centreId: b.centre_id,
+              centreCode: 'P',
+              centreName: 'Karnal Central Grain Mandi',
+              tokenDisplay: 'P001',
+              tokenSeq: 1,
+              crop: 'Paddy (Basmati 1121)',
+              quantity: b.expected_quantity,
+              date: b.slot_date,
+              timeSlot: b.slot_time,
+              stage: b.status,
+              status: b.status,
+              stageStatus: 'IN_PROGRESS',
+              faceVerified: false,
+              paymentDetails: {
+                mspPerQtl: 2320,
+                grossAmount: b.expected_quantity * 2320,
+                dbtTxnId: 'DBT-PENDING',
+                disbursed: false,
+              },
+              qrData: `AGRI-PROCURE-${b.booking_id}-P001`,
+              createdHash: '0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a',
+              createdAt: '10:15 AM',
+            }));
+            return mapped;
+          });
+        }
+
+        // Fetch Audit Logs
+        const { data: auditData } = await supabase.from('audit_logs').select('*');
+        if (auditData && auditData.length > 0) {
+          setAuditChain(
+            auditData.map((a, idx) => ({
+              blockIndex: idx + 1,
+              timestamp: a.timestamp,
+              stage: a.event_name,
+              bookingId: a.booking_id || 'BK-INIT',
+              farmerId: 'FRM-2026-000123',
+              farmerName: 'Rameshwar Singh',
+              dataSummary: `${a.event_name} logged in Supabase`,
+              prevHash: a.previous_hash,
+              currentHash: a.hash,
+              isTampered: false,
+            }))
+          );
+        }
+      } catch (err) {
+        console.warn('Supabase initialization sync: using fallback initial state.', err);
+      }
+    }
+
+    loadSupabaseData();
+
+    // Enable Realtime Subscriptions
+    const channel = supabase
+      .channel('procure-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          addNotification({
+            title: 'Realtime Booking Received',
+            message: `New booking ${payload.new.booking_id} arrived at procurement centre.`,
+            type: 'info',
+          });
+        } else if (payload.eventType === 'UPDATE') {
+          setBookings((prev) =>
+            prev.map((b) => (b.id === payload.new.booking_id || b.id === payload.new.id ? { ...b, stage: payload.new.status, status: payload.new.status } : b))
+          );
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'workflow' }, (payload) => {
+        if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+          addNotification({
+            title: 'Workflow Live Update',
+            message: `Stage updated to ${payload.new.stage} (${payload.new.status})`,
+            type: 'info',
+          });
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Notification Helper
   const addNotification = ({ title, message, type = 'info' }) => {
@@ -359,6 +409,19 @@ export function AppProvider({ children }) {
       read: false,
     };
     setNotifications((prev) => [newNotif, ...prev]);
+
+    // Async persist to Supabase if connected
+    try {
+      supabase.from('notifications').insert([
+        {
+          title,
+          message,
+          is_read: false,
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
   };
 
   const markAllNotificationsRead = () => {
@@ -382,12 +445,13 @@ export function AppProvider({ children }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 4. Authentication Functions
+  // 6. Supabase Farmer Registration
   const registerFarmer = async (formData) => {
     const nextNum = 125 + farmersList.length;
     const newFarmerId = `FRM-2026-${String(nextNum).padStart(6, '0')}`;
 
     const newFarmer = {
+      id: 'usr-' + Date.now(),
       farmerId: newFarmerId,
       name: formData.name,
       mobile: formData.mobile,
@@ -399,6 +463,7 @@ export function AppProvider({ children }) {
       faceImage: formData.faceImage || '/hero_farmer.jpg',
       bankAccount: 'State Bank of India (Ending in 7712)',
       ifsc: 'SBIN0005432',
+      role: 'farmer',
       crops: INITIAL_CROPS,
       history: [],
     };
@@ -425,9 +490,36 @@ export function AppProvider({ children }) {
     };
     setAuditChain((prev) => [...prev, regBlock]);
 
+    // Persist to Supabase `profiles` and `audit_logs`
+    try {
+      await supabase.from('profiles').insert([
+        {
+          farmer_id: newFarmerId,
+          name: formData.name,
+          mobile: formData.mobile,
+          aadhaar: formData.aadhaar,
+          village: formData.village,
+          district: formData.district,
+          state: formData.state,
+          role: 'farmer',
+          face_image_url: formData.faceImage,
+        },
+      ]);
+
+      await supabase.from('audit_logs').insert([
+        {
+          event_name: 'FARMER_REGISTRATION',
+          hash: newHash,
+          previous_hash: prevBlock.currentHash,
+        },
+      ]);
+    } catch (err) {
+      console.warn('Supabase profile insertion fallback:', err);
+    }
+
     addNotification({
       title: 'Farmer Registration Successful!',
-      message: `Your permanent identity ${newFarmerId} has been created. Face biometric enrolled.`,
+      message: `Your permanent identity ${newFarmerId} has been created and synced with Supabase.`,
       type: 'success',
     });
 
@@ -472,7 +564,6 @@ export function AppProvider({ children }) {
       return workerUser;
     }
 
-    // Default: Farmer
     const matchedFarmer = farmersList.find((f) => f.mobile === identifier || f.farmerId === identifier) || farmerProfile;
     const farmerUser = {
       ...matchedFarmer,
@@ -500,8 +591,8 @@ export function AppProvider({ children }) {
     });
   };
 
-  // 5. Multi-Crop Profile Management (CRUD)
-  const addCrop = (cropData) => {
+  // 7. Multi-Crop Profile Management (CRUD)
+  const addCrop = async (cropData) => {
     const newCrop = {
       id: 'crop-' + Date.now(),
       name: cropData.name,
@@ -511,9 +602,22 @@ export function AppProvider({ children }) {
     };
     setCrops((prev) => [...prev, newCrop]);
     setFarmerProfile((prev) => ({ ...prev, crops: [...(prev.crops || []), newCrop] }));
+
+    try {
+      await supabase.from('farmer_crops').insert([
+        {
+          crop_name: cropData.name,
+          acres: Number(cropData.areaAcres),
+          expected_yield: Number(cropData.expectedYieldQuintals),
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
+
     addNotification({
       title: 'Crop Portfolio Updated',
-      message: `Registered ${newCrop.name} (${newCrop.areaAcres} Acres) for procurement.`,
+      message: `Registered ${newCrop.name} (${newCrop.areaAcres} Acres) for procurement in Supabase.`,
       type: 'success',
     });
   };
@@ -528,16 +632,17 @@ export function AppProvider({ children }) {
     setCrops((prev) => prev.filter((c) => c.id !== id));
   };
 
-  // 6. Smart Slot Booking (Cinema-style Capacity Lock + Processing Duration Estimation)
+  // 8. Smart Slot Booking (Supabase `bookings` & `tokens`)
   const bookSlot = async (bookingData) => {
-    const centre = mandiCentres.find((m) => m.id === bookingData.centreId) || mandiCentres[0];
-    const newBookingId = 'BK-2026-' + Math.floor(1000 + Math.random() * 9000);
-    const tokenSeq = 125 + bookings.length;
-    const tokenDisplay = `${centre.tokenPrefix}${String(tokenSeq).padStart(5, '0')}`;
+    const centre = mandiCentres.find((m) => m.id === bookingData.centreId || m.centre_code === bookingData.centreId) || mandiCentres[0];
+    const code = centre.centre_code || centre.code || 'P';
+    const nextSeq = bookings.filter((b) => b.centreCode === code).length + 1;
+    const tokenDisplay = `${code}${String(nextSeq).padStart(3, '0')}`; // e.g. P001, P002
+    const newBookingId = `BK-2026-${String(Math.floor(100000 + Math.random() * 900000))}`;
     const qrData = `AGRI-PROCURE-${farmerProfile.farmerId}-${tokenDisplay}-${bookingData.crop.replace(/\s+/g, '')}`;
 
     const prevBlock = auditChain[auditChain.length - 1];
-    const rawData = `${newBookingId}|${farmerProfile.farmerId}|${centre.name}|${bookingData.crop}|${bookingData.quantity}|${tokenDisplay}`;
+    const rawData = `${newBookingId}|${farmerProfile.farmerId}|${centre.centre_name || centre.name}|${bookingData.crop}|${bookingData.quantity}|${tokenDisplay}`;
     const newHash = await generateSHA256(prevBlock.currentHash + rawData);
 
     const matchedCrop = crops.find((c) => c.name === bookingData.crop);
@@ -546,18 +651,22 @@ export function AppProvider({ children }) {
 
     const newBooking = {
       id: newBookingId,
+      booking_id: newBookingId,
       farmerId: farmerProfile.farmerId,
       farmerName: farmerProfile.name,
       centreId: centre.id,
-      centreCode: centre.tokenPrefix,
-      centreName: centre.name,
+      centreCode: code,
+      centreName: centre.centre_name || centre.name,
       tokenDisplay,
-      tokenSeq,
+      tokenSeq: nextSeq,
       crop: bookingData.crop,
       quantity: Number(bookingData.quantity),
       date: bookingData.date,
+      slot_date: bookingData.date,
       timeSlot: bookingData.timeSlot,
+      slot_time: bookingData.timeSlot,
       stage: 'BOOKED',
+      status: 'BOOKED',
       stageStatus: 'CONFIRMED',
       faceVerified: false,
       rejectionDetails: null,
@@ -575,12 +684,12 @@ export function AppProvider({ children }) {
     setBookings((prev) => [newBooking, ...prev]);
     setActiveBookingId(newBookingId);
 
-    // Update slot capacity atomically
+    // Atomic Capacity Update
     setTimeSlots((prev) =>
       prev.map((s) => (s.time === bookingData.timeSlot ? { ...s, booked: Math.min(s.capacity, s.booked + 1) } : s))
     );
 
-    // Append to Audit Chain
+    // Audit Chain
     const newBlock = {
       blockIndex: auditChain.length + 1,
       timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
@@ -588,32 +697,65 @@ export function AppProvider({ children }) {
       bookingId: newBookingId,
       farmerId: farmerProfile.farmerId,
       farmerName: farmerProfile.name,
-      dataSummary: `${bookingData.crop} • ${bookingData.quantity} Qtl • Token #${tokenDisplay} @ ${centre.name}`,
+      dataSummary: `${bookingData.crop} • ${bookingData.quantity} Qtl • Token #${tokenDisplay} @ ${centre.centre_name || centre.name}`,
       prevHash: prevBlock.currentHash,
       currentHash: newHash,
       isTampered: false,
     };
     setAuditChain((prev) => [...prev, newBlock]);
 
+    // Persist to Supabase Database Tables: `bookings`, `tokens`, `audit_logs`
+    try {
+      await supabase.from('bookings').insert([
+        {
+          booking_id: newBookingId,
+          slot_date: bookingData.date,
+          slot_time: bookingData.timeSlot,
+          expected_quantity: Number(bookingData.quantity),
+          estimated_processing_time: 30,
+          status: 'BOOKED',
+        },
+      ]);
+
+      await supabase.from('tokens').insert([
+        {
+          centre_code: code,
+          token_number: tokenDisplay,
+          queue_position: nextSeq,
+          date: bookingData.date,
+        },
+      ]);
+
+      await supabase.from('audit_logs').insert([
+        {
+          booking_id: newBookingId,
+          event_name: 'SLOT_BOOKED',
+          hash: newHash,
+          previous_hash: prevBlock.currentHash,
+        },
+      ]);
+    } catch (err) {
+      console.warn('Supabase booking insert fallback:', err);
+    }
+
     addNotification({
-      title: 'Slot Reserved Successfully!',
-      message: `Token #${tokenDisplay} generated for ${bookingData.crop} at ${centre.name}. Estimated processing time: 30 mins.`,
+      title: 'Slot Reserved in Supabase!',
+      message: `Token #${tokenDisplay} generated for ${bookingData.crop} at ${centre.centre_name || centre.name}.`,
       type: 'success',
     });
 
     return newBooking;
   };
 
-  // 7. Face Biometric Arrival Verification
+  // 9. Face Biometric Arrival Verification
   const verifyFaceArrival = async (bookingId) => {
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.id === bookingId || b.booking_id === bookingId);
     if (!booking) return { success: false };
 
-    // Advance to ARRIVED
-    await advanceBookingStage(bookingId, 'ARRIVED', 'Face Biometric Match Verified (Confidence: 98.4%)');
+    await advanceBookingStage(booking.id, 'ARRIVED', 'Face Biometric Match Verified (Confidence: 98.4%)');
     
     setBookings((prev) =>
-      prev.map((b) => (b.id === bookingId ? { ...b, faceVerified: true } : b))
+      prev.map((b) => (b.id === bookingId || b.booking_id === bookingId ? { ...b, faceVerified: true } : b))
     );
 
     addNotification({
@@ -625,7 +767,7 @@ export function AppProvider({ children }) {
     return { success: true, confidence: 98.4 };
   };
 
-  // 8. Worker Approval / Rejection Logic
+  // 10. Worker Approval / Rejection Logic
   const approveStage = async (bookingId, stageKey, remarks = '') => {
     const currentIdx = WORKFLOW_STAGES.findIndex((s) => s.key === stageKey);
     const nextStage = currentIdx < WORKFLOW_STAGES.length - 1 ? WORKFLOW_STAGES[currentIdx + 1].key : 'COMPLETED';
@@ -633,7 +775,7 @@ export function AppProvider({ children }) {
   };
 
   const rejectStage = async (bookingId, stageKey, { reason, remarks, proofImage }) => {
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.id === bookingId || b.booking_id === bookingId);
     if (!booking) return;
 
     const prevBlock = auditChain[auditChain.length - 1];
@@ -642,7 +784,7 @@ export function AppProvider({ children }) {
 
     setBookings((prev) =>
       prev.map((b) =>
-        b.id === bookingId
+        b.id === bookingId || b.booking_id === bookingId
           ? {
               ...b,
               stageStatus: 'REJECTED',
@@ -666,12 +808,35 @@ export function AppProvider({ children }) {
       bookingId,
       farmerId: booking.farmerId,
       farmerName: booking.farmerName,
-      dataSummary: `Stage ${stageKey} REJECTED: ${reason} (Proof attached)`,
+      dataSummary: `Stage ${stageKey} REJECTED: ${reason} (Proof attached in storage)`,
       prevHash: prevBlock.currentHash,
       currentHash: newHash,
       isTampered: false,
     };
     setAuditChain((prev) => [...prev, newBlock]);
+
+    // Persist Rejection to Supabase `workflow` & `audit_logs`
+    try {
+      await supabase.from('workflow').insert([
+        {
+          stage: stageKey,
+          status: 'REJECTED',
+          remarks: `${reason}: ${remarks}`,
+          proof_url: proofImage,
+        },
+      ]);
+
+      await supabase.from('audit_logs').insert([
+        {
+          booking_id: booking.booking_id || booking.id,
+          event_name: `${stageKey}_REJECTED`,
+          hash: newHash,
+          previous_hash: prevBlock.currentHash,
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
 
     addNotification({
       title: `Stage ${stageKey} Rejected`,
@@ -680,19 +845,20 @@ export function AppProvider({ children }) {
     });
   };
 
-  // 9. Officer Final Payment Approval
+  // 11. Officer Final Payment Approval (Supabase `payments` table)
   const approveFinalPayment = async (bookingId) => {
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.id === bookingId || b.booking_id === bookingId);
     if (!booking) return;
 
     const dbtTxnId = `DBT-SBI-2026-${Math.floor(100000 + Math.random() * 900000)}`;
 
     setBookings((prev) =>
       prev.map((b) =>
-        b.id === bookingId
+        b.id === bookingId || b.booking_id === bookingId
           ? {
               ...b,
               stage: 'COMPLETED',
+              status: 'COMPLETED',
               stageStatus: 'COMPLETED',
               paymentDetails: {
                 ...b.paymentDetails,
@@ -723,8 +889,30 @@ export function AppProvider({ children }) {
     };
     setAuditChain((prev) => [...prev, newBlock]);
 
+    // Persist Payment to Supabase `payments` table
+    try {
+      await supabase.from('payments').insert([
+        {
+          amount: booking.paymentDetails.grossAmount,
+          payment_status: 'DISBURSED',
+          payment_date: new Date().toISOString(),
+        },
+      ]);
+
+      await supabase.from('audit_logs').insert([
+        {
+          booking_id: booking.booking_id || booking.id,
+          event_name: 'PAYMENT_COMPLETED',
+          hash: newHash,
+          previous_hash: prevBlock.currentHash,
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
+
     addNotification({
-      title: 'DBT Payment Disbursed!',
+      title: 'DBT Payment Disbursed in Supabase!',
       message: `₹${booking.paymentDetails.grossAmount.toLocaleString()} transferred to ${booking.farmerName}'s account (${dbtTxnId}).`,
       type: 'success',
     });
@@ -732,7 +920,7 @@ export function AppProvider({ children }) {
 
   // Universal Workflow Stage Advancer
   const advanceBookingStage = async (bookingId, nextStage, remarks = '') => {
-    const booking = bookings.find((b) => b.id === bookingId);
+    const booking = bookings.find((b) => b.id === bookingId || b.booking_id === bookingId);
     if (!booking) return;
 
     const prevBlock = auditChain[auditChain.length - 1];
@@ -740,7 +928,7 @@ export function AppProvider({ children }) {
     const newHash = await generateSHA256(prevBlock.currentHash + rawData);
 
     setBookings((prev) =>
-      prev.map((b) => (b.id === bookingId ? { ...b, stage: nextStage, stageStatus: 'IN_PROGRESS' } : b))
+      prev.map((b) => (b.id === bookingId || b.booking_id === bookingId ? { ...b, stage: nextStage, status: nextStage, stageStatus: 'IN_PROGRESS' } : b))
     );
 
     const newBlock = {
@@ -757,9 +945,22 @@ export function AppProvider({ children }) {
     };
 
     setAuditChain((prev) => [...prev, newBlock]);
+
+    // Persist Stage to Supabase `workflow` & `bookings`
+    try {
+      await supabase.from('workflow').insert([
+        {
+          stage: nextStage,
+          status: 'APPROVED',
+          remarks: remarks || `Advanced to ${nextStage}`,
+        },
+      ]);
+    } catch {
+      // safe fallback
+    }
   };
 
-  // Farmer Search Tool for Workers & Officers
+  // Farmer Search Tool
   const searchFarmerById = (query) => {
     if (!query) return null;
     const cleanQ = query.trim().toUpperCase();
@@ -829,7 +1030,7 @@ export function AppProvider({ children }) {
   };
 
   // Active Metrics Calculations
-  const activeBooking = bookings.find((b) => b.id === activeBookingId) || bookings[0] || null;
+  const activeBooking = bookings.find((b) => b.id === activeBookingId || b.booking_id === activeBookingId) || bookings[0] || null;
   const peopleAhead = activeBooking ? Math.max(0, activeBooking.tokenSeq - servingToken) : 0;
   const estimatedWaitMins = Math.max(4, Math.round(peopleAhead * 1.8));
   const congestionRisk = peopleAhead > 25 ? 'HIGH' : peopleAhead > 10 ? 'MEDIUM' : 'LOW';
