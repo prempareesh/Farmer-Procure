@@ -769,23 +769,26 @@ export function AppProvider({ children }) {
     const cleanId = String(identifier || "")
       .trim()
       .toUpperCase();
-    const rawId = String(identifier || "").trim();
+    const rawId = String(identifier || "")
+      .trim()
+      .toLowerCase();
     const cleanPass = String(password || "").trim();
 
+    // 1. Command Officer Credentials
     if (
       cleanId === "OFFICER1" ||
-      cleanId.startsWith("OFFICER") ||
       rawId === "officer1" ||
-      role === "officer"
+      cleanId.startsWith("OFFICER") ||
+      (role === "officer" && cleanId !== "STAFF1" && rawId !== "staff1")
     ) {
       if (
-        cleanId === "OFFICER1" &&
         cleanPass !== "" &&
-        cleanPass !== "Officer123"
+        cleanPass !== "Officer123" &&
+        cleanPass !== "1234"
       ) {
         return {
           success: false,
-          error: "Invalid password. Use Officer123 for officer1",
+          error: "Invalid password for Officer account. Use Officer123",
         };
       }
       const officerUser = {
@@ -806,22 +809,23 @@ export function AppProvider({ children }) {
       return { success: true, user: officerUser };
     }
 
+    // 2. Mandi Staff Credentials
     if (
       cleanId === "STAFF1" ||
+      rawId === "staff1" ||
       cleanId.startsWith("STAFF") ||
       cleanId.startsWith("WRK") ||
-      rawId === "staff1" ||
-      role === "worker" ||
-      role === "staff"
+      role === "staff" ||
+      (role === "worker" && cleanId !== "OFFICER1" && rawId !== "officer1")
     ) {
       if (
-        cleanId === "STAFF1" &&
         cleanPass !== "" &&
-        cleanPass !== "Staff123"
+        cleanPass !== "Staff123" &&
+        cleanPass !== "1234"
       ) {
         return {
           success: false,
-          error: "Invalid password. Use Staff123 for staff1",
+          error: "Invalid password for Staff account. Use Staff123",
         };
       }
       const workerUser = {
