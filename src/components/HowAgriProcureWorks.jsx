@@ -17,7 +17,7 @@ import {
 import { useApp } from "../context/AppContext";
 
 export default function HowAgriProcureWorks({ initialStep = 0 }) {
-  const { navigateTo, t } = useApp();
+  const { t } = useApp();
 
   const [currentStepIndex, setCurrentStepIndex] = useState(
     typeof initialStep === "number" && initialStep >= 0 && initialStep < 8
@@ -154,7 +154,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
   return (
     <section
-      id="how-agriprocure-works"
+      id="how-it-works"
       className="w-full py-12 lg:py-16 bg-[#FAFBF8] border-t border-[#E8EFE6] relative selection:bg-[#2E7D32] selection:text-white"
     >
       <div className="max-w-4xl mx-auto px-6">
@@ -267,7 +267,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                 {currentStepIndex === 0 && (
                   <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
                     {/* Farmer Profile Strip */}
-                    <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200">
+                    <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200 select-none">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-[#1B4318] text-white flex items-center justify-center font-bold text-xs">
                           RS
@@ -287,7 +287,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                     </div>
 
                     {/* Registered Crops List */}
-                    <div className="space-y-2">
+                    <div className="space-y-2 select-none">
                       <div className="text-[11px] font-extrabold text-gray-500 uppercase tracking-wider">
                         {t("registeredCropsLabel")}
                       </div>
@@ -322,11 +322,11 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                       </div>
                     </div>
 
-                    {/* Highlighted CTA */}
+                    {/* Demo Button: Advances Walkthrough */}
                     <div className="pt-2">
                       <button
-                        onClick={() => navigateTo("book-slot")}
-                        className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-sm ring-2 ring-[#2E7D32]/30 ring-offset-1 cursor-pointer"
+                        onClick={goNext}
+                        className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-sm ring-2 ring-[#2E7D32]/30 ring-offset-1 cursor-pointer transition-all active:scale-98"
                       >
                         <span>{t("bookProcurementSlotBtn")}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -337,7 +337,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 02 — BOOK SLOT UI */}
                 {currentStepIndex === 1 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans select-none">
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div className="bg-white p-3 rounded-xl border border-gray-200">
                         <span className="text-[10px] text-gray-400 font-bold uppercase block">
@@ -399,9 +399,10 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                       </div>
                     </div>
 
+                    {/* Demo Button: Advances Walkthrough */}
                     <button
-                      onClick={() => navigateTo("book-slot")}
-                      className="w-full py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer"
+                      onClick={goNext}
+                      className="w-full py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer transition-all active:scale-98"
                     >
                       {t("confirmSlot")}
                     </button>
@@ -410,7 +411,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 03 — SMART TOKEN UI */}
                 {currentStepIndex === 2 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-3 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-3 font-sans select-none">
                     <div className="bg-white p-4 rounded-xl border border-[#C8E6C9] shadow-2xs space-y-3">
                       <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                         <span className="text-xs font-black text-[#2E7D32] flex items-center gap-1.5">
@@ -442,7 +443,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                           <span className="text-gray-400">
                             {t("cropLabel")}:
                           </span>{" "}
-                          Paddy (Basmati)
+                          Paddy (Basmati 1121)
                         </div>
                         <div>
                           <span className="text-gray-400">
@@ -469,7 +470,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 04 — LIVE QUEUE UI */}
                 {currentStepIndex === 3 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans select-none">
                     <div className="bg-[#1B4318] text-white p-4 rounded-xl flex items-center justify-between">
                       <div>
                         <div className="text-[10px] text-[#C8E6C9] font-bold uppercase">
@@ -535,7 +536,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 05 — AI PREDICTION UI */}
                 {currentStepIndex === 4 && (
-                  <div className="bg-[#1B4318] text-white rounded-2xl p-5 border border-[#1B4318] space-y-4 font-sans shadow-md">
+                  <div className="bg-[#1B4318] text-white rounded-2xl p-5 border border-[#1B4318] space-y-4 font-sans shadow-md select-none">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
                       <div className="bg-black/30 p-2.5 rounded-xl border border-white/10">
                         <div className="text-[9px] text-white/60 font-bold uppercase">
@@ -606,7 +607,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 06 — SMART ACTION UI */}
                 {currentStepIndex === 5 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans select-none">
                     <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-black text-amber-900 flex items-center gap-1.5">
@@ -625,9 +626,10 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
                         <span>{t("dispatchOpText")}</span>
                       </div>
                     </div>
+                    {/* Demo Button: Advances Walkthrough */}
                     <button
-                      onClick={() => navigateTo("officer-dashboard")}
-                      className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer flex items-center justify-center gap-2"
+                      onClick={goNext}
+                      className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer flex items-center justify-center gap-2 transition-all active:scale-98"
                     >
                       <span>{t("btnDispatchIntervention")}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -637,7 +639,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 07 — PROCUREMENT STATUS UI */}
                 {currentStepIndex === 6 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans select-none">
                     <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-2">
                       <div className="text-xs font-extrabold text-[#111827] pb-1 border-b border-gray-100 flex items-center justify-between">
                         <span>{t("lifecycleStatusTitle")}</span>
@@ -696,7 +698,7 @@ export default function HowAgriProcureWorks({ initialStep = 0 }) {
 
                 {/* STEP 08 — VERIFY AUDIT UI */}
                 {currentStepIndex === 7 && (
-                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans">
+                  <div className="bg-[#FAFBF8] rounded-2xl p-5 border border-gray-200 space-y-4 font-sans select-none">
                     <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
                       <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                         <span className="text-xs font-black text-[#1B4318] flex items-center gap-1.5">
