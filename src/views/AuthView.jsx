@@ -160,6 +160,7 @@ export default function AuthView() {
                   onClick={() => {
                     setSelectedRole("farmer");
                     setLoginIdentifier("FRM-2026-000123");
+                    setLoginPassword("1234");
                   }}
                   className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                     selectedRole === "farmer"
@@ -173,7 +174,8 @@ export default function AuthView() {
                   type="button"
                   onClick={() => {
                     setSelectedRole("worker");
-                    setLoginIdentifier("WRK-HR-108");
+                    setLoginIdentifier("staff1");
+                    setLoginPassword("Staff123");
                   }}
                   className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                     selectedRole === "worker"
@@ -187,7 +189,8 @@ export default function AuthView() {
                   type="button"
                   onClick={() => {
                     setSelectedRole("officer");
-                    setLoginIdentifier("OFFICER-HR-402");
+                    setLoginIdentifier("officer1");
+                    setLoginPassword("Officer123");
                   }}
                   className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                     selectedRole === "officer"
@@ -211,9 +214,9 @@ export default function AuthView() {
                   type="text"
                   placeholder={
                     selectedRole === "worker"
-                      ? "e.g. WRK-HR-108"
+                      ? "e.g. staff1"
                       : selectedRole === "officer"
-                        ? "e.g. OFFICER-HR-402"
+                        ? "e.g. officer1"
                         : t("enterFarmerIdOrMobile")
                   }
                   value={loginIdentifier}

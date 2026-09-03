@@ -769,8 +769,25 @@ export function AppProvider({ children }) {
     const cleanId = String(identifier || "")
       .trim()
       .toUpperCase();
+    const rawId = String(identifier || "").trim();
+    const cleanPass = String(password || "").trim();
 
-    if (role === "officer" || cleanId.startsWith("OFFICER")) {
+    if (
+      cleanId === "OFFICER1" ||
+      cleanId.startsWith("OFFICER") ||
+      rawId === "officer1" ||
+      role === "officer"
+    ) {
+      if (
+        cleanId === "OFFICER1" &&
+        cleanPass !== "" &&
+        cleanPass !== "Officer123"
+      ) {
+        return {
+          success: false,
+          error: "Invalid password. Use Officer123 for officer1",
+        };
+      }
       const officerUser = {
         id: "OFFICER-HR-402",
         name: "Devendra Sharma",
@@ -790,11 +807,23 @@ export function AppProvider({ children }) {
     }
 
     if (
-      role === "worker" ||
-      role === "staff" ||
+      cleanId === "STAFF1" ||
+      cleanId.startsWith("STAFF") ||
       cleanId.startsWith("WRK") ||
-      cleanId.startsWith("STAFF")
+      rawId === "staff1" ||
+      role === "worker" ||
+      role === "staff"
     ) {
+      if (
+        cleanId === "STAFF1" &&
+        cleanPass !== "" &&
+        cleanPass !== "Staff123"
+      ) {
+        return {
+          success: false,
+          error: "Invalid password. Use Staff123 for staff1",
+        };
+      }
       const workerUser = {
         id: "WRK-HR-108",
         name: "Sukhvinder Singh",
