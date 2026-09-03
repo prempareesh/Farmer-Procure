@@ -53,18 +53,46 @@ function MainApp() {
         </main>
       )}
 
-      {/* 3. Authenticated Application Views */}
+      {/* 3. Authenticated Application Views with Strict Role Guards */}
       {currentView === "auth" && <AuthView />}
       {currentView === "farmer-dash" && <FarmerDashboardView />}
-      {currentView === "worker-dash" && <WorkerDashboardView />}
-      {currentView === "officer-dash" && <OfficerDashboardView />}
+
+      {/* Staff / Worker Dashboard Guard */}
+      {currentView === "worker-dash" &&
+        (user?.role === "worker" || user?.role === "staff" ? (
+          <WorkerDashboardView />
+        ) : user?.role === "officer" ? (
+          <OfficerDashboardView />
+        ) : (
+          <FarmerDashboardView />
+        ))}
+
+      {/* Officer Command Tower Guard */}
+      {currentView === "officer-dash" &&
+        (user?.role === "officer" ? (
+          <OfficerDashboardView />
+        ) : user?.role === "worker" || user?.role === "staff" ? (
+          <WorkerDashboardView />
+        ) : (
+          <FarmerDashboardView />
+        ))}
+
+      {/* Audit Ledger Guard (Officer Only) */}
+      {currentView === "audit" &&
+        (user?.role === "officer" ? (
+          <AuditChainView />
+        ) : user?.role === "worker" || user?.role === "staff" ? (
+          <WorkerDashboardView />
+        ) : (
+          <FarmerDashboardView />
+        ))}
+
       {currentView === "profile" && <ProfileView />}
       {currentView === "book-slot" && <SlotBookingView />}
       {currentView === "queue" && <LiveQueueView />}
-      {currentView === "qr-scanner" && <QRScannerView />}
-      {currentView === "audit" &&
-        (user?.role !== "farmer" ? (
-          <AuditChainView />
+      {currentView === "qr-scanner" &&
+        (user?.role === "worker" || user?.role === "staff" ? (
+          <QRScannerView />
         ) : (
           <FarmerDashboardView />
         ))}
