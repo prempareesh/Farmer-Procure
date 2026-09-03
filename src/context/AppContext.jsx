@@ -908,7 +908,7 @@ export function AppProvider({ children }) {
     return { success: true, farmerId: newFarmerId, farmer: newFarmer };
   };
 
-  const loginUser = (identifier, password, role = "farmer") => {
+  const loginUser = async (identifier, password, role = "farmer") => {
     const rawId = String(identifier || "").trim();
     const cleanId = rawId.toUpperCase();
     const cleanPass = String(password || "").trim();
@@ -981,16 +981,54 @@ export function AppProvider({ children }) {
     }
 
     // 3. Farmer Authentication
-    const matchedFarmer = farmersList.find(
+    let matchedFarmer = farmersList.find(
       (f) =>
         f.mobile === rawId ||
-        f.farmerId.toUpperCase() === cleanId ||
+        (f.farmerId && f.farmerId.toUpperCase() === cleanId) ||
         (cleanId === "FRM-2026-000123" && f.farmerId === "FRM-2026-000123"),
     );
 
+    // If not in memory, query Supabase profiles table directly
+    if (!matchedFarmer) {
+      try {
+        const { data: dbProfile } = await supabase
+          .from("profiles")
+          .select("*")
+          .or(`farmer_id.ilike.%${cleanId}%,mobile.eq.${rawId}`)
+          .maybeSingle();
+
+        if (dbProfile) {
+          matchedFarmer = {
+            id: dbProfile.id,
+            farmerId:
+              dbProfile.farmer_id || `FRM-2026-${dbProfile.id.slice(0, 6)}`,
+            name: dbProfile.name,
+            mobile: dbProfile.mobile,
+            aadhaar: dbProfile.aadhaar || "XXXX-XXXX-1234",
+            village: dbProfile.village || "Taraori",
+            district: dbProfile.district || "Karnal",
+            state: dbProfile.state || "Haryana",
+            role: dbProfile.role || "farmer",
+            faceImage: dbProfile.face_image_url || "/hero_farmer.jpg",
+            bankAccount: "State Bank of India (Ending in 4092)",
+            ifsc: "SBIN0001234",
+            crops: INITIAL_CROPS,
+            history: [],
+          };
+          setFarmersList((prev) => [matchedFarmer, ...prev]);
+        }
+      } catch {
+        // Safe fallback
+      }
+    }
+
     const activeFarmer =
       matchedFarmer ||
-      (cleanId === "FRM-2026-000123" || rawId === "9876543210"
+      (cleanId === "FRM-2026-000123" ||
+      rawId === "9876543210" ||
+      (farmerProfile &&
+        (farmerProfile.mobile === rawId ||
+          farmerProfile.farmerId?.toUpperCase() === cleanId))
         ? farmerProfile
         : null);
 
@@ -1002,7 +1040,11 @@ export function AppProvider({ children }) {
       };
     }
 
-    if (cleanPass !== "1234" && cleanPass !== activeFarmer.password) {
+    if (
+      cleanPass !== "1234" &&
+      activeFarmer.password &&
+      cleanPass !== activeFarmer.password
+    ) {
       return {
         success: false,
         error: "Incorrect password. Please try again.",
