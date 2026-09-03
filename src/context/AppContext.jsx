@@ -502,54 +502,86 @@ export function AppProvider({ children }) {
             farmerId: p.farmer_id || `FRM-2026-${p.id.slice(0, 6)}`,
             name: p.name,
             mobile: p.mobile,
-            aadhaar: p.aadhaar,
-            village: p.village,
-            district: p.district,
-            state: p.state,
-            role: p.role,
+            aadhaar: p.aadhaar || "XXXX-XXXX-1234",
+            village: p.village || "Taraori",
+            district: p.district || "Karnal",
+            state: p.state || "Haryana",
+            role: p.role || "farmer",
             faceImage: p.face_image_url || "/hero_farmer.jpg",
             bankAccount: "State Bank of India (Ending in 4092)",
             ifsc: "SBIN0001234",
             crops: INITIAL_CROPS,
             history: [],
           }));
-          setFarmersList(formatted);
-          if (formatted.length > 0) setFarmerProfile(formatted[0]);
+          setFarmersList((prev) => {
+            const existingIds = new Set(prev.map((f) => f.farmerId));
+            const newItems = formatted.filter(
+              (f) => !existingIds.has(f.farmerId),
+            );
+            return [...prev, ...newItems];
+          });
         }
 
-        const { data: bookingsData } = await supabase
-          .from("bookings")
-          .select("*");
+        // Fetch bookings with profiles join
+        const { data: bookingsData } = await supabase.from("bookings").select(`
+            *,
+            profiles ( id, farmer_id, name, mobile, village, district, state ),
+            procurement_centres ( id, centre_code, centre_name )
+          `);
+
         if (bookingsData && bookingsData.length > 0) {
-          const mapped = bookingsData.map((b) => ({
-            id: b.booking_id || b.id,
-            farmerId: "FRM-2026-000123",
-            farmerName: "Rameshwar Singh",
-            centreId: b.centre_id,
-            centreCode: "P",
-            centreName: "Karnal Central Grain Mandi",
-            tokenDisplay: "P001",
-            tokenSeq: 1,
-            crop: "Paddy (Basmati 1121)",
-            quantity: b.expected_quantity,
-            date: b.slot_date,
-            timeSlot: b.slot_time,
-            stage: b.status,
-            status: b.status,
-            stageStatus: "IN_PROGRESS",
-            faceVerified: false,
-            paymentDetails: {
-              mspPerQtl: 2320,
-              grossAmount: b.expected_quantity * 2320,
-              dbtTxnId: "DBT-PENDING",
-              disbursed: false,
-            },
-            qrData: `AGRI-PROCURE-${b.booking_id}-P001`,
-            createdHash:
-              "0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a",
-            createdAt: "10:15 AM",
-          }));
-          setBookings(mapped);
+          const mapped = bookingsData.map((b) => {
+            const p = b.profiles || {};
+            const c = b.procurement_centres || {};
+            const fId = p.farmer_id || "FRM-2026-000123";
+            const fName = p.name || "Rameshwar Singh";
+            const code = c.centre_code || "P";
+            const cName = c.centre_name || "Karnal Central Grain Mandi";
+            const tSeq = 1;
+            const tDisp = `${code}${String(tSeq).padStart(3, "0")}`;
+
+            return {
+              id: b.booking_id || b.id,
+              booking_id: b.booking_id || b.id,
+              farmerId: fId,
+              farmerName: fName,
+              farmerMobile: p.mobile,
+              centreId: b.centre_id,
+              centreCode: code,
+              centreName: cName,
+              tokenDisplay: tDisp,
+              tokenSeq: tSeq,
+              crop: "Paddy (Basmati 1121)",
+              quantity: Number(b.expected_quantity || 25),
+              date: b.slot_date,
+              slot_date: b.slot_date,
+              timeSlot: b.slot_time,
+              slot_time: b.slot_time,
+              stage: b.status || "BOOKED",
+              status: b.status || "BOOKED",
+              stageStatus: "IN_PROGRESS",
+              faceVerified: false,
+              paymentDetails: {
+                mspPerQtl: 2320,
+                grossAmount: Number(b.expected_quantity || 25) * 2320,
+                dbtTxnId: "DBT-PENDING",
+                disbursed: b.status === "COMPLETED",
+              },
+              qrData: `AGRI-PROCURE-${b.booking_id || b.id}-${tDisp}`,
+              createdAt: new Date(
+                b.created_at || Date.now(),
+              ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+          });
+
+          setBookings((prev) => {
+            const existingIds = new Set(prev.map((item) => item.id));
+            const newItems = mapped.filter((item) => !existingIds.has(item.id));
+            return [...newItems, ...prev];
+          });
         }
 
         const { data: auditData } = await supabase
@@ -572,10 +604,7 @@ export function AppProvider({ children }) {
           );
         }
       } catch (err) {
-        console.warn(
-          "Supabase initialization sync: using fallback initial state.",
-          err,
-        );
+        console.warn("Supabase initialization sync log:", err);
       }
     }
 
@@ -585,11 +614,71 @@ export function AppProvider({ children }) {
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "bookings" },
-          (payload) => {
+          async (payload) => {
             if (payload.eventType === "INSERT") {
+              const newDb = payload.new;
+              const bId = newDb.booking_id || newDb.id;
+
+              let fId = "FRM-2026-000123";
+              let fName = "Rameshwar Singh";
+
+              if (newDb.profile_id) {
+                try {
+                  const { data: p } = await supabase
+                    .from("profiles")
+                    .select("farmer_id, name")
+                    .eq("id", newDb.profile_id)
+                    .maybeSingle();
+                  if (p) {
+                    fId = p.farmer_id || fId;
+                    fName = p.name || fName;
+                  }
+                } catch {
+                  // Safe fallback
+                }
+              }
+
+              const newBookingRecord = {
+                id: bId,
+                booking_id: bId,
+                farmerId: fId,
+                farmerName: fName,
+                centreId: newDb.centre_id,
+                centreCode: "P",
+                centreName: "Karnal Central Grain Mandi",
+                tokenDisplay: "P001",
+                tokenSeq: 1,
+                crop: "Paddy (Basmati 1121)",
+                quantity: Number(newDb.expected_quantity || 25),
+                date: newDb.slot_date,
+                slot_date: newDb.slot_date,
+                timeSlot: newDb.slot_time,
+                slot_time: newDb.slot_time,
+                stage: newDb.status || "BOOKED",
+                status: newDb.status || "BOOKED",
+                stageStatus: "IN_PROGRESS",
+                faceVerified: false,
+                paymentDetails: {
+                  mspPerQtl: 2320,
+                  grossAmount: Number(newDb.expected_quantity || 25) * 2320,
+                  dbtTxnId: "DBT-PENDING",
+                  disbursed: false,
+                },
+                qrData: `AGRI-PROCURE-${bId}-P001`,
+                createdAt: new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              };
+
+              setBookings((prev) => {
+                if (prev.some((item) => item.id === bId)) return prev;
+                return [newBookingRecord, ...prev];
+              });
+
               addNotification({
                 title: "Realtime Booking Received",
-                message: `New booking ${payload.new.booking_id} arrived at procurement centre.`,
+                message: `New booking ${bId} (${fName}) arrived at procurement centre.`,
                 type: "info",
               });
             } else if (payload.eventType === "UPDATE") {
@@ -1091,34 +1180,90 @@ export function AppProvider({ children }) {
 
     // Persist to Supabase Database Tables: `bookings`, `tokens`, `audit_logs`
     try {
-      await supabase.from("bookings").insert([
-        {
-          booking_id: newBookingId,
-          slot_date: bookingData.date,
-          slot_time: bookingData.timeSlot,
-          expected_quantity: Number(bookingData.quantity),
-          estimated_processing_time: 30,
-          status: "BOOKED",
-        },
-      ]);
+      let profileUuid = null;
+      let centreUuid = null;
 
-      await supabase.from("tokens").insert([
-        {
-          centre_code: code,
-          token_number: tokenDisplay,
-          queue_position: nextSeq,
-          date: bookingData.date,
-        },
-      ]);
+      // Get profile UUID from Supabase profiles
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("farmer_id", farmerProfile.farmerId)
+        .maybeSingle();
 
-      await supabase.from("audit_logs").insert([
-        {
-          booking_id: newBookingId,
-          event_name: "SLOT_BOOKED",
-          hash: newHash,
-          previous_hash: prevBlock.currentHash,
-        },
-      ]);
+      if (prof) {
+        profileUuid = prof.id;
+      } else {
+        // Create profile if missing in Supabase DB
+        const { data: newProf } = await supabase
+          .from("profiles")
+          .insert([
+            {
+              farmer_id: farmerProfile.farmerId,
+              name: farmerProfile.name,
+              mobile: farmerProfile.mobile,
+              village: farmerProfile.village || "Taraori",
+              district: farmerProfile.district || "Karnal",
+              state: farmerProfile.state || "Haryana",
+              role: "farmer",
+            },
+          ])
+          .select()
+          .single();
+        if (newProf) profileUuid = newProf.id;
+      }
+
+      // Get centre UUID from Supabase procurement_centres
+      const { data: cent } = await supabase
+        .from("procurement_centres")
+        .select("id")
+        .eq("centre_code", code)
+        .maybeSingle();
+
+      if (cent) {
+        centreUuid = cent.id;
+      }
+
+      if (profileUuid && centreUuid) {
+        const { data: insertedDb, error: bErr } = await supabase
+          .from("bookings")
+          .insert([
+            {
+              booking_id: newBookingId,
+              profile_id: profileUuid,
+              centre_id: centreUuid,
+              slot_date: bookingData.date,
+              slot_time: bookingData.timeSlot,
+              expected_quantity: Number(bookingData.quantity),
+              estimated_processing_time: 30,
+              status: "BOOKED",
+            },
+          ])
+          .select()
+          .single();
+
+        if (insertedDb) {
+          await supabase.from("tokens").insert([
+            {
+              booking_id: insertedDb.id,
+              centre_code: code,
+              token_number: tokenDisplay,
+              queue_position: nextSeq,
+              date: bookingData.date,
+            },
+          ]);
+
+          await supabase.from("audit_logs").insert([
+            {
+              booking_id: insertedDb.id,
+              event_name: "SLOT_BOOKED",
+              hash: newHash,
+              previous_hash: prevBlock.currentHash,
+            },
+          ]);
+        } else if (bErr) {
+          console.warn("Supabase booking insert notice:", bErr.message);
+        }
+      }
     } catch (err) {
       console.warn("Supabase booking insert fallback:", err);
     }
@@ -1509,18 +1654,51 @@ export function AppProvider({ children }) {
     });
   };
 
-  // Farmer Search Tool
-  const searchFarmerById = (query) => {
+  // Farmer Search Tool (Searches local state + Supabase Database)
+  const searchFarmerById = async (query) => {
     if (!query) return null;
     const cleanQ = query.trim().toUpperCase();
-    return (
-      farmersList.find(
-        (f) =>
-          f.farmerId.toUpperCase() === cleanQ ||
-          f.mobile.includes(cleanQ) ||
-          f.name.toUpperCase().includes(cleanQ),
-      ) || null
+
+    const memoryMatch = farmersList.find(
+      (f) =>
+        f.farmerId.toUpperCase() === cleanQ ||
+        f.mobile.includes(cleanQ) ||
+        f.name.toUpperCase().includes(cleanQ),
     );
+    if (memoryMatch) return memoryMatch;
+
+    // Database lookup for farmer profile
+    try {
+      const { data: p } = await supabase
+        .from("profiles")
+        .select("*")
+        .or(
+          `farmer_id.ilike.%${cleanQ}%,mobile.ilike.%${cleanQ}%,name.ilike.%${cleanQ}%`,
+        )
+        .maybeSingle();
+
+      if (p) {
+        const foundFarmer = {
+          id: p.id,
+          farmerId: p.farmer_id || cleanQ,
+          name: p.name,
+          mobile: p.mobile,
+          aadhaar: p.aadhaar || "XXXX-XXXX-1234",
+          village: p.village || "Taraori",
+          district: p.district || "Karnal",
+          state: p.state || "Haryana",
+          role: p.role || "farmer",
+          crops: INITIAL_CROPS,
+          history: [],
+        };
+        setFarmersList((prev) => [foundFarmer, ...prev]);
+        return foundFarmer;
+      }
+    } catch {
+      // Safe fallback
+    }
+
+    return null;
   };
 
   // Bottleneck & Fraud Handlers

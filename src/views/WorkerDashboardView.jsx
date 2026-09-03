@@ -53,13 +53,13 @@ export default function WorkerDashboardView() {
     return b.stage === workerAssignedStage;
   });
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
       setSearchedFarmer(null);
       return;
     }
-    const result = searchFarmerById(searchQuery);
+    const result = await searchFarmerById(searchQuery);
     setSearchedFarmer(result || "NOT_FOUND");
   };
 

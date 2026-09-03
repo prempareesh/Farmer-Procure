@@ -52,13 +52,13 @@ export default function OfficerDashboardView() {
         ).toFixed(1)
       : "4.2";
 
-  const handleSearchFarmer = (e) => {
+  const handleSearchFarmer = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
       setSelectedFarmerHistory(null);
       return;
     }
-    const res = searchFarmerById(searchQuery);
+    const res = await searchFarmerById(searchQuery);
     setSelectedFarmerHistory(res || "NOT_FOUND");
   };
 
