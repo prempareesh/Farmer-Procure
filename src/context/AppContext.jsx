@@ -770,52 +770,14 @@ export function AppProvider({ children }) {
     const cleanId = rawId.toUpperCase();
     const cleanPass = String(password || "").trim();
 
-    // 1. Command Officer Authentication
+    // 1. Mandi Staff / Worker Tab or Identifier
     if (
-      cleanId === "OFFICER1" ||
-      rawId === "officer1" ||
-      cleanId === "OFFICER-HR-402" ||
-      (role === "officer" &&
-        (cleanId === "OFFICER1" ||
-          rawId === "officer1" ||
-          cleanId === "OFFICER-HR-402"))
-    ) {
-      if (cleanPass !== "Officer123" && cleanPass !== "1234") {
-        return {
-          success: false,
-          error:
-            "Invalid password for Command Officer account. Password: Officer123",
-        };
-      }
-      const officerUser = {
-        id: "OFFICER-HR-402",
-        name: "Devendra Sharma",
-        role: "officer",
-        designation: "Chief Procurement Officer",
-        zone: "North Zone (Haryana & Punjab)",
-      };
-      setUser(officerUser);
-      localStorage.setItem("agri_user", JSON.stringify(officerUser));
-      addNotification({
-        title: "Officer Access Granted",
-        message: "Signed in to Mandi Higher Authority & Command Tower.",
-        type: "success",
-      });
-      navigateTo("officer-dash");
-      return { success: true, user: officerUser };
-    }
-
-    // 2. Mandi Staff Authentication
-    if (
+      role === "worker" ||
+      role === "staff" ||
       cleanId === "STAFF1" ||
-      rawId === "staff1" ||
-      cleanId === "WRK-HR-108" ||
-      cleanId.startsWith("WRK-") ||
-      cleanId.startsWith("STAFF-") ||
-      (role === "worker" &&
-        (cleanId === "STAFF1" ||
-          rawId === "staff1" ||
-          cleanId.startsWith("WRK")))
+      rawId.toLowerCase() === "staff1" ||
+      cleanId.startsWith("WRK") ||
+      cleanId.startsWith("STAFF")
     ) {
       if (cleanPass !== "Staff123" && cleanPass !== "1234") {
         return {
@@ -842,55 +804,66 @@ export function AppProvider({ children }) {
       return { success: true, user: workerUser };
     }
 
-    // 3. Farmer Authentication
-    const matchedFarmer = farmersList.find(
-      (f) =>
-        f.mobile === rawId ||
-        f.farmerId.toUpperCase() === cleanId ||
-        f.farmerId.toUpperCase() === "FRM-2026-000123",
-    );
-
-    // If identifier is demo ID or mobile
+    // 2. Command Officer Tab or Identifier
     if (
-      cleanId === "FRM-2026-000123" ||
-      rawId === "9876543210" ||
-      matchedFarmer
+      role === "officer" ||
+      cleanId === "OFFICER1" ||
+      rawId.toLowerCase() === "officer1" ||
+      cleanId.startsWith("OFFICER")
     ) {
-      const activeFarmer = matchedFarmer || farmerProfile;
-      if (
-        cleanPass !== "1234" &&
-        cleanPass !== activeFarmer.password &&
-        cleanPass !== "Staff123"
-      ) {
+      if (cleanPass !== "Officer123" && cleanPass !== "1234") {
         return {
           success: false,
-          error: "Invalid password for Farmer account. Password: 1234",
+          error:
+            "Invalid password for Command Officer account. Password: Officer123",
         };
       }
-
-      const farmerUser = {
-        ...activeFarmer,
-        role: "farmer",
+      const officerUser = {
+        id: "OFFICER-HR-402",
+        name: "Devendra Sharma",
+        role: "officer",
+        designation: "Chief Procurement Officer",
+        zone: "North Zone (Haryana & Punjab)",
       };
-      setUser(farmerUser);
-      setFarmerProfile(activeFarmer);
-      localStorage.setItem("agri_user", JSON.stringify(farmerUser));
+      setUser(officerUser);
+      localStorage.setItem("agri_user", JSON.stringify(officerUser));
       addNotification({
-        title: "Farmer Sign-In Successful",
-        message: `Welcome back, ${farmerUser.name}! (ID: ${farmerUser.farmerId})`,
+        title: "Officer Access Granted",
+        message: "Signed in to Mandi Higher Authority & Command Tower.",
         type: "success",
       });
-      navigateTo(authRedirectView || "farmer-dash");
-      setAuthRedirectView(null);
-      return { success: true, user: farmerUser };
+      navigateTo("officer-dash");
+      return { success: true, user: officerUser };
     }
 
-    // Reject all unrecognized / random inputs
-    return {
-      success: false,
-      error:
-        "Invalid credentials. Please enter a valid Farmer ID / Mobile, Staff ID, or Officer ID.",
+    // 3. Farmer Authentication
+    const matchedFarmer = farmersList.find(
+      (f) => f.mobile === rawId || f.farmerId.toUpperCase() === cleanId,
+    );
+
+    const activeFarmer = matchedFarmer || farmerProfile;
+    if (cleanPass !== "1234" && cleanPass !== activeFarmer.password) {
+      return {
+        success: false,
+        error: "Invalid password for Farmer account. Password: 1234",
+      };
+    }
+
+    const farmerUser = {
+      ...activeFarmer,
+      role: "farmer",
     };
+    setUser(farmerUser);
+    setFarmerProfile(activeFarmer);
+    localStorage.setItem("agri_user", JSON.stringify(farmerUser));
+    addNotification({
+      title: "Farmer Sign-In Successful",
+      message: `Welcome back, ${farmerUser.name}! (ID: ${farmerUser.farmerId})`,
+      type: "success",
+    });
+    navigateTo(authRedirectView || "farmer-dash");
+    setAuthRedirectView(null);
+    return { success: true, user: farmerUser };
   };
 
   const logoutUser = () => {
