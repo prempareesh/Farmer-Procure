@@ -85,6 +85,26 @@ export const translations = {
     btnGetStarted: "Login / Get Started",
     btnCreateId: "Create Farmer ID",
 
+    // Premium Footer Keys
+    footerDesc: "Making agricultural procurement more predictable, transparent and efficient for farmers and procurement centres.",
+    footerProjectTag: "SIH 2026 Prototype • AgriTech Procurement Platform",
+    footerNavQuickAccess: "QUICK ACCESS",
+    footerNavForFarmers: "FOR FARMERS",
+    footerNavPlatform: "PLATFORM",
+    footerNavHome: "Home",
+    footerNavHowItWorks: "How It Works",
+    footerNavSignIn: "Sign In / Login",
+    footerNavBookSlot: "Book a Slot",
+    footerNavLiveQueue: "Live Queue Status",
+    footerNavFarmerPortal: "Farmer Portal",
+    footerNavAbout: "About AgriProcure",
+    footerNavFeatures: "Features",
+    footerNavContact: "Contact & Support",
+    footerCopyright: "© 2026 AgriProcure. Smart procurement infrastructure for farmers and procurement centres.",
+    footerPrivacy: "Privacy",
+    footerTerms: "Terms",
+    footerAccessibility: "Accessibility",
+
     // Homepage Outcomes & Closing
     outcomesTitle: "Designed for Every Procurement Participant",
     outcomesSubtitle:
@@ -570,6 +590,26 @@ export const translations = {
     finalCtaTitle: "ధాన్య సేకరణను మరింత సులభంగా చేయడానికి సిద్ధమా?",
     btnGetStarted: "లాగిన్ చేయండి / ప్రారంభించండి",
     btnCreateId: "కొత్త రైతు ఐడీ సృష్టించండి",
+
+    // Premium Footer Keys
+    footerDesc: "రైతులు మరియు ధాన్య సేకరణ కేంద్రాల కోసం వ్యవసాయ సేకరణను మరింత సులభంగా, పారదర్శకంగా మరియు సమర్థవంతంగా చేయడం.",
+    footerProjectTag: "SIH 2026 ప్రొటోటైప్ • అగ్రిటెక్ ప్రొక్యూర్మెంట్ వేదిక",
+    footerNavQuickAccess: "త్వరిత ప్రవేశం",
+    footerNavForFarmers: "రైతుల కొరకు",
+    footerNavPlatform: "ప్లాట్‌ఫారమ్",
+    footerNavHome: "హోమ్",
+    footerNavHowItWorks: "ఎలా పనిచేస్తుంది",
+    footerNavSignIn: "లాగిన్ చేయండి",
+    footerNavBookSlot: "స్లాట్ బుక్ చేయండి",
+    footerNavLiveQueue: "లైవ్ క్యూ సమాచారం",
+    footerNavFarmerPortal: "రైతు పోర్టల్",
+    footerNavAbout: "అగ్రిప్రొక్యూర్ గురించి",
+    footerNavFeatures: "లక్షణాలు",
+    footerNavContact: "సంప్రదించండి & మద్దతు",
+    footerCopyright: "© 2026 అగ్రిప్రొక్యూర్. రైతులు మరియు ధాన్య సేకరణ కేంద్రాల కోసం స్మార్ట్ సేకరణ మౌలిక సదుపాయాలు.",
+    footerPrivacy: "గోప్యత",
+    footerTerms: "నిబంధనలు",
+    footerAccessibility: "యాక్సెసిబిలిటీ",
 
     // Homepage Outcomes & Closing
     outcomesTitle: "సేకరణలో పాల్గొనే ప్రతి ఒక్కరి కోసం రూపొందించబడింది",
@@ -1057,6 +1097,26 @@ export const translations = {
     finalCtaTitle: "खरीद को अधिक अनुमानित बनाने के लिए तैयार हैं?",
     btnGetStarted: "लॉगिन करें / शुरू करें",
     btnCreateId: "नया किसान आईडी बनाएं",
+
+    // Premium Footer Keys
+    footerDesc: "किसानों और खरीद केंद्रों के लिए कृषि खरीद को अधिक अनुमानित, पारदर्शी और कुशल बनाना।",
+    footerProjectTag: "SIH 2026 प्रोटोटाइप • एग्रीटेक खरीद प्लेटफॉर्म",
+    footerNavQuickAccess: "त्वरित पहुंच",
+    footerNavForFarmers: "किसानों के लिए",
+    footerNavPlatform: "प्लेटफॉर्म",
+    footerNavHome: "होम",
+    footerNavHowItWorks: "यह कैसे काम करता है",
+    footerNavSignIn: "साइन इन / लॉगिन",
+    footerNavBookSlot: "स्लाट बुक करें",
+    footerNavLiveQueue: "लाइव कतार स्थिति",
+    footerNavFarmerPortal: "किसान पोर्टल",
+    footerNavAbout: "एग्रीप्रोक्योर के बारे में",
+    footerNavFeatures: "विशेषताएं",
+    footerNavContact: "संपर्क और सहायता",
+    footerCopyright: "© 2026 एग्रीप्रोक्योर। किसानों और खरीद केंद्रों के लिए स्मार्ट खरीद ढांचा।",
+    footerPrivacy: "गोपनीयता",
+    footerTerms: "शर्तें",
+    footerAccessibility: "पहुंच (एक्सेसिबिलिटी)",
 
     // Homepage Outcomes & Closing
     outcomesTitle: "खरीद प्रक्रिया के हर भागीदार के लिए निर्मित",
