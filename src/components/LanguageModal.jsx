@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Globe, Check, ArrowRight } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React from "react";
+import { motion } from "framer-motion";
+import { Globe, Check, ArrowRight } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function LanguageModal({ isOpen, onClose }) {
   const { currentLang, setCurrentLang, t } = useApp();
@@ -10,29 +10,29 @@ export default function LanguageModal({ isOpen, onClose }) {
 
   const languages = [
     {
-      code: 'en',
-      name: 'English',
-      native: 'English',
-      desc: 'Default system language with international nomenclature',
+      code: "en",
+      name: "English",
+      native: "English",
+      desc: "Default system language with international nomenclature",
     },
     {
-      code: 'hi',
-      name: 'Hindi',
-      native: 'हिंदी (Hindi)',
-      desc: 'राष्ट्रीय भाषा - सम्पूर्ण किसान एवं मंडी शब्दावली',
+      code: "hi",
+      name: "Hindi",
+      native: "हिंदी (Hindi)",
+      desc: "राष्ट्रीय भाषा - सम्पूर्ण किसान एवं मंडी शब्दावली",
     },
     {
-      code: 'te',
-      name: 'Telugu',
-      native: 'తెలుగు (Telugu)',
-      desc: 'ప్రాంతీయ భాష - పూర్తి వ్యవసాయ మరియు మార్కెట్ సమాచారం',
+      code: "te",
+      name: "Telugu",
+      native: "తెలుగు (Telugu)",
+      desc: "ప్రాంతీయ భాష - పూర్తి వ్యవసాయ మరియు మార్కెట్ సమాచారం",
     },
   ];
 
   const handleSelect = (code) => {
     setCurrentLang(code);
-    localStorage.setItem('agri_lang', code);
-    localStorage.setItem('agri_lang_chosen', 'true');
+    localStorage.setItem("agri_lang", code);
+    localStorage.setItem("agri_lang_chosen", "true");
     onClose();
   };
 
@@ -52,7 +52,8 @@ export default function LanguageModal({ isOpen, onClose }) {
             Select Preferred Language / भाषा चुनें / భాషను ఎంచుకోండి
           </h2>
           <p className="text-xs text-[#A5D6A7] mt-1 font-semibold">
-            Choose your language for a customized agricultural procurement experience
+            Choose your language for a customized agricultural procurement
+            experience
           </p>
         </div>
 
@@ -67,21 +68,29 @@ export default function LanguageModal({ isOpen, onClose }) {
                 onClick={() => handleSelect(lang.code)}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? 'bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs'
-                    : 'bg-white border-gray-200 hover:border-[#A5D6A7] hover:shadow-xs'
+                    ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
+                    : "bg-white border-gray-200 hover:border-[#A5D6A7] hover:shadow-xs"
                 }`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-base font-extrabold text-gray-900">{lang.native}</span>
-                    <span className="text-xs text-gray-400 font-bold">({lang.name})</span>
+                    <span className="text-base font-extrabold text-gray-900">
+                      {lang.native}
+                    </span>
+                    <span className="text-xs text-gray-400 font-bold">
+                      ({lang.name})
+                    </span>
                   </div>
-                  <p className="text-[11px] text-gray-600 font-medium mt-0.5">{lang.desc}</p>
+                  <p className="text-[11px] text-gray-600 font-medium mt-0.5">
+                    {lang.desc}
+                  </p>
                 </div>
 
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                    isSelected ? 'bg-[#2E7D32] text-white shadow-xs' : 'bg-gray-100 text-gray-400'
+                    isSelected
+                      ? "bg-[#2E7D32] text-white shadow-xs"
+                      : "bg-gray-100 text-gray-400"
                   }`}
                 >
                   <Check className="w-4 h-4" />
@@ -94,7 +103,8 @@ export default function LanguageModal({ isOpen, onClose }) {
         {/* Footer */}
         <div className="p-4 bg-white border-t border-gray-100 text-center">
           <p className="text-[11px] font-semibold text-gray-500">
-            You can change your language preference anytime from the header menu or profile settings.
+            You can change your language preference anytime from the header menu
+            or profile settings.
           </p>
         </div>
       </motion.div>

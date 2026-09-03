@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Send, CheckCircle2, MessageSquare } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { X, Send, CheckCircle2, MessageSquare } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function ContactModal() {
   const { contactModalOpen, setContactModalOpen, addNotification } = useApp();
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   if (!contactModalOpen) return null;
@@ -17,17 +17,18 @@ export default function ContactModal() {
     e.preventDefault();
     setSubmitted(true);
     addNotification({
-      title: 'Inquiry Submitted',
-      message: 'Your Mandi assistance inquiry ticket #TKT-8841 has been registered. Officer will call back within 15 mins.',
-      type: 'success',
+      title: "Inquiry Submitted",
+      message:
+        "Your Mandi assistance inquiry ticket #TKT-8841 has been registered. Officer will call back within 15 mins.",
+      type: "success",
     });
   };
 
   const handleClose = () => {
     setSubmitted(false);
-    setName('');
-    setPhone('');
-    setMessage('');
+    setName("");
+    setPhone("");
+    setMessage("");
     setContactModalOpen(false);
   };
 
@@ -47,7 +48,9 @@ export default function ContactModal() {
             </div>
             <div>
               <h3 className="text-lg font-bold">Mandi Helpdesk & Support</h3>
-              <p className="text-xs text-[#A5D6A7]">Farmer Query & Assistance Desk</p>
+              <p className="text-xs text-[#A5D6A7]">
+                Farmer Query & Assistance Desk
+              </p>
             </div>
           </div>
           <button
@@ -63,7 +66,9 @@ export default function ContactModal() {
           {!submitted ? (
             <form onSubmit={handleSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Your Name *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Your Name *
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. Rameshwar Singh"
@@ -75,7 +80,9 @@ export default function ContactModal() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile / WhatsApp Number *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Mobile / WhatsApp Number *
+                </label>
                 <input
                   type="tel"
                   placeholder="98765 43210"
@@ -88,7 +95,9 @@ export default function ContactModal() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Message / Mandi Assistance Required *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  Message / Mandi Assistance Required *
+                </label>
                 <textarea
                   rows="3"
                   placeholder="Describe your slot, quality check or DBT query..."
@@ -112,9 +121,12 @@ export default function ContactModal() {
               <div className="w-14 h-14 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-xs">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h4 className="text-base font-bold text-gray-900">Inquiry Ticket #TKT-8841 Created</h4>
+              <h4 className="text-base font-bold text-gray-900">
+                Inquiry Ticket #TKT-8841 Created
+              </h4>
               <p className="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-                Thank you! Our procurement support executive will contact your registered mobile number shortly.
+                Thank you! Our procurement support executive will contact your
+                registered mobile number shortly.
               </p>
               <button
                 onClick={handleClose}

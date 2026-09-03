@@ -1,7 +1,15 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Bell, CheckCircle2, AlertTriangle, Info, Sparkles, CheckCheck } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  X,
+  Bell,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
+  Sparkles,
+  CheckCheck,
+} from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function NotificationDrawer() {
   const {
@@ -16,17 +24,17 @@ export default function NotificationDrawer() {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
-      <div 
+      <div
         onClick={() => setNotificationDrawerOpen(false)}
         className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <motion.div
-          initial={{ x: '100%' }}
+          initial={{ x: "100%" }}
           animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="w-screen max-w-md bg-white shadow-2xl border-l border-gray-100 flex flex-col"
         >
           {/* Header */}
@@ -37,7 +45,9 @@ export default function NotificationDrawer() {
               </div>
               <div>
                 <h3 className="text-base font-bold">Live Procurement Alerts</h3>
-                <p className="text-xs text-[#A5D6A7]">Real-time Mandi & Slot Updates</p>
+                <p className="text-xs text-[#A5D6A7]">
+                  Real-time Mandi & Slot Updates
+                </p>
               </div>
             </div>
 
@@ -77,26 +87,32 @@ export default function NotificationDrawer() {
                     key={notif.id}
                     className={`p-4 rounded-2xl border transition-all ${
                       notif.read
-                        ? 'bg-white/80 border-gray-200'
-                        : 'bg-white border-[#A5D6A7] shadow-sm ring-1 ring-[#2E7D32]/10'
+                        ? "bg-white/80 border-gray-200"
+                        : "bg-white border-[#A5D6A7] shadow-sm ring-1 ring-[#2E7D32]/10"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                          notif.type === 'success'
-                            ? 'bg-green-100 text-green-700'
-                            : notif.type === 'warning'
-                            ? 'bg-amber-100 text-amber-700'
-                            : notif.type === 'recommendation'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-gray-100 text-gray-700'
+                          notif.type === "success"
+                            ? "bg-green-100 text-green-700"
+                            : notif.type === "warning"
+                              ? "bg-amber-100 text-amber-700"
+                              : notif.type === "recommendation"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-gray-100 text-gray-700"
                         }`}
                       >
-                        {notif.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
-                        {notif.type === 'warning' && <AlertTriangle className="w-4 h-4" />}
-                        {notif.type === 'recommendation' && <Sparkles className="w-4 h-4" />}
-                        {notif.type === 'info' && <Info className="w-4 h-4" />}
+                        {notif.type === "success" && (
+                          <CheckCircle2 className="w-4 h-4" />
+                        )}
+                        {notif.type === "warning" && (
+                          <AlertTriangle className="w-4 h-4" />
+                        )}
+                        {notif.type === "recommendation" && (
+                          <Sparkles className="w-4 h-4" />
+                        )}
+                        {notif.type === "info" && <Info className="w-4 h-4" />}
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -122,7 +138,8 @@ export default function NotificationDrawer() {
           {/* Footer Info */}
           <div className="p-4 bg-white border-t border-gray-100 text-center">
             <p className="text-[11px] font-semibold text-gray-500">
-              Procure Intelligence • Multi-channel SMS & WhatsApp Webhooks Active
+              Procure Intelligence • Multi-channel SMS & WhatsApp Webhooks
+              Active
             </p>
           </div>
         </motion.div>

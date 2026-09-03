@@ -1,38 +1,38 @@
-import React from 'react';
-import { BarChart3, Target, ShieldCheck, Users } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React from "react";
+import { BarChart3, Target, ShieldCheck, Users } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function FeatureCards() {
   const { navigateTo, t } = useApp();
 
   const cards = [
     {
-      id: '01',
+      id: "01",
       icon: BarChart3,
-      title: t('feat1Title'),
-      description: t('feat1Desc'),
-      action: () => navigateTo('queue'),
+      title: t("feat1Title"),
+      description: t("feat1Desc"),
+      action: () => navigateTo("queue"),
     },
     {
-      id: '02',
+      id: "02",
       icon: Target,
-      title: t('feat2Title'),
-      description: t('feat2Desc'),
-      action: () => navigateTo('book-slot'),
+      title: t("feat2Title"),
+      description: t("feat2Desc"),
+      action: () => navigateTo("book-slot"),
     },
     {
-      id: '03',
+      id: "03",
       icon: ShieldCheck,
-      title: t('feat3Title'),
-      description: t('feat3Desc'),
-      action: () => navigateTo('audit'),
+      title: t("feat3Title"),
+      description: t("feat3Desc"),
+      action: () => navigateTo("audit"),
     },
     {
-      id: '04',
+      id: "04",
       icon: Users,
-      title: t('feat4Title'),
-      description: t('feat4Desc'),
-      action: () => navigateTo('profile'),
+      title: t("feat4Title"),
+      description: t("feat4Desc"),
+      action: () => navigateTo("profile"),
     },
   ];
 

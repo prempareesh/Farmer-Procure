@@ -1,7 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { X, Sprout, ShieldCheck, Phone, MapPin, Award, CheckCircle2 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  X,
+  Sprout,
+  ShieldCheck,
+  Phone,
+  MapPin,
+  Award,
+  CheckCircle2,
+} from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function AboutModal() {
   const { aboutModalOpen, setAboutModalOpen, navigateTo } = useApp();
@@ -23,8 +31,12 @@ export default function AboutModal() {
               <Sprout className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">About AgriProcure Intelligence</h3>
-              <p className="text-xs text-[#A5D6A7]">Smart India Hackathon (SIH 2026) Project</p>
+              <h3 className="text-lg font-bold">
+                About AgriProcure Intelligence
+              </h3>
+              <p className="text-xs text-[#A5D6A7]">
+                Smart India Hackathon (SIH 2026) Project
+              </p>
             </div>
           </div>
           <button
@@ -38,9 +50,15 @@ export default function AboutModal() {
         {/* Body */}
         <div className="p-6 space-y-4 bg-[#FAF8F2] max-h-[75vh] overflow-y-auto">
           <div className="bg-white p-5 rounded-2xl border border-gray-200 space-y-2">
-            <h4 className="text-sm font-black text-gray-900">National Vision for Farmer Empowerment</h4>
+            <h4 className="text-sm font-black text-gray-900">
+              National Vision for Farmer Empowerment
+            </h4>
             <p className="text-xs text-gray-700 leading-relaxed font-medium">
-              AgriProcure is an AI-powered predictive procurement platform engineered to solve physical Mandi congestion, eliminate multi-day queue delays, and guarantee transparent MSP transactions through cryptographic SHA-256 audit trails and intelligent dynamic scheduling.
+              AgriProcure is an AI-powered predictive procurement platform
+              engineered to solve physical Mandi congestion, eliminate multi-day
+              queue delays, and guarantee transparent MSP transactions through
+              cryptographic SHA-256 audit trails and intelligent dynamic
+              scheduling.
             </p>
           </div>
 
@@ -51,7 +69,8 @@ export default function AboutModal() {
                 <span>100% Cryptographic Audit</span>
               </div>
               <p className="text-[11px] text-gray-600">
-                Immutable SHA-256 chain verifying weighbridge weights, moisture tests, and DBT payments.
+                Immutable SHA-256 chain verifying weighbridge weights, moisture
+                tests, and DBT payments.
               </p>
             </div>
 
@@ -61,7 +80,8 @@ export default function AboutModal() {
                 <span>Zero-Wait Lane Scheduling</span>
               </div>
               <p className="text-[11px] text-gray-600">
-                AI load distribution algorithm predicting peak congestion and recommending low-traffic windows.
+                AI load distribution algorithm predicting peak congestion and
+                recommending low-traffic windows.
               </p>
             </div>
           </div>
@@ -73,12 +93,17 @@ export default function AboutModal() {
                 <Phone className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-bold text-[#A5D6A7] block uppercase">24/7 Farmer Helpline (Toll-Free)</span>
+                <span className="text-[10px] font-bold text-[#A5D6A7] block uppercase">
+                  24/7 Farmer Helpline (Toll-Free)
+                </span>
                 <span className="text-base font-black">1800-PROCURE-AI</span>
               </div>
             </div>
             <button
-              onClick={() => { setAboutModalOpen(false); navigateTo('book-slot'); }}
+              onClick={() => {
+                setAboutModalOpen(false);
+                navigateTo("book-slot");
+              }}
               className="px-4 py-2 rounded-xl bg-[#2E7D32] hover:bg-white hover:text-[#1B4318] text-white font-bold text-xs transition-colors"
             >
               Book Slot →

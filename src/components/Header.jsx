@@ -1,6 +1,15 @@
-import React, { useState } from 'react';
-import { User, Menu, X, Sprout, Bell, LogOut, Globe, ChevronDown } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React, { useState } from "react";
+import {
+  User,
+  Menu,
+  X,
+  Sprout,
+  Bell,
+  LogOut,
+  Globe,
+  ChevronDown,
+} from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function Header() {
   const {
@@ -11,9 +20,6 @@ export default function Header() {
     notifications,
     currentLang,
     setCurrentLang,
-    setAboutModalOpen,
-    setHowItWorksModalOpen,
-    setContactModalOpen,
     setNotificationDrawerOpen,
     t,
   } = useApp();
@@ -24,64 +30,103 @@ export default function Header() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'hi', name: 'हिंदी (Hindi)' },
-    { code: 'te', name: 'తెలుగు (Telugu)' },
+    { code: "en", name: "English" },
+    { code: "hi", name: "हिंदी (Hindi)" },
+    { code: "te", name: "తెలుగు (Telugu)" },
   ];
+
+  const scrollToSection = (id) => {
+    if (currentView !== "home") {
+      navigateTo("home");
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // Dynamic Nav Items based on user role
   let navItems = [];
 
   if (!user) {
     navItems = [
-      { name: t('home'), action: () => navigateTo('home'), view: 'home' },
-      { name: t('about'), action: () => setAboutModalOpen(true), modal: true },
-      { name: t('features'), action: () => navigateTo('home'), view: 'features' },
-      { name: t('howItWorks'), action: () => setHowItWorksModalOpen(true), modal: true },
-      { name: t('contact'), action: () => setContactModalOpen(true), modal: true },
+      {
+        name: t("navHowItWorks"),
+        action: () => scrollToSection("how-it-works"),
+      },
+      { name: t("navBenefits"), action: () => scrollToSection("benefits") },
     ];
-  } else if (user.role === 'farmer') {
+  } else if (user.role === "farmer") {
     navItems = [
-      { name: t('home'), action: () => navigateTo('home'), view: 'home' },
-      { name: t('farmerPortal'), action: () => navigateTo('farmer-dash'), view: 'farmer-dash' },
-      { name: t('bookSlot'), action: () => navigateTo('book-slot'), view: 'book-slot' },
-      { name: t('profile'), action: () => navigateTo('profile'), view: 'profile' },
-      { name: 'SHA-256 Audit', action: () => navigateTo('audit'), view: 'audit' },
+      { name: t("home"), action: () => navigateTo("home"), view: "home" },
+      {
+        name: t("farmerPortal"),
+        action: () => navigateTo("farmer-dash"),
+        view: "farmer-dash",
+      },
+      {
+        name: t("bookSlot"),
+        action: () => navigateTo("book-slot"),
+        view: "book-slot",
+      },
+      {
+        name: t("liveQueue"),
+        action: () => navigateTo("queue"),
+        view: "queue",
+      },
     ];
-  } else if (user.role === 'worker') {
+  } else if (user.role === "worker") {
     navItems = [
-      { name: t('home'), action: () => navigateTo('home'), view: 'home' },
-      { name: t('workerPortal'), action: () => navigateTo('worker-dash'), view: 'worker-dash' },
-      { name: 'Queue Telemetry', action: () => navigateTo('queue'), view: 'queue' },
-      { name: 'SHA-256 Audit', action: () => navigateTo('audit'), view: 'audit' },
+      { name: t("home"), action: () => navigateTo("home"), view: "home" },
+      {
+        name: t("workerPortal"),
+        action: () => navigateTo("worker-dash"),
+        view: "worker-dash",
+      },
+      {
+        name: t("gateScanner"),
+        action: () => navigateTo("qr-scanner"),
+        view: "qr-scanner",
+      },
     ];
-  } else if (user.role === 'officer') {
+  } else if (user.role === "officer") {
     navItems = [
-      { name: t('home'), action: () => navigateTo('home'), view: 'home' },
-      { name: t('officerPortal'), action: () => navigateTo('officer-dash'), view: 'officer-dash' },
-      { name: 'Live Telemetry', action: () => navigateTo('queue'), view: 'queue' },
-      { name: 'SHA-256 Audit', action: () => navigateTo('audit'), view: 'audit' },
+      { name: t("home"), action: () => navigateTo("home"), view: "home" },
+      {
+        name: t("officerPortal"),
+        action: () => navigateTo("officer-dash"),
+        view: "officer-dash",
+      },
+      {
+        name: t("auditTrail"),
+        action: () => navigateTo("audit"),
+        view: "audit",
+      },
     ];
   }
 
   return (
-    <header className="w-full bg-[#F4F8F2] px-6 lg:px-12 py-3.5 flex items-center justify-between z-30 shrink-0 border-b border-[#E2EBE0]">
-      
+    <header className="sticky top-0 w-full bg-[#FAFBF8]/95 backdrop-blur-md px-6 lg:px-12 py-3.5 flex items-center justify-between z-40 shrink-0 border-b border-[#E8EFE6] transition-all">
       {/* LEFT: Logo & Brand */}
-      <div 
-        onClick={() => navigateTo('home')}
-        className="flex items-center gap-3 cursor-pointer group"
-      >
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7CB342] via-[#2E7D32] to-[#1B4318] flex items-center justify-center shadow-xs">
-          <Sprout className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-[#1B1B1B] tracking-tight leading-none">
-            {t('brandName')}
-          </h1>
-          <p className="text-[11px] font-medium text-gray-500 tracking-tight mt-1 leading-none">
-            {t('brandTagline')}
-          </p>
+      <div className="flex items-center gap-3">
+        <div
+          onClick={() => navigateTo("home")}
+          className="flex items-center gap-3 cursor-pointer group"
+        >
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7CB342] via-[#2E7D32] to-[#1B4318] flex items-center justify-center shadow-xs">
+            <Sprout className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-[#1B1B1B] tracking-tight leading-none">
+              {t("brandName")}
+            </h1>
+            <p className="text-[11px] font-medium text-gray-500 tracking-tight mt-1 leading-none">
+              {t("brandTagline")}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -94,7 +139,9 @@ export default function Header() {
               key={item.name}
               onClick={item.action}
               className={`relative py-1 text-sm font-semibold transition-colors duration-200 ${
-                isActive ? 'text-[#2E7D32]' : 'text-gray-700 hover:text-[#2E7D32]'
+                isActive
+                  ? "text-[#2E7D32]"
+                  : "text-gray-700 hover:text-[#2E7D32]"
               }`}
             >
               {item.name}
@@ -108,7 +155,6 @@ export default function Header() {
 
       {/* RIGHT: Language Selector & Auth Actions */}
       <div className="hidden sm:flex items-center gap-3">
-        
         {/* Language Selector Dropdown */}
         <div className="relative">
           <button
@@ -116,7 +162,13 @@ export default function Header() {
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-gray-700 bg-white hover:bg-gray-50 rounded-xl transition-all border border-gray-200 shadow-2xs"
           >
             <Globe className="w-3.5 h-3.5 text-[#2E7D32]" />
-            <span>{languages.find((l) => l.code === currentLang)?.name.split(' ')[0]}</span>
+            <span>
+              {
+                languages
+                  .find((l) => l.code === currentLang)
+                  ?.name.split(" ")[0]
+              }
+            </span>
             <ChevronDown className="w-3 h-3 text-gray-400" />
           </button>
 
@@ -127,11 +179,13 @@ export default function Header() {
                   key={lang.code}
                   onClick={() => {
                     setCurrentLang(lang.code);
-                    localStorage.setItem('agri_lang', lang.code);
+                    localStorage.setItem("agri_lang", lang.code);
                     setLangDropdownOpen(false);
                   }}
                   className={`w-full text-left px-3.5 py-2 text-xs font-bold transition-colors ${
-                    currentLang === lang.code ? 'bg-[#E8F5E9] text-[#2E7D32]' : 'text-gray-700 hover:bg-gray-50'
+                    currentLang === lang.code
+                      ? "bg-[#E8F5E9] text-[#2E7D32]"
+                      : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {lang.name}
@@ -159,13 +213,27 @@ export default function Header() {
 
             {/* Role Profile Badge */}
             <button
-              onClick={() => navigateTo(user.role === 'farmer' ? 'farmer-dash' : user.role === 'worker' ? 'worker-dash' : 'officer-dash')}
+              onClick={() =>
+                navigateTo(
+                  user.role === "farmer"
+                    ? "farmer-dash"
+                    : user.role === "worker"
+                      ? "worker-dash"
+                      : "officer-dash",
+                )
+              }
               className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-gray-800 bg-white border border-[#D5E2D3] hover:bg-[#FAF8F2] shadow-2xs"
             >
               <div className="w-5 h-5 rounded-full bg-[#2E7D32] text-white flex items-center justify-center text-[10px]">
-                {user.role === 'farmer' ? 'F' : user.role === 'worker' ? 'W' : 'O'}
+                {user.role === "farmer"
+                  ? "F"
+                  : user.role === "worker"
+                    ? "W"
+                    : "O"}
               </div>
-              <span className="max-w-28 truncate">{user.name.split(' ')[0]}</span>
+              <span className="max-w-28 truncate">
+                {user.name.split(" ")[0]}
+              </span>
             </button>
 
             {/* Logout */}
@@ -174,16 +242,16 @@ export default function Header() {
               className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>{t('logout')}</span>
+              <span>{t("logout")}</span>
             </button>
           </>
         ) : (
           <button
-            onClick={() => navigateTo('auth')}
+            onClick={() => navigateTo("auth")}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1B4318] hover:bg-[#2E7D32] shadow-xs transition-all duration-200 active:scale-95"
           >
             <User className="w-4 h-4 text-[#F9A825]" />
-            <span>{t('login')}</span>
+            <span>{t("login")}</span>
           </button>
         )}
       </div>
@@ -194,7 +262,11 @@ export default function Header() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-2 text-gray-700 hover:text-[#2E7D32]"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
@@ -204,7 +276,10 @@ export default function Header() {
           {navItems.map((item) => (
             <button
               key={item.name}
-              onClick={() => { item.action(); setMobileMenuOpen(false); }}
+              onClick={() => {
+                item.action();
+                setMobileMenuOpen(false);
+              }}
               className="block w-full text-left py-2 font-bold text-gray-800 hover:text-[#2E7D32]"
             >
               {item.name}
@@ -213,14 +288,20 @@ export default function Header() {
           <div className="pt-3 flex flex-col gap-2 border-t border-[#E2EBE0]">
             {user ? (
               <button
-                onClick={() => { logoutUser(); setMobileMenuOpen(false); }}
+                onClick={() => {
+                  logoutUser();
+                  setMobileMenuOpen(false);
+                }}
                 className="w-full py-2.5 bg-red-100 text-red-800 font-bold rounded-xl text-xs"
               >
                 Logout ({user.name})
               </button>
             ) : (
               <button
-                onClick={() => { navigateTo('auth'); setMobileMenuOpen(false); }}
+                onClick={() => {
+                  navigateTo("auth");
+                  setMobileMenuOpen(false);
+                }}
                 className="w-full py-2.5 bg-[#1B4318] text-white font-bold rounded-xl text-sm"
               >
                 Login Portal

@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, ShieldCheck, Phone, Lock, ArrowRight, CheckCircle2, Building } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  X,
+  User,
+  ShieldCheck,
+  Phone,
+  Lock,
+  ArrowRight,
+  CheckCircle2,
+  Building,
+} from "lucide-react";
 
 export default function LoginModal({ isOpen, onClose }) {
-  const [role, setRole] = useState('farmer'); // 'farmer' or 'officer'
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [officerId, setOfficerId] = useState('');
-  const [password, setPassword] = useState('');
+  const [role, setRole] = useState("farmer"); // 'farmer' or 'officer'
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [officerId, setOfficerId] = useState("");
+  const [password, setPassword] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +42,10 @@ export default function LoginModal({ isOpen, onClose }) {
     setTimeout(() => {
       setIsLoading(false);
       setLoggedInUser({
-        name: 'Rameshwar Singh',
-        role: 'Registered Farmer',
-        kisanId: 'KA-2026-98124',
-        mandi: 'Karnal Grain Market',
+        name: "Rameshwar Singh",
+        role: "Registered Farmer",
+        kisanId: "KA-2026-98124",
+        mandi: "Karnal Grain Market",
       });
     }, 700);
   };
@@ -47,10 +56,10 @@ export default function LoginModal({ isOpen, onClose }) {
     setTimeout(() => {
       setIsLoading(false);
       setLoggedInUser({
-        name: 'Devendra Sharma',
-        role: 'Procurement Officer (Admin)',
-        officerId: officerId || 'PO-HR-402',
-        mandi: 'Haryana Central Zone',
+        name: "Devendra Sharma",
+        role: "Procurement Officer (Admin)",
+        officerId: officerId || "PO-HR-402",
+        mandi: "Haryana Central Zone",
       });
     }, 700);
   };
@@ -58,10 +67,10 @@ export default function LoginModal({ isOpen, onClose }) {
   const handleReset = () => {
     setOtpSent(false);
     setLoggedInUser(null);
-    setPhone('');
-    setOtp('');
-    setOfficerId('');
-    setPassword('');
+    setPhone("");
+    setOtp("");
+    setOfficerId("");
+    setPassword("");
     onClose();
   };
 
@@ -81,7 +90,9 @@ export default function LoginModal({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="text-lg font-bold">Procure Intelligence Portal</h3>
-              <p className="text-xs text-[#A5D6A7]">Secure Farmer & Officer Single Sign-On</p>
+              <p className="text-xs text-[#A5D6A7]">
+                Secure Farmer & Officer Single Sign-On
+              </p>
             </div>
           </div>
           <button
@@ -100,11 +111,14 @@ export default function LoginModal({ isOpen, onClose }) {
               <div className="flex bg-[#F4F9F4] p-1 rounded-2xl mb-6 border border-[#C8E6C9]">
                 <button
                   type="button"
-                  onClick={() => { setRole('farmer'); setOtpSent(false); }}
+                  onClick={() => {
+                    setRole("farmer");
+                    setOtpSent(false);
+                  }}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    role === 'farmer'
-                      ? 'bg-[#2E7D32] text-white shadow-sm'
-                      : 'text-gray-700 hover:text-[#2E7D32]'
+                    role === "farmer"
+                      ? "bg-[#2E7D32] text-white shadow-sm"
+                      : "text-gray-700 hover:text-[#2E7D32]"
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -112,11 +126,11 @@ export default function LoginModal({ isOpen, onClose }) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setRole('officer')}
+                  onClick={() => setRole("officer")}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    role === 'officer'
-                      ? 'bg-[#2E7D32] text-white shadow-sm'
-                      : 'text-gray-700 hover:text-[#2E7D32]'
+                    role === "officer"
+                      ? "bg-[#2E7D32] text-white shadow-sm"
+                      : "text-gray-700 hover:text-[#2E7D32]"
                   }`}
                 >
                   <Building className="w-4 h-4" />
@@ -125,7 +139,7 @@ export default function LoginModal({ isOpen, onClose }) {
               </div>
 
               {/* Farmer OTP Login Flow */}
-              {role === 'farmer' ? (
+              {role === "farmer" ? (
                 !otpSent ? (
                   <form onSubmit={handleSendOtp} className="space-y-4">
                     <div>
@@ -148,7 +162,8 @@ export default function LoginModal({ isOpen, onClose }) {
                         />
                       </div>
                       <p className="text-[11px] text-gray-500 mt-1.5">
-                        You will receive an instant 6-digit OTP for secure authentication.
+                        You will receive an instant 6-digit OTP for secure
+                        authentication.
                       </p>
                     </div>
 
@@ -200,7 +215,9 @@ export default function LoginModal({ isOpen, onClose }) {
                       disabled={isLoading}
                       className="w-full py-3.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
                     >
-                      {isLoading ? 'Verifying OTP...' : 'Verify & Enter Dashboard'}
+                      {isLoading
+                        ? "Verifying OTP..."
+                        : "Verify & Enter Dashboard"}
                     </button>
                   </form>
                 )
@@ -241,7 +258,7 @@ export default function LoginModal({ isOpen, onClose }) {
                     disabled={isLoading}
                     className="w-full py-3.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
                   >
-                    {isLoading ? 'Authenticating...' : 'Sign In as Officer'}
+                    {isLoading ? "Authenticating..." : "Sign In as Officer"}
                   </button>
                 </form>
               )}
@@ -257,18 +274,26 @@ export default function LoginModal({ isOpen, onClose }) {
                 <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32] bg-[#E8F5E9] px-3 py-1 rounded-full">
                   Authentication Successful
                 </span>
-                <h4 className="text-xl font-bold text-gray-900 mt-2">{loggedInUser.name}</h4>
-                <p className="text-xs text-gray-500 font-medium">{loggedInUser.role} • {loggedInUser.mandi}</p>
+                <h4 className="text-xl font-bold text-gray-900 mt-2">
+                  {loggedInUser.name}
+                </h4>
+                <p className="text-xs text-gray-500 font-medium">
+                  {loggedInUser.role} • {loggedInUser.mandi}
+                </p>
               </div>
 
               <div className="bg-[#FAF8F2] p-4 rounded-2xl border border-[#E8E4D9] text-left text-xs space-y-1.5 font-medium text-gray-700">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Security Token:</span>
-                  <span className="font-mono text-[#2E7D32] font-bold">SHA256-AUTH-OK</span>
+                  <span className="font-mono text-[#2E7D32] font-bold">
+                    SHA256-AUTH-OK
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Access Level:</span>
-                  <span className="font-bold text-gray-900">Mandi Slot & Telemetry Access</span>
+                  <span className="font-bold text-gray-900">
+                    Mandi Slot & Telemetry Access
+                  </span>
                 </div>
               </div>
 
@@ -276,8 +301,8 @@ export default function LoginModal({ isOpen, onClose }) {
                 <button
                   onClick={() => {
                     handleReset();
-                    const dash = document.getElementById('dashboard');
-                    if (dash) dash.scrollIntoView({ behavior: 'smooth' });
+                    const dash = document.getElementById("dashboard");
+                    if (dash) dash.scrollIntoView({ behavior: "smooth" });
                   }}
                   className="flex-1 py-3 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs shadow-md"
                 >

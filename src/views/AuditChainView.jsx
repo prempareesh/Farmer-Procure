@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, Lock, CheckCircle2, AlertTriangle, ArrowLeft, RefreshCw, Layers, Link as LinkIcon, Sparkles } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ShieldCheck,
+  Lock,
+  CheckCircle2,
+  AlertTriangle,
+  ArrowLeft,
+  RefreshCw,
+  Layers,
+  Link as LinkIcon,
+  Sparkles,
+} from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function AuditChainView() {
   const { auditChain, simulateTamper, repairAuditChain, navigateTo } = useApp();
@@ -15,11 +25,10 @@ export default function AuditChainView() {
 
   return (
     <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6">
-      
       {/* Top Navigation Bar */}
       <div className="flex items-center justify-between">
         <button
-          onClick={() => navigateTo('home')}
+          onClick={() => navigateTo("home")}
           className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -28,7 +37,7 @@ export default function AuditChainView() {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigateTo('dashboard')}
+            onClick={() => navigateTo("dashboard")}
             className="px-3.5 py-1.5 rounded-xl bg-white border border-gray-300 text-xs font-bold text-gray-800 hover:bg-gray-50"
           >
             Admin Dashboard
@@ -44,13 +53,16 @@ export default function AuditChainView() {
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-xl font-extrabold text-gray-900">Cryptographic SHA-256 Audit Ledger</h2>
+              <h2 className="text-xl font-extrabold text-gray-900">
+                Cryptographic SHA-256 Audit Ledger
+              </h2>
               <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
                 IMMUTABLE CHAIN
               </span>
             </div>
             <p className="text-xs text-gray-500 font-semibold mt-0.5">
-              Tamper-evident blockchain-grade verification of all Mandi procurement transactions
+              Tamper-evident blockchain-grade verification of all Mandi
+              procurement transactions
             </p>
           </div>
         </div>
@@ -60,8 +72,8 @@ export default function AuditChainView() {
           <div
             className={`px-4 py-2.5 rounded-2xl border flex items-center gap-2 text-xs font-black shadow-xs ${
               isIntegrityValid
-                ? 'bg-green-50 border-green-300 text-green-800'
-                : 'bg-red-50 border-red-300 text-red-800 animate-pulse'
+                ? "bg-green-50 border-green-300 text-green-800"
+                : "bg-red-50 border-red-300 text-red-800 animate-pulse"
             }`}
           >
             {isIntegrityValid ? (
@@ -69,7 +81,9 @@ export default function AuditChainView() {
                 <CheckCircle2 className="w-5 h-5 text-[#2E7D32]" />
                 <div>
                   <span className="block leading-none">Hash Valid</span>
-                  <span className="text-[10px] text-[#2E7D32] font-semibold">100% Integrity Verified</span>
+                  <span className="text-[10px] text-[#2E7D32] font-semibold">
+                    100% Integrity Verified
+                  </span>
                 </div>
               </>
             ) : (
@@ -77,7 +91,9 @@ export default function AuditChainView() {
                 <AlertTriangle className="w-5 h-5 text-red-600" />
                 <div>
                   <span className="block leading-none">Integrity Failure!</span>
-                  <span className="text-[10px] text-red-700 font-semibold">Block Hash Mismatch Detected</span>
+                  <span className="text-[10px] text-red-700 font-semibold">
+                    Block Hash Mismatch Detected
+                  </span>
                 </div>
               </>
             )}
@@ -109,7 +125,9 @@ export default function AuditChainView() {
       <div className="space-y-4">
         <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
           <Layers className="w-4 h-4 text-[#2E7D32]" />
-          <span>Sequential Block Ledger ({auditChain.length} Verified Blocks)</span>
+          <span>
+            Sequential Block Ledger ({auditChain.length} Verified Blocks)
+          </span>
         </h3>
 
         <div className="space-y-4">
@@ -123,8 +141,8 @@ export default function AuditChainView() {
                 animate={{ opacity: 1, y: 0 }}
                 className={`bg-white rounded-3xl p-6 border transition-all shadow-xs ${
                   isTampered
-                    ? 'border-red-400 bg-red-50/40 ring-2 ring-red-500/20'
-                    : 'border-[#E0ECE0] hover:border-[#A5D6A7]'
+                    ? "border-red-400 bg-red-50/40 ring-2 ring-red-500/20"
+                    : "border-[#E0ECE0] hover:border-[#A5D6A7]"
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-3">
@@ -135,14 +153,15 @@ export default function AuditChainView() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-black text-[#1B4318] uppercase">
-                          Stage: {block.stage.replace('_', ' ')}
+                          Stage: {block.stage.replace("_", " ")}
                         </span>
                         <span className="font-mono text-[11px] font-bold text-gray-500">
                           [{block.bookingId}]
                         </span>
                       </div>
                       <p className="text-[11px] text-gray-500 font-medium">
-                        Farmer: <strong>{block.farmerName}</strong> • {block.timestamp}
+                        Farmer: <strong>{block.farmerName}</strong> •{" "}
+                        {block.timestamp}
                       </p>
                     </div>
                   </div>
@@ -165,7 +184,9 @@ export default function AuditChainView() {
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                     Transaction Payload Summary
                   </span>
-                  <p className="text-xs font-bold text-gray-800 mt-0.5">{block.dataSummary}</p>
+                  <p className="text-xs font-bold text-gray-800 mt-0.5">
+                    {block.dataSummary}
+                  </p>
                 </div>
 
                 {/* Cryptographic Hash Pair */}
@@ -174,16 +195,24 @@ export default function AuditChainView() {
                     <span className="text-[10px] font-bold text-gray-400 uppercase block">
                       Previous Block Hash (PrevHash)
                     </span>
-                    <p className="text-[11px] text-gray-600 truncate mt-0.5" title={block.prevHash}>
+                    <p
+                      className="text-[11px] text-gray-600 truncate mt-0.5"
+                      title={block.prevHash}
+                    >
                       {block.prevHash}
                     </p>
                   </div>
 
-                  <div className={`p-3 rounded-xl border ${isTampered ? 'bg-red-100 border-red-300' : 'bg-[#E8F5E9]/60 border-[#C8E6C9]'}`}>
+                  <div
+                    className={`p-3 rounded-xl border ${isTampered ? "bg-red-100 border-red-300" : "bg-[#E8F5E9]/60 border-[#C8E6C9]"}`}
+                  >
                     <span className="text-[10px] font-bold text-gray-500 uppercase block">
                       Current Block SHA-256 Hash
                     </span>
-                    <p className={`text-[11px] font-bold truncate mt-0.5 ${isTampered ? 'text-red-700' : 'text-[#1B4318]'}`} title={block.currentHash}>
+                    <p
+                      className={`text-[11px] font-bold truncate mt-0.5 ${isTampered ? "text-red-700" : "text-[#1B4318]"}`}
+                      title={block.currentHash}
+                    >
                       {block.currentHash}
                     </p>
                   </div>
@@ -193,7 +222,6 @@ export default function AuditChainView() {
           })}
         </div>
       </div>
-
     </div>
   );
 }
