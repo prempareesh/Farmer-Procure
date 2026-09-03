@@ -988,14 +988,37 @@ export function AppProvider({ children }) {
         (cleanId === "FRM-2026-000123" && f.farmerId === "FRM-2026-000123"),
     );
 
-    // If not in memory, query Supabase profiles table directly
+    // If not in memory, query Supabase profiles table directly using robust queries
     if (!matchedFarmer) {
       try {
-        const { data: dbProfile } = await supabase
+        // Query A: By mobile number
+        const { data: byMobile } = await supabase
           .from("profiles")
           .select("*")
-          .or(`farmer_id.ilike.%${cleanId}%,mobile.eq.${rawId}`)
+          .eq("mobile", rawId)
           .maybeSingle();
+
+        let dbProfile = byMobile;
+
+        // Query B: By exact farmer_id
+        if (!dbProfile) {
+          const { data: byFarmerId } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("farmer_id", cleanId)
+            .maybeSingle();
+          dbProfile = byFarmerId;
+        }
+
+        // Query C: By case-insensitive farmer_id
+        if (!dbProfile) {
+          const { data: byIlike } = await supabase
+            .from("profiles")
+            .select("*")
+            .ilike("farmer_id", cleanId)
+            .maybeSingle();
+          dbProfile = byIlike;
+        }
 
         if (dbProfile) {
           matchedFarmer = {
@@ -1017,8 +1040,8 @@ export function AppProvider({ children }) {
           };
           setFarmersList((prev) => [matchedFarmer, ...prev]);
         }
-      } catch {
-        // Safe fallback
+      } catch (err) {
+        console.warn("Supabase farmer login lookup error:", err);
       }
     }
 
@@ -1711,13 +1734,31 @@ export function AppProvider({ children }) {
 
     // Database lookup for farmer profile
     try {
-      const { data: p } = await supabase
+      let p = null;
+      const { data: byId } = await supabase
         .from("profiles")
         .select("*")
-        .or(
-          `farmer_id.ilike.%${cleanQ}%,mobile.ilike.%${cleanQ}%,name.ilike.%${cleanQ}%`,
-        )
+        .eq("farmer_id", cleanQ)
         .maybeSingle();
+      p = byId;
+
+      if (!p) {
+        const { data: byMob } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("mobile", query.trim())
+          .maybeSingle();
+        p = byMob;
+      }
+
+      if (!p) {
+        const { data: byName } = await supabase
+          .from("profiles")
+          .select("*")
+          .ilike("name", `%${query.trim()}%`)
+          .maybeSingle();
+        p = byName;
+      }
 
       if (p) {
         const foundFarmer = {
