@@ -32,7 +32,9 @@ export default function AuthView() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setError("");
+    setAuthSuccessMessage("");
 
     if (!regForm.name.trim()) {
       setError("Full Name is required.");
@@ -57,14 +59,19 @@ export default function AuthView() {
 
     setLoading(true);
     try {
-      const newFarmer = await registerFarmer(regForm);
+      const res = await registerFarmer(regForm);
+      if (res && !res.success) {
+        setError(res.error || "Registration failed. Please check inputs.");
+        return;
+      }
       setAuthSuccessMessage(
-        `Farmer ID ${newFarmer.farmerId} created successfully! Please sign in.`,
+        `Account created successfully! Your Farmer ID is ${res.farmerId}. Please sign in below.`,
       );
       setIsRegistering(false);
-      setLoginIdentifier(newFarmer.farmerId);
+      setLoginIdentifier(res.farmerId);
+      setLoginPassword(regForm.password);
     } catch {
-      setError("Registration failed. Please check inputs.");
+      setError("Unable to complete registration right now. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +81,9 @@ export default function AuthView() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setError("");
+
     if (!loginIdentifier.trim()) {
       setError("Identifier is required.");
       return;
