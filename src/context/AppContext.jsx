@@ -270,77 +270,11 @@ export function AppProvider({ children }) {
   const [selectedMandiId, setSelectedMandiId] = useState("mandi-1");
   const [timeSlots, setTimeSlots] = useState(INITIAL_TIME_SLOTS);
 
-  const [bookings, setBookings] = useState([
-    {
-      id: "BK-2026-000147",
-      booking_id: "BK-2026-000147",
-      farmerId: "FRM-2026-000123",
-      farmerName: "Rameshwar Singh",
-      centreId: "mandi-1",
-      centreCode: "P",
-      centreName: "Karnal Central Grain Mandi (HR)",
-      tokenDisplay: "P-147",
-      tokenSeq: 147,
-      crop: "Paddy (Basmati 1121)",
-      quantity: 25,
-      date: new Date().toISOString().split("T")[0],
-      slot_date: new Date().toISOString().split("T")[0],
-      timeSlot: "02:00 PM - 02:30 PM",
-      slot_time: "02:00 PM - 02:30 PM",
-      stage: "BOOKED",
-      status: "BOOKED",
-      stageStatus: "CONFIRMED",
-      faceVerified: false,
-      rejectionDetails: null,
-      paymentDetails: {
-        mspPerQtl: 2320,
-        grossAmount: 58000,
-        dbtTxnId: "DBT-PENDING",
-        disbursed: false,
-      },
-      qrData: "AGRI-PROCURE-FRM-2026-000123-P147-PADDY",
-      createdHash:
-        "0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a",
-      createdAt: "10:15 AM",
-    },
-    {
-      id: "BK-2026-000088",
-      booking_id: "BK-2026-000088",
-      farmerId: "FRM-2026-000124",
-      farmerName: "Gurpreet Singh",
-      centreId: "mandi-2",
-      centreCode: "Q",
-      centreName: "Ludhiana Main Grain Market (PB)",
-      tokenDisplay: "Q001",
-      tokenSeq: 1,
-      crop: "Wheat (HD-3086)",
-      quantity: 60,
-      date: "2026-08-26",
-      slot_date: "2026-08-26",
-      timeSlot: "10:00 AM - 11:00 AM",
-      slot_time: "10:00 AM - 11:00 AM",
-      stage: "WEIGHING",
-      status: "WEIGHING",
-      stageStatus: "IN_PROGRESS",
-      faceVerified: true,
-      rejectionDetails: null,
-      paymentDetails: {
-        mspPerQtl: 2425,
-        grossAmount: 145500,
-        dbtTxnId: "DBT-PENDING",
-        disbursed: false,
-      },
-      qrData: "AGRI-PROCURE-FRM-2026-000124-Q001-WHEAT",
-      createdHash:
-        "0x3c9e1d7b0e885e4f2c118f2a4b127f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e",
-      createdAt: "09:30 AM",
-    },
-  ]);
-
-  const [activeBookingId, setActiveBookingId] = useState("BK-2026-000147");
+  const [bookings, setBookings] = useState([]);
+  const [activeBookingId, setActiveBookingId] = useState(null);
   const [servingToken, setServingToken] = useState(1);
   const [autoQueueTicker, setAutoQueueTicker] = useState(true);
-  const [workerAssignedStage, setWorkerAssignedStage] = useState("WEIGHING");
+  const [workerAssignedStage, setWorkerAssignedStage] = useState("ALL");
 
   const [auditChain, setAuditChain] = useState([
     {
@@ -1503,18 +1437,21 @@ export function AppProvider({ children }) {
       type: "info",
     });
 
-    if (!isDemoMode) {
-      try {
-        await supabase.from("workflow").insert([
-          {
-            stage: nextStage,
-            status: "APPROVED",
-            remarks: remarks || `Advanced to ${nextStage}`,
-          },
-        ]);
-      } catch {
-        // safe fallback
-      }
+    try {
+      await supabase
+        .from("bookings")
+        .update({ status: nextStage })
+        .eq("booking_id", booking.booking_id || booking.id);
+
+      await supabase.from("workflow").insert([
+        {
+          stage: nextStage,
+          status: "APPROVED",
+          remarks: remarks || `Advanced to ${nextStage}`,
+        },
+      ]);
+    } catch {
+      // safe fallback
     }
   };
 
