@@ -851,12 +851,18 @@ export function AppProvider({ children }) {
     if (
       role === "worker" ||
       role === "staff" ||
+      cleanId === "STAFF" ||
       cleanId === "STAFF1" ||
+      rawId.toLowerCase() === "staff" ||
       rawId.toLowerCase() === "staff1" ||
       cleanId.startsWith("WRK") ||
       cleanId.startsWith("STAFF")
     ) {
-      if (cleanPass !== "Staff123" && cleanPass !== "1234") {
+      if (
+        cleanPass !== "staff1" &&
+        cleanPass !== "Staff123" &&
+        cleanPass !== "1234"
+      ) {
         return {
           success: false,
           error:
@@ -867,7 +873,7 @@ export function AppProvider({ children }) {
         id: "WRK-HR-108",
         name: "Sukhvinder Singh",
         role: "worker",
-        assignedStage: workerAssignedStage || "WEIGHING",
+        assignedStage: workerAssignedStage || "ALL",
         mandiId: "mandi-1",
         mandiName: "Karnal Central Grain Mandi",
       };
@@ -875,7 +881,7 @@ export function AppProvider({ children }) {
       localStorage.setItem("agri_user", JSON.stringify(workerUser));
       addNotification({
         title: "Worker Portal Initialized",
-        message: `Signed in as Procurement Staff (${workerUser.assignedStage} Stage).`,
+        message: "Signed in as Procurement Staff.",
         type: "success",
       });
       navigateTo("worker-dash");
@@ -885,11 +891,17 @@ export function AppProvider({ children }) {
     // 2. Command Officer Authentication
     if (
       role === "officer" ||
+      cleanId === "OFFICER" ||
       cleanId === "OFFICER1" ||
+      rawId.toLowerCase() === "officer" ||
       rawId.toLowerCase() === "officer1" ||
       cleanId.startsWith("OFFICER")
     ) {
-      if (cleanPass !== "Officer123" && cleanPass !== "1234") {
+      if (
+        cleanPass !== "officer1" &&
+        cleanPass !== "Officer123" &&
+        cleanPass !== "1234"
+      ) {
         return {
           success: false,
           error:

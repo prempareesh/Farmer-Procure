@@ -183,8 +183,8 @@ export default function AuthView() {
                   type="button"
                   onClick={() => {
                     setSelectedRole("worker");
-                    setLoginIdentifier("staff1");
-                    setLoginPassword("Staff123");
+                    setLoginIdentifier("staff");
+                    setLoginPassword("staff1");
                   }}
                   className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                     selectedRole === "worker"
@@ -198,8 +198,8 @@ export default function AuthView() {
                   type="button"
                   onClick={() => {
                     setSelectedRole("officer");
-                    setLoginIdentifier("officer1");
-                    setLoginPassword("Officer123");
+                    setLoginIdentifier("officer");
+                    setLoginPassword("officer1");
                   }}
                   className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                     selectedRole === "officer"
