@@ -41,6 +41,12 @@ export default function WorkerDashboardView() {
   const [rejectRemarks, setRejectRemarks] = useState("");
   const [proofFileName] = useState("lab_moisture_sensor_report.pdf");
 
+  // Receipt Upload Modal State (Required before COMPLETED)
+  const [receiptUploadBookingId, setReceiptUploadBookingId] = useState(null);
+  const [receiptFileName, setReceiptFileName] = useState(
+    "final_procurement_receipt_P147.pdf",
+  );
+
   // Filter tasks for worker's assigned stage or all
   const filteredBookings = bookings.filter((b) => {
     if (workerAssignedStage === "ALL") return true;
@@ -87,12 +93,25 @@ export default function WorkerDashboardView() {
         "DBT payment entry logged by Staff",
       );
     } else if (currentStage === "PAYMENT") {
-      await advanceBookingStage(
-        bookingId,
-        "COMPLETED",
-        "Procurement cycle completed with SHA-256 seal",
-      );
+      // Mandate receipt upload before transaction completion
+      setReceiptUploadBookingId(bookingId);
     }
+  };
+
+  const handleReceiptUploadSubmit = async (e) => {
+    e.preventDefault();
+    if (!receiptUploadBookingId) return;
+    await advanceBookingStage(
+      receiptUploadBookingId,
+      "COMPLETED",
+      `Final procurement receipt (${receiptFileName}) attached and transaction completed with SHA-256 seal`,
+      {
+        receiptUploaded: true,
+        receiptFileName:
+          receiptFileName || "final_procurement_receipt_P147.pdf",
+      },
+    );
+    setReceiptUploadBookingId(null);
   };
 
   const handleWeighingSubmit = async (e) => {
@@ -349,7 +368,7 @@ export default function WorkerDashboardView() {
                       className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>{t("completeTransactionBtn")}</span>
+                      <span>UPLOAD RECEIPT & COMPLETE</span>
                     </button>
                   )}
 
@@ -533,6 +552,90 @@ export default function WorkerDashboardView() {
                     className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs cursor-pointer"
                   >
                     Confirm Rejection & Log SHA-256
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Receipt Upload Modal for Staff */}
+      <AnimatePresence>
+        {receiptUploadBookingId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden"
+            >
+              <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <CheckSquare className="w-6 h-6 text-[#F9A825]" />
+                  <div>
+                    <h3 className="text-base font-bold">
+                      Upload Official Procurement Receipt
+                    </h3>
+                    <p className="text-xs text-[#A5D6A7]">
+                      Required for Transaction Completion
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <form
+                onSubmit={handleReceiptUploadSubmit}
+                className="p-6 space-y-4 font-sans text-xs"
+              >
+                <div className="p-3 bg-[#FAF8F2] rounded-xl border border-gray-200 text-gray-700 space-y-1">
+                  <div className="font-bold text-[#1B4318]">
+                    Booking Verification:
+                  </div>
+                  <div>
+                    Booking ID:{" "}
+                    {bookings.find((bk) => bk.id === receiptUploadBookingId)
+                      ?.booking_id || "BK-2026-000147"}
+                  </div>
+                  <div>
+                    Token: #
+                    {bookings.find((bk) => bk.id === receiptUploadBookingId)
+                      ?.tokenDisplay || "P-147"}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-gray-700 font-bold block">
+                    Select Receipt Document File:
+                  </label>
+                  <input
+                    type="text"
+                    value={receiptFileName}
+                    onChange={(e) => setReceiptFileName(e.target.value)}
+                    placeholder="e.g. final_procurement_receipt_P147.pdf"
+                    required
+                    className="w-full p-2.5 rounded-xl border border-gray-300 font-mono text-xs bg-white focus:ring-2 focus:ring-[#2E7D32]"
+                  />
+                  <p className="text-[10px] text-gray-500">
+                    PDF, JPG or PNG format. Hashed with SHA-256 seal upon
+                    upload.
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setReceiptUploadBookingId(null)}
+                    className="px-4 py-2 rounded-xl border border-gray-300 font-bold text-gray-700 hover:bg-gray-50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Upload & Complete Transaction</span>
                   </button>
                 </div>
               </form>
