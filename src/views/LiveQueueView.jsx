@@ -12,6 +12,7 @@ import { useApp, WORKFLOW_STAGES } from "../context/AppContext";
 
 export default function LiveQueueView() {
   const {
+    user,
     bookings,
     activeBooking,
     servingToken,
@@ -60,7 +61,7 @@ export default function LiveQueueView() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigateTo("home")}
-          className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors"
+          className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("home")}</span>
@@ -69,18 +70,25 @@ export default function LiveQueueView() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigateTo("qr-scanner")}
-            className="px-3.5 py-1.5 rounded-xl bg-white border border-[#C8E6C9] text-xs font-bold text-[#2E7D32] hover:bg-[#E8F5E9] flex items-center gap-1.5 shadow-xs"
+            className="px-3.5 py-1.5 rounded-xl bg-white border border-[#C8E6C9] text-xs font-bold text-[#2E7D32] hover:bg-[#E8F5E9] flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             <QrCode className="w-3.5 h-3.5" />
             <span>{t("gateScanner")}</span>
           </button>
-          <button
-            onClick={() => navigateTo("audit")}
-            className="px-3.5 py-1.5 rounded-xl bg-[#1B4318] text-white text-xs font-bold hover:bg-[#2E7D32] flex items-center gap-1.5 shadow-xs"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#F9A825]" />
-            <span>{t("auditTrail")}</span>
-          </button>
+          {user?.role !== "farmer" ? (
+            <button
+              onClick={() => navigateTo("audit")}
+              className="px-3.5 py-1.5 rounded-xl bg-[#1B4318] text-white text-xs font-bold hover:bg-[#2E7D32] flex items-center gap-1.5 shadow-xs cursor-pointer"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#F9A825]" />
+              <span>{t("auditTrail")}</span>
+            </button>
+          ) : (
+            <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] border border-[#A5D6A7] text-[11px] font-extrabold text-[#2E7D32] flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <span>Cryptographically Tracked</span>
+            </span>
+          )}
         </div>
       </div>
 
@@ -287,16 +295,27 @@ export default function LiveQueueView() {
               })}
             </div>
 
-            {/* Advance Stage Control */}
-            <div className="pt-2 border-t border-gray-100">
-              <button
-                onClick={handleNextStage}
-                className="w-full py-3 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all active:scale-95 flex items-center justify-center gap-2"
-              >
-                <span>Advance to Next Stage</span>
-                <ArrowRight className="w-4 h-4 text-[#F9A825]" />
-              </button>
-            </div>
+            {/* Advance Stage Control: Only rendered for Staff / Officer / Worker roles */}
+            {user?.role !== "farmer" ? (
+              <div className="pt-2 border-t border-gray-100">
+                <button
+                  onClick={handleNextStage}
+                  className="w-full py-3 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Advance to Next Stage</span>
+                  <ArrowRight className="w-4 h-4 text-[#F9A825]" />
+                </button>
+              </div>
+            ) : (
+              <div className="pt-2 border-t border-gray-100 text-center">
+                <div className="py-2.5 px-4 bg-[#FAF8F2] rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 flex items-center justify-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
+                  <span>
+                    Live Progress • Stage processing managed by Mandi Staff
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -25,7 +25,8 @@ import QRScannerView from "./views/QRScannerView";
 import AuditChainView from "./views/AuditChainView";
 
 function MainApp() {
-  const { currentView, languageModalOpen, setLanguageModalOpen } = useApp();
+  const { user, currentView, languageModalOpen, setLanguageModalOpen } =
+    useApp();
 
   // Public Pre-Login SPA views redirect to home SPA
   const isPublicSpaView =
@@ -61,7 +62,12 @@ function MainApp() {
       {currentView === "book-slot" && <SlotBookingView />}
       {currentView === "queue" && <LiveQueueView />}
       {currentView === "qr-scanner" && <QRScannerView />}
-      {currentView === "audit" && <AuditChainView />}
+      {currentView === "audit" &&
+        (user?.role !== "farmer" ? (
+          <AuditChainView />
+        ) : (
+          <FarmerDashboardView />
+        ))}
 
       {/* 4. Global Modals & Notifications */}
       <NotificationDrawer />

@@ -1084,13 +1084,27 @@ export function AppProvider({ children }) {
     return newFeedback;
   };
 
-  // Universal Workflow Stage Advancer
+  // Universal Workflow Stage Advancer (Role-permission Enforced)
   const advanceBookingStage = async (
     bookingId,
     nextStage,
     remarks = "",
     extraData = {},
   ) => {
+    // Role Authorization Guard: Farmers cannot mutate workflow beyond arrival check-in
+    if (user && user.role === "farmer" && nextStage !== "ARRIVED") {
+      console.warn(
+        `[Security Authorization] Farmer (${user.name}) attempted unauthorized workflow mutation to ${nextStage}`,
+      );
+      addNotification({
+        title: "Permission Denied",
+        message:
+          "Farmers are not permitted to modify procurement workflow stages. Stage processing is managed by Mandi Staff.",
+        type: "warning",
+      });
+      return;
+    }
+
     const booking = bookings.find(
       (b) => b.id === bookingId || b.booking_id === bookingId,
     );
