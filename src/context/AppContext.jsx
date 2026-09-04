@@ -38,7 +38,7 @@ const INITIAL_CROPS = [
 
 const INITIAL_CENTRES = [
   {
-    id: "mandi-1",
+    id: "186c9f3d-34bd-4413-9d95-77687b3fb49b",
     centre_code: "P",
     centre_name: "Karnal Central Grain Mandi (HR)",
     state: "Haryana",
@@ -48,10 +48,10 @@ const INITIAL_CENTRES = [
     activeCounters: 4,
     historicalAvgMins: 18,
     todayCapacity: 200,
-    todayBooked: 142,
+    todayBooked: 0,
   },
   {
-    id: "mandi-2",
+    id: "dfeb5f38-170c-462e-acfd-20c9a158b99c",
     centre_code: "Q",
     centre_name: "Ludhiana Main Grain Market (PB)",
     state: "Punjab",
@@ -61,10 +61,10 @@ const INITIAL_CENTRES = [
     activeCounters: 3,
     historicalAvgMins: 28,
     todayCapacity: 250,
-    todayBooked: 228,
+    todayBooked: 0,
   },
   {
-    id: "mandi-3",
+    id: "fa417b40-e53f-41cf-ac5c-b4a462a3053e",
     centre_code: "D",
     centre_name: "Nalgonda Paddy Procurement Hub (TS)",
     state: "Telangana",
@@ -74,10 +74,10 @@ const INITIAL_CENTRES = [
     activeCounters: 2,
     historicalAvgMins: 12,
     todayCapacity: 150,
-    todayBooked: 65,
+    todayBooked: 0,
   },
   {
-    id: "mandi-4",
+    id: "7157275c-57a9-4972-9386-2268c9079e2c",
     centre_code: "F",
     centre_name: "Kota Agricultural Mandi (RJ)",
     state: "Rajasthan",
@@ -87,7 +87,7 @@ const INITIAL_CENTRES = [
     activeCounters: 3,
     historicalAvgMins: 22,
     todayCapacity: 180,
-    todayBooked: 110,
+    todayBooked: 0,
   },
 ];
 
@@ -255,7 +255,9 @@ export function AppProvider({ children }) {
   const [crops, setCrops] = useState(INITIAL_CROPS);
 
   const [mandiCentres, setMandiCentres] = useState(INITIAL_CENTRES);
-  const [selectedMandiId, setSelectedMandiId] = useState("mandi-1");
+  const [selectedMandiId, setSelectedMandiId] = useState(
+    "186c9f3d-34bd-4413-9d95-77687b3fb49b",
+  );
   const [timeSlots, setTimeSlots] = useState(INITIAL_TIME_SLOTS);
 
   const [bookings, setBookings] = useState([]);
@@ -634,126 +636,96 @@ export function AppProvider({ children }) {
           "postgres_changes",
           { event: "*", schema: "public", table: "bookings" },
           async (payload) => {
-            if (payload.eventType === "INSERT") {
-              const newDb = payload.new;
-              const bId = newDb.booking_id || newDb.id;
+            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+              const targetDbId = payload.new.id;
+              try {
+                const { data: bFull } = await supabase
+                  .from("bookings")
+                  .select(`
+                    *,
+                    profiles ( id, farmer_id, name, mobile, village, district, state ),
+                    procurement_centres ( id, centre_code, centre_name ),
+                    tokens ( id, token_number, queue_position, centre_code )
+                  `)
+                  .eq("id", targetDbId)
+                  .maybeSingle();
 
-              let fId = "FRM-2026-000123";
-              let fName = "Rameshwar Singh";
-              let pMobile = null;
+                if (bFull) {
+                  const p = bFull.profiles || {};
+                  const c = bFull.procurement_centres || {};
+                  const t = (bFull.tokens && bFull.tokens.length > 0) ? bFull.tokens[0] : null;
 
-              if (newDb.profile_id) {
-                try {
-                  const { data: p } = await supabase
-                    .from("profiles")
-                    .select("id, farmer_id, name, mobile")
-                    .eq("id", newDb.profile_id)
-                    .maybeSingle();
-                  if (p) {
-                    fId = p.farmer_id || fId;
-                    fName = p.name || fName;
-                    pMobile = p.mobile;
+                  const fId = p.farmer_id || bFull.farmer_id || "FRM-2026-000123";
+                  const fName = p.name || bFull.farmer_name || "Farmer";
+                  const code = c.centre_code || "P";
+                  const cName = c.centre_name || "Karnal Central Grain Mandi";
+                  const tSeq = t?.queue_position || 1;
+                  const prefix = code === "P" ? "PS" : `${code}S`;
+                  const tDisp = t?.token_number || `${prefix}-${String(tSeq).padStart(3, "0")}`;
+                  const bId = bFull.booking_id || bFull.id;
+
+                  const formattedRecord = {
+                    id: bId,
+                    booking_id: bId,
+                    db_id: bFull.id,
+                    profileId: bFull.profile_id,
+                    profiles: p,
+                    farmerId: fId,
+                    farmerName: fName,
+                    farmerMobile: p.mobile,
+                    centreId: bFull.centre_id,
+                    centreCode: code,
+                    centreName: cName,
+                    tokenDisplay: tDisp,
+                    tokenSeq: tSeq,
+                    crop: "Paddy (Basmati 1121)",
+                    quantity: Number(bFull.expected_quantity || 25),
+                    date: bFull.slot_date,
+                    slot_date: bFull.slot_date,
+                    timeSlot: bFull.slot_time,
+                    slot_time: bFull.slot_time,
+                    stage: bFull.status || "BOOKED",
+                    status: bFull.status || "BOOKED",
+                    stageStatus: "IN_PROGRESS",
+                    faceVerified: false,
+                    paymentDetails: {
+                      mspPerQtl: 2320,
+                      grossAmount: Number(bFull.expected_quantity || 25) * 2320,
+                      dbtTxnId: "DBT-PENDING",
+                      disbursed: bFull.status === "COMPLETED",
+                    },
+                    qrData: `AGRI-PROCURE-${bId}-${tDisp}`,
+                    createdAt: new Date(bFull.created_at || Date.now()).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }),
+                  };
+
+                  setBookings((prev) => {
+                    const exists = prev.some(
+                      (item) => item.id === bId || item.booking_id === bId || item.db_id === bFull.id
+                    );
+                    if (exists) {
+                      return prev.map((item) =>
+                        item.id === bId || item.booking_id === bId || item.db_id === bFull.id
+                          ? { ...item, ...formattedRecord }
+                          : item
+                      );
+                    }
+                    return [formattedRecord, ...prev];
+                  });
+
+                  if (payload.eventType === "INSERT") {
+                    addNotification({
+                      title: "Realtime Booking Received",
+                      message: `New booking ${bId} (${fName}) arrived at ${cName}.`,
+                      type: "info",
+                    });
                   }
-                } catch {
-                  // Safe fallback
                 }
+              } catch (err) {
+                console.warn("Realtime hydration sync error:", err);
               }
-
-              let cCode = "P";
-              let cName = "Karnal Central Grain Mandi";
-
-              if (newDb.centre_id) {
-                try {
-                  const { data: c } = await supabase
-                    .from("procurement_centres")
-                    .select("centre_code, centre_name")
-                    .eq("id", newDb.centre_id)
-                    .maybeSingle();
-                  if (c) {
-                    cCode = c.centre_code || "P";
-                    cName = c.centre_name || cName;
-                  }
-                } catch {
-                  // Safe fallback
-                }
-              }
-
-              const prefix = cCode === "P" ? "PS" : `${cCode}S`;
-              const tokenDisp = newDb.tokenDisplay || `${prefix}-001`;
-
-              const newBookingRecord = {
-                id: bId,
-                booking_id: bId,
-                db_id: newDb.id,
-                profileId: newDb.profile_id,
-                farmerId: fId,
-                farmerName: fName,
-                farmerMobile: pMobile,
-                centreId: newDb.centre_id,
-                centreCode: cCode,
-                centreName: cName,
-                tokenDisplay: tokenDisp,
-                tokenSeq: 1,
-                crop: "Paddy (Basmati 1121)",
-                quantity: Number(newDb.expected_quantity || 25),
-                date: newDb.slot_date,
-                slot_date: newDb.slot_date,
-                timeSlot: newDb.slot_time,
-                slot_time: newDb.slot_time,
-                stage: newDb.status || "BOOKED",
-                status: newDb.status || "BOOKED",
-                stageStatus: "IN_PROGRESS",
-                faceVerified: false,
-                paymentDetails: {
-                  mspPerQtl: 2320,
-                  grossAmount: Number(newDb.expected_quantity || 25) * 2320,
-                  dbtTxnId: "DBT-PENDING",
-                  disbursed: false,
-                },
-                qrData: `AGRI-PROCURE-${bId}-${tokenDisp}`,
-                createdAt: new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-              };
-
-              setBookings((prev) => {
-                const exists = prev.some(
-                  (item) => item.id === bId || item.booking_id === bId,
-                );
-                if (exists) {
-                  return prev.map((item) =>
-                    item.id === bId || item.booking_id === bId
-                      ? { ...item, ...newBookingRecord }
-                      : item,
-                  );
-                }
-                return [newBookingRecord, ...prev];
-              });
-
-              addNotification({
-                title: "Realtime Booking Received",
-                message: `New booking ${bId} (${fName}) arrived at ${cName}.`,
-                type: "info",
-              });
-            } else if (payload.eventType === "UPDATE") {
-              const updatedStatus = payload.new.status;
-              const updatedId = payload.new.booking_id || payload.new.id;
-
-              setBookings((prev) =>
-                prev.map((b) =>
-                  b.id === updatedId ||
-                  b.booking_id === updatedId ||
-                  b.id === payload.new.id ||
-                  b.booking_id === payload.new.booking_id
-                    ? {
-                        ...b,
-                        stage: updatedStatus,
-                        status: updatedStatus,
-                      }
-                    : b,
-                ),
-              );
             }
           },
         )
@@ -1467,10 +1439,28 @@ export function AppProvider({ children }) {
     const code = centre.centre_code || centre.code || "P";
     const prefix = code === "P" ? "PS" : `${code}S`;
 
-    // USP 4 & High Demand Resilience: Strict Capacity Enforcement
+    // USP 4 & High Demand Resilience: Server-Revalidated Capacity Enforcement
     const slotObj = timeSlots.find((s) => s.time === bookingData.timeSlot) || {
       capacity: 20,
     };
+
+    try {
+      const { count: serverSlotCount } = await supabase
+        .from("bookings")
+        .select("id", { count: "exact", head: true })
+        .eq("centre_id", centre.id)
+        .eq("slot_date", bookingData.date)
+        .eq("slot_time", bookingData.timeSlot)
+        .neq("status", "CANCELLED");
+
+      if (serverSlotCount !== null && serverSlotCount >= slotObj.capacity) {
+        throw new Error("Slot full. Please choose another slot.");
+      }
+    } catch (err) {
+      if (err.message && err.message.includes("Slot full")) throw err;
+      console.warn("Server capacity revalidation fallback:", err);
+    }
+
     const activeSlotBookings = bookings.filter(
       (b) =>
         (b.centreId === bookingData.centreId || b.centreCode === code) &&
@@ -1478,7 +1468,9 @@ export function AppProvider({ children }) {
         (b.timeSlot === bookingData.timeSlot ||
           b.slot_time === bookingData.timeSlot) &&
         b.stage !== "COMPLETED" &&
-        b.status !== "COMPLETED",
+        b.status !== "COMPLETED" &&
+        b.stage !== "CANCELLED" &&
+        b.status !== "CANCELLED",
     ).length;
 
     if (activeSlotBookings >= slotObj.capacity) {

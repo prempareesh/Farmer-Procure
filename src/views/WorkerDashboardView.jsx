@@ -48,7 +48,8 @@ export default function WorkerDashboardView() {
   );
 
   // Filter tasks for worker's assigned centre and assigned stage
-  const staffMandiId = user?.mandiId || "mandi-1";
+  const staffMandiId =
+    user?.mandiId || "186c9f3d-34bd-4413-9d95-77687b3fb49b";
   const staffMandiCode = "P"; // Canonical staff assigned to Karnal Central Grain Mandi (code P)
 
   const filteredBookings = bookings.filter((b) => {
