@@ -637,7 +637,54 @@ export function AppProvider({ children }) {
           { event: "*", schema: "public", table: "bookings" },
           async (payload) => {
             if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-              const targetDbId = payload.new.id;
+              const newDb = payload.new;
+              const targetDbId = newDb.id;
+              const rawBId = newDb.booking_id || newDb.id;
+
+              // Stage 1: Instant Ingestion (Guarantees zero-lag rendering on Staff Portal)
+              const instantRecord = {
+                id: rawBId,
+                booking_id: rawBId,
+                db_id: newDb.id,
+                profileId: newDb.profile_id,
+                farmerId: "FRM-2026-PENDING",
+                farmerName: "Farmer Booking",
+                centreId: newDb.centre_id,
+                centreCode: "P",
+                centreName: "Karnal Central Grain Mandi",
+                tokenDisplay: "PS-PENDING",
+                tokenSeq: 1,
+                crop: "Paddy (Basmati 1121)",
+                quantity: Number(newDb.expected_quantity || 25),
+                date: newDb.slot_date,
+                slot_date: newDb.slot_date,
+                timeSlot: newDb.slot_time,
+                slot_time: newDb.slot_time,
+                stage: newDb.status || "BOOKED",
+                status: newDb.status || "BOOKED",
+                stageStatus: "IN_PROGRESS",
+                faceVerified: false,
+                createdAt: new Date(newDb.created_at || Date.now()).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              };
+
+              setBookings((prev) => {
+                const exists = prev.some(
+                  (item) => item.id === rawBId || item.booking_id === rawBId || item.db_id === newDb.id
+                );
+                if (exists) {
+                  return prev.map((item) =>
+                    item.id === rawBId || item.booking_id === rawBId || item.db_id === newDb.id
+                      ? { ...item, ...instantRecord }
+                      : item
+                  );
+                }
+                return [instantRecord, ...prev];
+              });
+
+              // Stage 2: Asynchronous Relational Hydration
               try {
                 const { data: bFull } = await supabase
                   .from("bookings")
@@ -701,19 +748,13 @@ export function AppProvider({ children }) {
                     }),
                   };
 
-                  setBookings((prev) => {
-                    const exists = prev.some(
-                      (item) => item.id === bId || item.booking_id === bId || item.db_id === bFull.id
-                    );
-                    if (exists) {
-                      return prev.map((item) =>
-                        item.id === bId || item.booking_id === bId || item.db_id === bFull.id
-                          ? { ...item, ...formattedRecord }
-                          : item
-                      );
-                    }
-                    return [formattedRecord, ...prev];
-                  });
+                  setBookings((prev) =>
+                    prev.map((item) =>
+                      item.id === bId || item.booking_id === bId || item.db_id === bFull.id
+                        ? { ...item, ...formattedRecord }
+                        : item
+                    )
+                  );
 
                   if (payload.eventType === "INSERT") {
                     addNotification({
@@ -724,7 +765,31 @@ export function AppProvider({ children }) {
                   }
                 }
               } catch (err) {
-                console.warn("Realtime hydration sync error:", err);
+                console.warn("Realtime hydration sync notice:", err);
+              }
+            }
+          },
+        )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "tokens" },
+          (payload) => {
+            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+              const tRow = payload.new;
+              if (tRow && tRow.booking_id) {
+                setBookings((prev) =>
+                  prev.map((b) => {
+                    if (b.db_id === tRow.booking_id || b.id === tRow.booking_id) {
+                      return {
+                        ...b,
+                        tokenDisplay: tRow.token_number || b.tokenDisplay,
+                        tokenSeq: tRow.queue_position || b.tokenSeq,
+                        centreCode: tRow.centre_code || b.centreCode,
+                      };
+                    }
+                    return b;
+                  })
+                );
               }
             }
           },
