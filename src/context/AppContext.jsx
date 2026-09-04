@@ -546,8 +546,8 @@ export function AppProvider({ children }) {
             const c = b.procurement_centres || {};
             const t = (b.tokens && b.tokens.length > 0) ? b.tokens[0] : null;
 
-            const fId = p.farmer_id || b.farmer_id || "FRM-2026-000123";
-            const fName = p.name || b.farmer_name || "Rameshwar Singh";
+            const fId = p.farmer_id || b.farmer_id || "FRM-2026-UNKNOWN";
+            const fName = p.name || b.farmer_name || "Farmer";
             const code = c.centre_code || "P";
             const cName = c.centre_name || "Karnal Central Grain Mandi";
             const tSeq = t?.queue_position || 1;
@@ -615,8 +615,8 @@ export function AppProvider({ children }) {
               timestamp: a.timestamp,
               stage: a.event_name,
               bookingId: a.booking_id || "BK-INIT",
-              farmerId: "FRM-2026-000123",
-              farmerName: "Rameshwar Singh",
+              farmerId: "FRM-2026-SYSTEM",
+              farmerName: "System Audit Log",
               dataSummary: `${a.event_name} logged in Supabase`,
               prevHash: a.previous_hash,
               currentHash: a.hash,
@@ -641,14 +641,39 @@ export function AppProvider({ children }) {
               const targetDbId = newDb.id;
               const rawBId = newDb.booking_id || newDb.id;
 
-              // Stage 1: Instant Ingestion (Guarantees zero-lag rendering on Staff Portal)
+              // Stage 1: Fast Profile Name Resolution & Instant Ingestion
+              let fastFarmerName = "Farmer Booking";
+              let fastFarmerId = "FRM-2026-PENDING";
+
+              const localProf = farmersList.find(
+                (f) => f.id === newDb.profile_id || f.farmerId === newDb.profile_id
+              );
+              if (localProf) {
+                fastFarmerName = localProf.name;
+                fastFarmerId = localProf.farmerId;
+              } else if (newDb.profile_id) {
+                try {
+                  const { data: profFast } = await supabase
+                    .from("profiles")
+                    .select("farmer_id, name")
+                    .eq("id", newDb.profile_id)
+                    .maybeSingle();
+                  if (profFast) {
+                    fastFarmerName = profFast.name;
+                    fastFarmerId = profFast.farmer_id || `FRM-2026-${profFast.id.slice(0, 6)}`;
+                  }
+                } catch {
+                  // Fast lookup fallback
+                }
+              }
+
               const instantRecord = {
                 id: rawBId,
                 booking_id: rawBId,
                 db_id: newDb.id,
                 profileId: newDb.profile_id,
-                farmerId: "FRM-2026-PENDING",
-                farmerName: "Farmer Booking",
+                farmerId: fastFarmerId,
+                farmerName: fastFarmerName,
                 centreId: newDb.centre_id,
                 centreCode: "P",
                 centreName: "Karnal Central Grain Mandi",
@@ -702,8 +727,8 @@ export function AppProvider({ children }) {
                   const c = bFull.procurement_centres || {};
                   const t = (bFull.tokens && bFull.tokens.length > 0) ? bFull.tokens[0] : null;
 
-                  const fId = p.farmer_id || bFull.farmer_id || "FRM-2026-000123";
-                  const fName = p.name || bFull.farmer_name || "Farmer";
+                  const fId = p.farmer_id || bFull.farmer_id || fastFarmerId;
+                  const fName = p.name || bFull.farmer_name || fastFarmerName;
                   const code = c.centre_code || "P";
                   const cName = c.centre_name || "Karnal Central Grain Mandi";
                   const tSeq = t?.queue_position || 1;
@@ -1720,27 +1745,36 @@ export function AppProvider({ children }) {
       let profileUuid = null;
       let centreUuid = null;
 
-      // Get profile UUID from Supabase profiles
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("farmer_id", farmerProfile.farmerId)
-        .maybeSingle();
+      const activeFarmerObj =
+        user && (user.role === "farmer" || user.farmerId) ? user : farmerProfile;
 
-      if (prof) {
-        profileUuid = prof.id;
-      } else {
+      if (activeFarmerObj?.id && String(activeFarmerObj.id).length > 20) {
+        profileUuid = activeFarmerObj.id;
+      }
+
+      if (!profileUuid && activeFarmerObj?.farmerId) {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("farmer_id", activeFarmerObj.farmerId)
+          .maybeSingle();
+        if (prof) profileUuid = prof.id;
+      }
+
+      if (!profileUuid && activeFarmerObj) {
         // Create profile if missing in Supabase DB
         const { data: newProf } = await supabase
           .from("profiles")
           .insert([
             {
-              farmer_id: farmerProfile.farmerId,
-              name: farmerProfile.name,
-              mobile: farmerProfile.mobile,
-              village: farmerProfile.village || "Taraori",
-              district: farmerProfile.district || "Karnal",
-              state: farmerProfile.state || "Haryana",
+              farmer_id:
+                activeFarmerObj.farmerId ||
+                `FRM-2026-${Math.floor(100000 + Math.random() * 900000)}`,
+              name: activeFarmerObj.name,
+              mobile: activeFarmerObj.mobile,
+              village: activeFarmerObj.village || "Taraori",
+              district: activeFarmerObj.district || "Karnal",
+              state: activeFarmerObj.state || "Haryana",
               role: "farmer",
             },
           ])
@@ -1758,6 +1792,8 @@ export function AppProvider({ children }) {
 
       if (cent) {
         centreUuid = cent.id;
+      } else {
+        centreUuid = "186c9f3d-34bd-4413-9d95-77687b3fb49b";
       }
 
       if (profileUuid && centreUuid) {

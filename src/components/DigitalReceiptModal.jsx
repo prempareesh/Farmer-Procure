@@ -15,7 +15,7 @@ export default function DigitalReceiptModal({ isOpen, onClose, booking }) {
 
   if (!isOpen || !booking) return null;
 
-  const farmerName = booking.farmerName || "Rameshwar Singh";
+  const farmerName = booking.farmerName || "Farmer";
   const farmerId = booking.farmerId || "FRM-2026-000123";
   const crop = booking.crop || "Paddy (Basmati 1121)";
   const bookedQuantity = booking.quantity || 25;

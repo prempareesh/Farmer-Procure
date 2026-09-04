@@ -74,7 +74,7 @@ export default function QRScannerView() {
               <div className="flex justify-between">
                 <span className="text-gray-500">Farmer:</span>
                 <span className="font-bold text-gray-900">
-                  {currentBooking?.farmerName || "Rameshwar Singh"}
+                  {currentBooking?.farmerName || "Farmer"}
                 </span>
               </div>
               <div className="flex justify-between">
