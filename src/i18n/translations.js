@@ -240,6 +240,11 @@ export const translations = {
     reviewWeighingCapacity: "Review additional weighing capacity at Bridge #2",
     expectedArrivals: "Expected Arrivals",
     smartSlotRecommendation: "Smart Slot Recommendation",
+    offlineModeActive: "OFFLINE MODE — Showing last synchronized status",
+    pendingSync: "PENDING SYNC",
+    slotFullError: "Slot full. Please choose another slot.",
+    lowestQueuePressure: "Lowest current queue pressure",
+    farmersAheadText: "farmers ahead of you",
 
     // Audit Chain
     auditTitle: "SHA-256 Cryptographic Audit Trail",
@@ -762,6 +767,11 @@ export const translations = {
       "బ్రిడ్జ్ #2 వద్ద అదనపు తూకం సిబ్బందిని ఏర్పాటు చేయండి",
     expectedArrivals: "రాబోయే వాహనాలు",
     smartSlotRecommendation: "స్మార్ట్ స్లాట్ సూచన",
+    offlineModeActive: "ఆఫ్‌లైన్ మోడ్ — చివరి సరిపోల్చిన స్థితి చూపబడుతోంది",
+    pendingSync: "సింక్ పెండింగ్‌లో ఉంది",
+    slotFullError: "స్లాట్ పూర్తయింది. దయచేసి మరొక స్లాట్‌ను ఎంచుకోండి.",
+    lowestQueuePressure: "తక్కువ క్యూ ఒత్తిడి",
+    farmersAheadText: "రైతులు మీ కంటే ముందు ఉన్నారు",
 
     // Audit Chain
     auditTitle: "SHA-256 డిజిటల్ ఆడిట్ రికార్డు",
@@ -1283,6 +1293,11 @@ export const translations = {
     reviewWeighingCapacity: "वेब्रिज #2 पर अतिरिक्त कर्मचारी तैनात करें",
     expectedArrivals: "संभावित आगमन",
     smartSlotRecommendation: "स्मार्ट स्लॉट सुझाव",
+    offlineModeActive: "ऑफ़लाइन मोड — अंतिम सिंक्रनाइज़ स्थिति दिखाई जा रही है",
+    pendingSync: "सिंक लंबित",
+    slotFullError: "स्लॉट भर गया है। कृपया दूसरा स्लॉट चुनें।",
+    lowestQueuePressure: "न्यूनतम कतार दबाव",
+    farmersAheadText: "किसान आपके आगे हैं",
 
     // Audit Chain
     auditTitle: "SHA-256 डिजिटल ऑडिट रिकॉर्ड",

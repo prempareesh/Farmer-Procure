@@ -3,13 +3,29 @@ import { User, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export default function HeroSection() {
-  const { navigateTo, t } = useApp();
+  const { user, navigateTo, t } = useApp();
 
   const scrollToHowItWorks = () => {
     const el = document.getElementById("how-it-works");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const getPortalDestination = () => {
+    if (!user) return "auth";
+    if (user.role === "farmer") return "farmer-dash";
+    if (user.role === "worker" || user.role === "staff") return "worker-dash";
+    if (user.role === "officer") return "officer-dash";
+    return "auth";
+  };
+
+  const getPortalButtonLabel = () => {
+    if (!user) return t("btnGetStarted");
+    if (user.role === "farmer") return t("farmerPortal");
+    if (user.role === "worker" || user.role === "staff") return t("workerPortal");
+    if (user.role === "officer") return t("officerPortal");
+    return t("btnGetStarted");
   };
 
   return (
@@ -51,13 +67,13 @@ export default function HeroSection() {
 
           {/* Primary & Secondary CTAs */}
           <div className="flex flex-wrap items-center gap-4 pt-3">
-            {/* Primary: Login / Get Started */}
+            {/* Primary: Login / Go to Portal */}
             <button
-              onClick={() => navigateTo("auth")}
+              onClick={() => navigateTo(getPortalDestination())}
               className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-sm transition-all duration-200 active:scale-98 cursor-pointer"
             >
               <User className="w-4 h-4 text-[#F9A825]" />
-              <span>{t("btnGetStarted")}</span>
+              <span>{getPortalButtonLabel()}</span>
             </button>
 
             {/* Secondary: See How It Works */}
@@ -74,3 +90,4 @@ export default function HeroSection() {
     </section>
   );
 }
+

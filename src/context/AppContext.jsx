@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { generateSHA256 } from "../utils/crypto";
 import { translations } from "../i18n/translations";
@@ -189,6 +189,8 @@ export const WORKFLOW_STAGES = [
 ];
 
 export function AppProvider({ children }) {
+  const activeChannelRef = useRef(null);
+
   // 1. Language State
   const [currentLang, setCurrentLangState] = useState(
     () => localStorage.getItem("agri_lang") || "en",
@@ -339,6 +341,111 @@ export function AppProvider({ children }) {
   const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(true);
 
+  // Network Connectivity State (USP 3: Offline-First Operation)
+  const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      addNotification({
+        title: "Network Connection Restored",
+        message: "Reconnected to Internet. Synchronizing pending offline data...",
+        type: "success",
+      });
+      syncPendingOfflineBookings();
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+      addNotification({
+        title: "Offline Mode Active",
+        message: "Showing last synchronized information.",
+        type: "warning",
+      });
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // Sync Offline Bookings to Supabase upon Reconnect
+  const syncPendingOfflineBookings = async () => {
+    try {
+      const savedPending = JSON.parse(
+        localStorage.getItem("agri_pending_offline_bookings") || "[]",
+      );
+      if (!savedPending || savedPending.length === 0) return;
+
+      for (const pending of savedPending) {
+        const newBookingId = `BK-2026-${String(Math.floor(100000 + Math.random() * 900000))}`;
+        const prefix = pending.centreCode === "P" ? "PS" : `${pending.centreCode}S`;
+        const nextSeq = bookings.filter((b) => b.centreCode === pending.centreCode).length + 1;
+        const tokenDisplay = `${prefix}-${String(nextSeq).padStart(3, "0")}`;
+
+        const confirmedBooking = {
+          ...pending,
+          id: newBookingId,
+          booking_id: newBookingId,
+          tokenDisplay,
+          tokenSeq: nextSeq,
+          status: "BOOKED",
+          stage: "BOOKED",
+          isOfflinePending: false,
+        };
+
+        setBookings((prev) =>
+          prev.map((b) =>
+            b.id === pending.id || b.clientReqId === pending.clientReqId
+              ? confirmedBooking
+              : b,
+          ),
+        );
+        setActiveBookingId(newBookingId);
+
+        try {
+          await supabase.from("bookings").insert([
+            {
+              booking_id: newBookingId,
+              slot_date: pending.date,
+              slot_time: pending.timeSlot,
+              expected_quantity: Number(pending.quantity),
+              status: "BOOKED",
+            },
+          ]);
+        } catch {
+          // Safe DB fallback
+        }
+
+        if (activeChannelRef.current) {
+          try {
+            activeChannelRef.current.send({
+              type: "broadcast",
+              event: "new-booking",
+              payload: confirmedBooking,
+            });
+          } catch {
+            // Safe broadcast fallback
+          }
+        }
+
+        addNotification({
+          title: "Offline Booking Confirmed!",
+          message: `Token #${tokenDisplay} generated on server for ${pending.crop}.`,
+          type: "success",
+        });
+      }
+
+      localStorage.removeItem("agri_pending_offline_bookings");
+    } catch (err) {
+      console.warn("Offline sync error:", err);
+    }
+  };
+
   // Notification Helper
   const addNotification = ({ title, message, type = "info" }) => {
     const newNotif = {
@@ -378,33 +485,14 @@ export function AppProvider({ children }) {
     let activeChannel = null;
 
     async function initializeSystem() {
-      let backendOnline = false;
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1200);
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/`, {
-          method: "GET",
-          headers: { apikey: SUPABASE_ANON_KEY },
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-        if (res.ok || res.status === 401 || res.status === 404) {
-          backendOnline = true;
-        }
-      } catch {
-        backendOnline = false;
-      }
-
-      if (backendOnline) {
+      if (SUPABASE_URL && SUPABASE_ANON_KEY) {
         setIsDemoMode(false);
         try {
           await loadSupabaseData();
           activeChannel = subscribeRealtime();
-        } catch {
-          setIsDemoMode(true);
+        } catch (err) {
+          console.warn("Supabase initialization sync warning:", err);
         }
-      } else {
-        setIsDemoMode(true);
       }
     }
 
@@ -572,15 +660,34 @@ export function AppProvider({ children }) {
                 }
               }
 
+              let cCode = "P";
+              let cName = "Karnal Central Grain Mandi";
+
+              if (newDb.centre_id) {
+                try {
+                  const { data: c } = await supabase
+                    .from("procurement_centres")
+                    .select("centre_code, centre_name")
+                    .eq("id", newDb.centre_id)
+                    .maybeSingle();
+                  if (c) {
+                    cCode = c.centre_code || "P";
+                    cName = c.centre_name || cName;
+                  }
+                } catch {
+                  // Safe fallback
+                }
+              }
+
               const newBookingRecord = {
                 id: bId,
                 booking_id: bId,
                 farmerId: fId,
                 farmerName: fName,
                 centreId: newDb.centre_id,
-                centreCode: "P",
-                centreName: "Karnal Central Grain Mandi",
-                tokenDisplay: "P001",
+                centreCode: cCode,
+                centreName: cName,
+                tokenDisplay: `${cCode}001`,
                 tokenSeq: 1,
                 crop: "Paddy (Basmati 1121)",
                 quantity: Number(newDb.expected_quantity || 25),
@@ -598,7 +705,7 @@ export function AppProvider({ children }) {
                   dbtTxnId: "DBT-PENDING",
                   disbursed: false,
                 },
-                qrData: `AGRI-PROCURE-${bId}-P001`,
+                qrData: `AGRI-PROCURE-${bId}-${cCode}001`,
                 createdAt: new Date().toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -606,23 +713,38 @@ export function AppProvider({ children }) {
               };
 
               setBookings((prev) => {
-                if (prev.some((item) => item.id === bId)) return prev;
+                const exists = prev.some(
+                  (item) => item.id === bId || item.booking_id === bId,
+                );
+                if (exists) {
+                  return prev.map((item) =>
+                    item.id === bId || item.booking_id === bId
+                      ? { ...item, ...newBookingRecord }
+                      : item,
+                  );
+                }
                 return [newBookingRecord, ...prev];
               });
 
               addNotification({
                 title: "Realtime Booking Received",
-                message: `New booking ${bId} (${fName}) arrived at procurement centre.`,
+                message: `New booking ${bId} (${fName}) arrived at ${cName}.`,
                 type: "info",
               });
             } else if (payload.eventType === "UPDATE") {
+              const updatedStatus = payload.new.status;
+              const updatedId = payload.new.booking_id || payload.new.id;
+
               setBookings((prev) =>
                 prev.map((b) =>
-                  b.id === payload.new.booking_id || b.id === payload.new.id
+                  b.id === updatedId ||
+                  b.booking_id === updatedId ||
+                  b.id === payload.new.id ||
+                  b.booking_id === payload.new.booking_id
                     ? {
                         ...b,
-                        stage: payload.new.status,
-                        status: payload.new.status,
+                        stage: updatedStatus,
+                        status: updatedStatus,
                       }
                     : b,
                 ),
@@ -646,6 +768,69 @@ export function AppProvider({ children }) {
             }
           },
         )
+        .on("broadcast", { event: "new-booking" }, (payload) => {
+          const newBooking = payload.payload;
+          if (newBooking) {
+            const bId = newBooking.id || newBooking.booking_id;
+            setBookings((prev) => {
+              const exists = prev.some(
+                (item) => item.id === bId || item.booking_id === bId,
+              );
+              if (exists) {
+                return prev.map((item) =>
+                  item.id === bId || item.booking_id === bId
+                    ? { ...item, ...newBooking }
+                    : item,
+                );
+              }
+              return [newBooking, ...prev];
+            });
+            addNotification({
+              title: "Realtime Booking Received",
+              message: `New booking ${bId} (${newBooking.farmerName || "Farmer"}) arrived at ${newBooking.centreName || "Procurement Centre"}.`,
+              type: "info",
+            });
+          }
+        })
+        .on("broadcast", { event: "stage-updated" }, (payload) => {
+          const { bookingId, nextStage, remarks, extraData } =
+            payload.payload || {};
+          if (bookingId && nextStage) {
+            const timeStr = new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            setBookings((prev) =>
+              prev.map((b) => {
+                if (b.id === bookingId || b.booking_id === bookingId) {
+                  const updatedHistory = [
+                    ...(b.stageHistory || [
+                      {
+                        stage: "BOOKED",
+                        label: "Booked",
+                        time: b.createdAt || "02:00 PM",
+                      },
+                    ]),
+                    { stage: nextStage, label: nextStage, time: timeStr },
+                  ];
+                  return {
+                    ...b,
+                    stage: nextStage,
+                    status: nextStage,
+                    stageHistory: updatedHistory,
+                    ...(extraData || {}),
+                  };
+                }
+                return b;
+              }),
+            );
+            addNotification({
+              title: `Workflow Live Update: ${nextStage}`,
+              message: `Booking ${bookingId} stage updated to ${nextStage}.`,
+              type: "info",
+            });
+          }
+        })
         .subscribe((status) => {
           if (
             status === "CHANNEL_ERROR" ||
@@ -655,6 +840,9 @@ export function AppProvider({ children }) {
             // Silently handled in DEMO MODE
           }
         });
+
+      activeChannelRef.current = channel;
+      return channel;
     }
 
     initializeSystem();
@@ -747,20 +935,24 @@ export function AppProvider({ children }) {
     const newFarmerId = `FRM-2026-${String(nextNum).padStart(6, "0")}`;
 
     // D. Persist to Supabase `profiles` and handle potential 409 Conflict
+    let dbProfileId = null;
     try {
-      const { error: profileError } = await supabase.from("profiles").insert([
-        {
-          farmer_id: newFarmerId,
-          name: formData.name,
-          mobile: formData.mobile,
-          aadhaar: formData.aadhaar,
-          village: formData.village || "Taraori",
-          district: formData.district || "Karnal",
-          state: formData.state || "Haryana",
-          role: "farmer",
-          face_image_url: formData.faceImage || "/hero_farmer.jpg",
-        },
-      ]);
+      const { data: insertedProfiles, error: profileError } = await supabase
+        .from("profiles")
+        .insert([
+          {
+            farmer_id: newFarmerId,
+            name: formData.name,
+            mobile: formData.mobile,
+            aadhaar: formData.aadhaar,
+            village: formData.village || "Taraori",
+            district: formData.district || "Karnal",
+            state: formData.state || "Haryana",
+            role: "farmer",
+            face_image_url: formData.faceImage || "/hero_farmer.jpg",
+          },
+        ])
+        .select();
 
       if (profileError) {
         if (
@@ -775,6 +967,8 @@ export function AppProvider({ children }) {
               "An account with this mobile number or Farmer ID already exists. Please sign in.",
           };
         }
+      } else if (insertedProfiles && insertedProfiles.length > 0) {
+        dbProfileId = insertedProfiles[0].id;
       }
     } catch {
       // Fallback
@@ -782,7 +976,7 @@ export function AppProvider({ children }) {
 
     // E. Construct Farmer Object with Password & State Update
     const newFarmer = {
-      id: "usr-" + Date.now(),
+      id: dbProfileId || "usr-" + Date.now(),
       farmerId: newFarmerId,
       name: formData.name,
       mobile: formData.mobile,
@@ -980,6 +1174,7 @@ export function AppProvider({ children }) {
             district: dbProfile.district || "Karnal",
             state: dbProfile.state || "Haryana",
             role: dbProfile.role || "farmer",
+            password: cleanPass || "1234",
             faceImage: dbProfile.face_image_url || "/hero_farmer.jpg",
             bankAccount: "State Bank of India (Ending in 4092)",
             ifsc: "SBIN0001234",
@@ -1264,18 +1459,101 @@ export function AppProvider({ children }) {
           m.centre_code === bookingData.centreId,
       ) || mandiCentres[0];
     const code = centre.centre_code || centre.code || "P";
-    const nextSeq = bookings.filter((b) => b.centreCode === code).length + 1;
-    const tokenDisplay = `${code}${String(nextSeq).padStart(3, "0")}`; // e.g. P001, P002
+    const prefix = code === "P" ? "PS" : `${code}S`;
+
+    // USP 4 & High Demand Resilience: Strict Capacity Enforcement
+    const slotObj = timeSlots.find((s) => s.time === bookingData.timeSlot) || {
+      capacity: 20,
+    };
+    const activeSlotBookings = bookings.filter(
+      (b) =>
+        (b.centreId === bookingData.centreId || b.centreCode === code) &&
+        (b.date === bookingData.date || b.slot_date === bookingData.date) &&
+        (b.timeSlot === bookingData.timeSlot ||
+          b.slot_time === bookingData.timeSlot) &&
+        b.stage !== "COMPLETED" &&
+        b.status !== "COMPLETED",
+    ).length;
+
+    if (activeSlotBookings >= slotObj.capacity) {
+      throw new Error("Slot full. Please choose another slot.");
+    }
+
+    const nextSeq =
+      bookings.filter((b) => b.centreCode === code || b.centreId === centre.id)
+        .length + 1;
+    const tokenDisplay = `${prefix}-${String(nextSeq).padStart(3, "0")}`; // e.g. PS-001, PS-002
     const newBookingId = `BK-2026-${String(Math.floor(100000 + Math.random() * 900000))}`;
     const qrData = `AGRI-PROCURE-${farmerProfile.farmerId}-${tokenDisplay}-${bookingData.crop.replace(/\s+/g, "")}`;
-
-    const prevBlock = auditChain[auditChain.length - 1];
-    const rawData = `${newBookingId}|${farmerProfile.farmerId}|${centre.centre_name || centre.name}|${bookingData.crop}|${bookingData.quantity}|${tokenDisplay}`;
-    const newHash = await generateSHA256(prevBlock.currentHash + rawData);
 
     const matchedCrop = crops.find((c) => c.name === bookingData.crop);
     const mspRate = matchedCrop ? matchedCrop.mspPerQtl : 2320;
     const grossAmount = mspRate * Number(bookingData.quantity);
+
+    // USP 3: Offline-First Booking Queue handling
+    if (!navigator.onLine) {
+      const clientReqId = `OFFLINE-REQ-${Date.now()}`;
+      const offlineBooking = {
+        id: clientReqId,
+        booking_id: clientReqId,
+        farmerId: farmerProfile.farmerId,
+        farmerName: farmerProfile.name,
+        centreId: centre.id,
+        centreCode: code,
+        centreName: centre.centre_name || centre.name,
+        tokenDisplay: `${prefix}-PENDING`,
+        tokenSeq: nextSeq,
+        crop: bookingData.crop,
+        quantity: Number(bookingData.quantity),
+        date: bookingData.date,
+        slot_date: bookingData.date,
+        timeSlot: bookingData.timeSlot,
+        slot_time: bookingData.timeSlot,
+        stage: "BOOKED",
+        status: "PENDING_SYNC",
+        isOfflinePending: true,
+        clientReqId,
+        paymentDetails: {
+          mspPerQtl: mspRate,
+          grossAmount,
+          dbtTxnId: "DBT-PENDING",
+          disbursed: false,
+        },
+        qrData,
+        createdAt: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      setBookings((prev) => [offlineBooking, ...prev]);
+      setActiveBookingId(clientReqId);
+
+      try {
+        const existingPending = JSON.parse(
+          localStorage.getItem("agri_pending_offline_bookings") || "[]",
+        );
+        localStorage.setItem(
+          "agri_pending_offline_bookings",
+          JSON.stringify([...existingPending, offlineBooking]),
+        );
+      } catch {
+        // storage fallback
+      }
+
+      addNotification({
+        title: "Offline Booking Saved",
+        message:
+          "Status: PENDING SYNC. Request saved on device and will be submitted automatically when connection is restored.",
+        type: "warning",
+      });
+
+      return offlineBooking;
+    }
+
+    const prevBlock = auditChain[auditChain.length - 1];
+    const rawData = `${newBookingId}|${farmerProfile.farmerId}|${centre.centre_name || centre.name}|${bookingData.crop}|${bookingData.quantity}|${tokenDisplay}`;
+    const newHash = await generateSHA256(prevBlock.currentHash + rawData);
 
     const newBooking = {
       id: newBookingId,
@@ -1435,6 +1713,19 @@ export function AppProvider({ children }) {
       type: "success",
     });
 
+    // Multi-Device WebSocket Realtime Broadcast
+    try {
+      if (activeChannelRef.current) {
+        activeChannelRef.current.send({
+          type: "broadcast",
+          event: "new-booking",
+          payload: newBooking,
+        });
+      }
+    } catch {
+      // Safe broadcast fallback
+    }
+
     return newBooking;
   };
 
@@ -1593,17 +1884,13 @@ export function AppProvider({ children }) {
 
     setAuditChain((prev) => [...prev, newBlock]);
 
-    addNotification({
-      title: `Stage Advanced: ${stageLabel}`,
-      message: `Token #${booking.tokenDisplay} (${booking.farmerName}) advanced to ${stageLabel}.`,
-      type: "info",
-    });
-
     try {
+      const bIdMatch = booking.booking_id || booking.id;
+      const dbIdMatch = booking.db_id || booking.id;
       await supabase
         .from("bookings")
         .update({ status: nextStage })
-        .eq("booking_id", booking.booking_id || booking.id);
+        .or(`booking_id.eq.${bIdMatch},id.eq.${dbIdMatch}`);
 
       await supabase.from("workflow").insert([
         {
@@ -1614,6 +1901,24 @@ export function AppProvider({ children }) {
       ]);
     } catch {
       // safe fallback
+    }
+
+    // Multi-Device WebSocket Realtime Broadcast for Stage Update
+    try {
+      if (activeChannelRef.current) {
+        activeChannelRef.current.send({
+          type: "broadcast",
+          event: "stage-updated",
+          payload: {
+            bookingId: booking.id || booking.booking_id,
+            nextStage,
+            remarks,
+            extraData,
+          },
+        });
+      }
+    } catch {
+      // Safe broadcast fallback
     }
   };
 
@@ -1955,6 +2260,50 @@ export function AppProvider({ children }) {
     });
   };
 
+  // USP 1: Dynamic Active Queue & Position Metrics Engine
+  const calculateQueueMetrics = (targetBooking) => {
+    if (
+      !targetBooking ||
+      targetBooking.stage === "COMPLETED" ||
+      targetBooking.status === "COMPLETED"
+    ) {
+      return { position: 0, farmersAhead: 0, waitMins: 0, activeQueueCount: 0 };
+    }
+
+    const targetCentreId = targetBooking.centreId;
+    const targetCentreCode = targetBooking.centreCode;
+
+    // Filter active bookings for same procurement centre where stage !== "COMPLETED"
+    const eligibleActive = bookings.filter((b) => {
+      const isSameCentre =
+        (targetCentreId && b.centreId === targetCentreId) ||
+        (targetCentreCode && b.centreCode === targetCentreCode);
+      const isActive = b.stage !== "COMPLETED" && b.status !== "COMPLETED";
+      return isSameCentre && isActive;
+    });
+
+    // Chronological order by token sequence / creation
+    const sorted = [...eligibleActive].sort(
+      (a, b) => (a.tokenSeq || 0) - (b.tokenSeq || 0),
+    );
+
+    const targetIdx = sorted.findIndex(
+      (b) =>
+        b.id === targetBooking.id || b.booking_id === targetBooking.booking_id,
+    );
+
+    const position = targetIdx >= 0 ? targetIdx + 1 : 1;
+    const farmersAhead = Math.max(0, position - 1);
+    const waitMins = Math.max(4, Math.round(farmersAhead * 2));
+
+    return {
+      position,
+      farmersAhead,
+      waitMins,
+      activeQueueCount: sorted.length,
+    };
+  };
+
   // Active Metrics Calculations
   const activeBooking =
     bookings.find(
@@ -1966,15 +2315,20 @@ export function AppProvider({ children }) {
     ? Math.max(0, activeBooking.tokenSeq - servingToken)
     : 0;
   const estimatedWaitMins = Math.max(4, Math.round(peopleAhead * 1.8));
+
+  // Dynamic Congestion Intelligence derived from real centre intake
+  const activeIntakeCount = bookings.filter(
+    (b) => b.stage !== "COMPLETED" && b.status !== "COMPLETED",
+  ).length;
   const congestionRisk =
-    peopleAhead > 25 ? "HIGH" : peopleAhead > 10 ? "MEDIUM" : "LOW";
+    activeIntakeCount >= 15 ? "HIGH" : activeIntakeCount >= 8 ? "MEDIUM" : "LOW";
 
   const xaiFactors = [
     {
       factor: "Queue Length Surge",
       impact: "+35%",
       positive: false,
-      desc: `${peopleAhead} vehicles currently in Mandi intake lane`,
+      desc: `${activeIntakeCount} active bookings currently in Mandi intake lane`,
     },
     {
       factor: "Average Crop Load (45 Qtl)",
@@ -2041,7 +2395,7 @@ export function AppProvider({ children }) {
         setSelectedMandiId,
         timeSlots,
 
-        // Bookings
+        // Bookings & Offline Network State
         bookings,
         activeBookingId,
         setActiveBookingId,
@@ -2051,6 +2405,8 @@ export function AppProvider({ children }) {
         verifyGateArrival,
         verifyFaceArrival,
         isDemoMode,
+        isOffline,
+        syncPendingOfflineBookings,
 
         // Worker & Officer Operations
         workerAssignedStage,
@@ -2064,13 +2420,14 @@ export function AppProvider({ children }) {
         feedbackList,
         submitAnonymousFeedback,
 
-        // Queue
+        // Queue Engine
         servingToken,
         setServingToken,
         autoQueueTicker,
         setAutoQueueTicker,
         peopleAhead,
         estimatedWaitMins,
+        calculateQueueMetrics,
 
         // AI & Security
         congestionRisk,

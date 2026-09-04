@@ -31,10 +31,9 @@ export default function FarmerDashboardView() {
     addCrop,
     deleteCrop,
     bookings,
-    activeBooking,
     servingToken,
-    peopleAhead,
-    estimatedWaitMins,
+    calculateQueueMetrics,
+    isOffline,
     advanceBookingStage,
     submitAnonymousFeedback,
     navigateTo,
@@ -61,7 +60,38 @@ export default function FarmerDashboardView() {
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const currentBooking = activeBooking || bookings[0];
+  // Farmer specific booking state resolution
+  const farmerProfileId = farmerProfile?.farmerId;
+  const farmerMobile = farmerProfile?.mobile;
+
+  const farmerBookings = (bookings || []).filter((b) => {
+    return (
+      b.farmerId === farmerProfileId ||
+      b.farmerMobile === farmerMobile ||
+      (b.profiles &&
+        (b.profiles.farmer_id === farmerProfileId ||
+          b.profiles.mobile === farmerMobile))
+    );
+  });
+
+  const activeBookingForFarmer = farmerBookings.find(
+    (b) => b.stage !== "COMPLETED" && b.status !== "COMPLETED",
+  );
+  const completedBookingForFarmer = farmerBookings.find(
+    (b) => b.stage === "COMPLETED" || b.status === "COMPLETED",
+  );
+
+  const hasActiveBooking = Boolean(activeBookingForFarmer);
+  const isCompleted = Boolean(!hasActiveBooking && completedBookingForFarmer);
+  const currentBooking = activeBookingForFarmer || completedBookingForFarmer || null;
+
+  const queueMetrics = calculateQueueMetrics
+    ? calculateQueueMetrics(activeBookingForFarmer)
+    : { position: 1, farmersAhead: 0, waitMins: 10 };
+
+  const farmersAheadCount = queueMetrics.farmersAhead;
+  const positionNum = queueMetrics.position;
+  const waitMins = queueMetrics.waitMins;
 
   const handleIveArrived = async () => {
     if (!currentBooking) return;
@@ -301,128 +331,99 @@ export default function FarmerDashboardView() {
 
       {/* TAB 1: LIVE QUEUE & TOKEN SYSTEM */}
       {activeTab === "queue" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-7 space-y-6">
-            {/* Live Journey Progress Banner */}
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-black text-gray-900">
-                    Today's Active Token Details
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    Mandi: {currentBooking?.centreName}
-                  </p>
+        <div className="space-y-6">
+          {/* STATE A: NO ACTIVE BOOKING */}
+          {!hasActiveBooking && !isCompleted && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-7 bg-white rounded-3xl p-8 shadow-md border border-[#E0ECE0] text-center space-y-4 my-auto">
+                <div className="w-16 h-16 rounded-2xl bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto">
+                  <Calendar className="w-8 h-8" />
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-xs">
-                  {currentBooking?.stage}
-                </span>
-              </div>
-
-              {/* Action Banner for GATE ARRIVAL */}
-              {currentBooking?.stage === "BOOKED" && (
-                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <div>
-                    <span className="text-xs font-bold text-amber-900 block">
-                      Have you arrived at Karnal Mandi Gate?
-                    </span>
-                    <span className="text-[11px] text-amber-700">
-                      Click below to update your status live for Mandi Staff.
-                    </span>
+                <div className="space-y-1">
+                  <h2 className="text-xl font-black text-gray-900">
+                    Today's Procurement
+                  </h2>
+                  <div className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black border border-amber-200">
+                    No active booking
                   </div>
+                </div>
+                <p className="text-xs text-gray-600 leading-relaxed max-w-md mx-auto">
+                  You haven't booked a procurement slot yet. Book a slot to
+                  receive your token, queue position, estimated waiting time, and
+                  digital gate pass.
+                </p>
+                <div className="pt-2">
                   <button
-                    onClick={handleIveArrived}
-                    className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-sm shrink-0 transition-colors cursor-pointer"
+                    onClick={() => navigateTo("book-slot")}
+                    className="px-6 py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-black shadow-md flex items-center gap-2 mx-auto cursor-pointer transition-all active:scale-95"
                   >
-                    {t("iveArrivedBtn")}
+                    <Calendar className="w-4 h-4 text-[#F9A825]" />
+                    <span>Book Slot</span>
                   </button>
-                </div>
-              )}
-
-              {currentBooking?.stage === "ARRIVED" && (
-                <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200 flex items-center justify-between text-xs">
-                  <div className="space-y-0.5">
-                    <span className="font-extrabold text-blue-900 block">
-                      {t("arrivalVerifiedMsg")}
-                    </span>
-                    <span className="text-blue-700">{t("staffNotified")}</span>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[10px]">
-                    Quality Check Pending
-                  </span>
-                </div>
-              )}
-
-              {currentBooking?.stage === "COMPLETED" && (
-                <div className="bg-[#E8F5E9] p-4 rounded-2xl border border-[#A5D6A7] flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <div>
-                    <span className="text-xs font-black text-[#1B4318] block">
-                      {t("transactionCompletedBadge")}
-                    </span>
-                    <span className="text-[11px] text-[#2E7D32]">
-                      Your official digital procurement receipt is ready to
-                      download or print.
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setReceiptModalOpen(true)}
-                    className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs flex items-center gap-2 shrink-0 cursor-pointer"
-                  >
-                    <FileText className="w-4 h-4 text-[#F9A825]" />
-                    <span>{t("viewReceiptBtn")}</span>
-                  </button>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-gray-200">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">
-                    Now Serving at Gate
-                  </span>
-                  <p className="text-3xl font-black text-[#2E7D32] mt-1">
-                    K00{servingToken}
-                  </p>
-                  <span className="text-[10px] text-gray-500">
-                    Daily Queue (Started 9:00 AM)
-                  </span>
-                </div>
-
-                <div className="p-4 bg-[#E8F5E9]/60 rounded-2xl border border-[#A5D6A7]">
-                  <span className="text-[10px] font-bold text-[#2E7D32] uppercase">
-                    Your Assigned Token
-                  </span>
-                  <p className="text-3xl font-black text-[#1B4318] mt-1">
-                    {currentBooking?.tokenDisplay || "P-147"}
-                  </p>
-                  <span className="text-[10px] text-[#2E7D32] font-bold">
-                    {currentBooking?.crop}
-                  </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-xs">
-                <div className="p-3.5 bg-white rounded-xl border border-gray-200">
-                  <span className="text-gray-500 font-medium">
-                    Vehicles Ahead:
-                  </span>
-                  <p className="text-xl font-black text-amber-600 mt-0.5">
-                    {peopleAhead} in lane
-                  </p>
+              <div className="lg:col-span-5 bg-white rounded-3xl p-8 shadow-md border border-[#E0ECE0] text-center space-y-4 my-auto">
+                <div className="w-14 h-14 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center mx-auto">
+                  <QrCode className="w-7 h-7" />
                 </div>
-                <div className="p-3.5 bg-white rounded-xl border border-gray-200">
-                  <span className="text-gray-500 font-medium">
-                    Estimated Waiting Time:
-                  </span>
-                  <p className="text-xl font-black text-gray-900 mt-0.5">
-                    ~{estimatedWaitMins} mins
-                  </p>
+                <h3 className="text-sm font-bold text-gray-900">
+                  Digital Gate Pass
+                </h3>
+                <div className="px-3 py-1 bg-amber-50 text-amber-900 rounded-full text-[11px] font-bold border border-amber-200 inline-block">
+                  Available after booking
                 </div>
+                <p className="text-xs text-gray-500 font-medium max-w-xs mx-auto">
+                  Book a procurement slot to generate your digital gate pass.
+                </p>
+                <button
+                  onClick={() => navigateTo("book-slot")}
+                  className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-bold shadow-xs cursor-pointer"
+                >
+                  Book Slot
+                </button>
               </div>
             </div>
+          )}
 
-            {/* Post-Procurement Anonymous Feedback Card */}
-            {currentBooking?.stage === "COMPLETED" && (
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4 font-sans">
+          {/* STATE C: COMPLETED BOOKING */}
+          {isCompleted && completedBookingForFarmer && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-3xl p-8 shadow-md border border-[#E0ECE0] text-center space-y-4 max-w-2xl mx-auto">
+                <div className="w-16 h-16 rounded-2xl bg-green-100 text-[#2E7D32] flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <h2 className="text-xl font-black text-gray-900">
+                    Procurement Cycle Completed
+                  </h2>
+                  <div className="inline-block px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black border border-[#A5D6A7]">
+                    Booking: {completedBookingForFarmer.booking_id || completedBookingForFarmer.id} • Token: {completedBookingForFarmer.tokenDisplay}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 leading-relaxed max-w-md mx-auto">
+                  Your procurement cycle at {completedBookingForFarmer.centreName || "Karnal Central Grain Mandi"} is completed with SHA-256 cryptographic seal.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setReceiptModalOpen(true)}
+                    className="px-5 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white text-xs font-black shadow-sm flex items-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4 text-[#F9A825]" />
+                    <span>View Digital Receipt</span>
+                  </button>
+                  <button
+                    onClick={() => navigateTo("book-slot")}
+                    className="px-5 py-2.5 rounded-xl bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 text-xs font-black shadow-2xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Calendar className="w-4 h-4 text-[#2E7D32]" />
+                    <span>Book Another Slot</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Feedback Form for Completed Transaction */}
+              <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4 max-w-2xl mx-auto font-sans">
                 <div className="flex items-center gap-2 text-[#1B4318] border-b border-gray-100 pb-3">
                   <MessageSquare className="w-5 h-5 text-[#2E7D32]" />
                   <h3 className="text-base font-extrabold">
@@ -440,7 +441,6 @@ export default function FarmerDashboardView() {
                     onSubmit={handleFeedbackSubmit}
                     className="space-y-4 text-xs"
                   >
-                    {/* Star Rating */}
                     <div className="space-y-1.5">
                       <label className="text-gray-600 font-bold block">
                         Rating:
@@ -472,7 +472,6 @@ export default function FarmerDashboardView() {
                       </div>
                     </div>
 
-                    {/* Category Selection */}
                     <div className="space-y-1">
                       <label className="text-gray-600 font-bold block">
                         Stage / Issue Category:
@@ -492,7 +491,6 @@ export default function FarmerDashboardView() {
                       </select>
                     </div>
 
-                    {/* Feedback Text */}
                     <div className="space-y-1">
                       <label className="text-gray-600 font-bold block">
                         {t("whatCouldBeImproved")}
@@ -516,26 +514,133 @@ export default function FarmerDashboardView() {
                   </form>
                 )}
               </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] text-center space-y-4">
-              <h3 className="text-sm font-bold text-gray-900">
-                Digital QR Gate Pass
-              </h3>
-              <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-gray-200 inline-block mx-auto">
-                <QrCode className="w-32 h-32 text-[#1B4318] mx-auto" />
-                <p className="text-[10px] font-mono text-gray-500 mt-2 font-bold">
-                  {currentBooking?.tokenDisplay}
-                </p>
-              </div>
-              <p className="text-xs text-gray-600 font-medium">
-                Present this QR code or Token ID at Mandi Gate scanner upon
-                physical arrival
-              </p>
             </div>
-          </div>
+          )}
+
+          {/* STATE B: ACTIVE BOOKING QUEUE */}
+          {hasActiveBooking && activeBookingForFarmer && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-black text-gray-900">
+                        {activeBookingForFarmer.centreName || "Karnal Central Grain Mandi"}
+                      </h3>
+                      <p className="text-xs text-gray-500 font-semibold mt-0.5">
+                        Slot: {activeBookingForFarmer.slot_date || "Today"} ({activeBookingForFarmer.slot_time || "02:00 PM – 02:30 PM"})
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
+                      {activeBookingForFarmer.stage}
+                    </span>
+                  </div>
+
+                  {/* Stage Action Banner */}
+                  {activeBookingForFarmer.stage === "BOOKED" && (
+                    <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <div>
+                        <span className="text-xs font-bold text-amber-900 block">
+                          Have you arrived at Mandi Gate?
+                        </span>
+                        <span className="text-[11px] text-amber-700">
+                          Click below to update your status live for Mandi Staff.
+                        </span>
+                      </div>
+                      <button
+                        onClick={handleIveArrived}
+                        className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-sm shrink-0 transition-colors cursor-pointer"
+                      >
+                        {t("iveArrivedBtn")}
+                      </button>
+                    </div>
+                  )}
+
+                  {activeBookingForFarmer.stage === "ARRIVED" && (
+                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200 flex items-center justify-between text-xs">
+                      <div className="space-y-0.5">
+                        <span className="font-extrabold text-blue-900 block">
+                          {t("arrivalVerifiedMsg")}
+                        </span>
+                        <span className="text-blue-700">{t("staffNotified")}</span>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[10px]">
+                        Quality Check Pending
+                      </span>
+                    </div>
+                  )}
+
+                  {/* 4 Telemetry Metrics Grid */}
+                  <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div className="bg-white rounded-2xl p-4 border border-[#A5D6A7] ring-2 ring-[#2E7D32]/15">
+                      <span className="text-[10px] font-bold text-[#2E7D32] uppercase tracking-wider block">
+                        YOUR TOKEN
+                      </span>
+                      <p className="text-3xl font-black text-[#1B4318] mt-1">
+                        {activeBookingForFarmer.tokenDisplay}
+                      </p>
+                      <span className="text-[10px] text-[#2E7D32] font-bold block mt-1">
+                        {activeBookingForFarmer.crop} ({activeBookingForFarmer.quantity} Qtl)
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-4 border border-gray-200">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                        YOUR POSITION
+                      </span>
+                      <p className="text-3xl font-black text-gray-900 mt-1">
+                        #{positionNum}
+                      </p>
+                      <span className="text-[10px] text-gray-500 font-medium block mt-1">
+                        Place in live mandi queue
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-4 border border-gray-200">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                        FARMERS AHEAD
+                      </span>
+                      <p className="text-3xl font-black text-amber-600 mt-1">
+                        {farmersAheadCount}
+                      </p>
+                      <span className="text-[10px] text-gray-500 font-medium block mt-1">
+                        {farmersAheadCount} farmers ahead of you
+                      </span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-4 border border-gray-200">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                        EXPECTED WAIT
+                      </span>
+                      <p className="text-3xl font-black text-gray-900 mt-1">
+                        ~{waitMins} <span className="text-xs font-normal text-gray-500">min</span>
+                      </p>
+                      <span className="text-[10px] text-[#2E7D32] font-semibold block mt-1">
+                        Estimated turn time
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 space-y-6">
+                <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] text-center space-y-4">
+                  <h3 className="text-sm font-bold text-gray-900">
+                    Digital QR Gate Pass
+                  </h3>
+                  <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-gray-200 inline-block mx-auto">
+                    <QrCode className="w-32 h-32 text-[#1B4318] mx-auto" />
+                    <p className="text-[10px] font-mono text-gray-500 mt-2 font-bold">
+                      {activeBookingForFarmer.tokenDisplay}
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-600 font-medium">
+                    Present this QR code or Token ID at Mandi Gate scanner upon physical arrival
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -546,59 +651,79 @@ export default function FarmerDashboardView() {
             <ShieldCheck className="w-8 h-8" />
           </div>
 
-          <div>
-            <h3 className="text-xl font-black text-gray-900">
-              Mandi Gate Arrival Check-in
-            </h3>
-            <p className="text-xs text-gray-500 mt-1">
-              Confirm your physical arrival at Karnal Mandi Gate for Token #
-              {currentBooking?.tokenDisplay}
-            </p>
-          </div>
-
-          {/* Gate Token Status */}
-          <div className="p-6 bg-[#FAF8F2] rounded-3xl border border-[#A5D6A7] space-y-3 max-w-sm mx-auto font-sans">
-            <div className="text-xs font-bold text-[#1B4318] uppercase">
-              ARRIVAL GATE SCANNER
-            </div>
-            <div className="text-3xl font-black text-[#1B4318]">
-              {currentBooking?.tokenDisplay || "P-147"}
-            </div>
-            <div className="text-xs text-gray-600 font-semibold">
-              {currentBooking?.farmerName} • {currentBooking?.crop} (
-              {currentBooking?.quantity} Qtl)
-            </div>
-          </div>
-
-          {currentBooking?.stage !== "BOOKED" ? (
-            <div className="p-4 bg-green-50 rounded-2xl border border-green-200 text-xs text-green-900 space-y-1">
-              <div className="flex items-center justify-center gap-2 font-bold text-sm text-[#2E7D32]">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Gate Check-in Confirmed ✓</span>
+          {!hasActiveBooking ? (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-xl font-black text-gray-900">
+                  Mandi Gate Arrival Check-in
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  No active booking found. Please book a procurement slot before check-in at Mandi Gate.
+                </p>
               </div>
-              <p className="text-[11px] text-gray-700">
-                Arrival recorded. Your Token #{currentBooking?.tokenDisplay}{" "}
-                stage is <strong>{currentBooking?.stage}</strong>. Staff has
-                been notified.
-              </p>
+              <button
+                onClick={() => navigateTo("book-slot")}
+                className="px-6 py-3 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-black text-xs rounded-xl shadow-md cursor-pointer transition-all"
+              >
+                Book Procurement Slot
+              </button>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <button
-                onClick={handleIveArrived}
-                className="flex-1 py-3.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>{t("iveArrivedBtn")}</span>
-              </button>
-              <button
-                onClick={() => setCameraModalOpen(true)}
-                className="flex-1 py-3.5 bg-white border border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] font-extrabold text-xs rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Camera className="w-4 h-4" />
-                <span>Verify Photo Identity</span>
-              </button>
-            </div>
+            <>
+              <div>
+                <h3 className="text-xl font-black text-gray-900">
+                  Mandi Gate Arrival Check-in
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Confirm your physical arrival at {activeBookingForFarmer.centreName || "Karnal Mandi Gate"} for Token #
+                  {activeBookingForFarmer.tokenDisplay}
+                </p>
+              </div>
+
+              {/* Gate Token Status */}
+              <div className="p-6 bg-[#FAF8F2] rounded-3xl border border-[#A5D6A7] space-y-3 max-w-sm mx-auto font-sans">
+                <div className="text-xs font-bold text-[#1B4318] uppercase">
+                  ARRIVAL GATE SCANNER
+                </div>
+                <div className="text-3xl font-black text-[#1B4318]">
+                  {activeBookingForFarmer.tokenDisplay}
+                </div>
+                <div className="text-xs text-gray-600 font-semibold">
+                  {activeBookingForFarmer.farmerName || farmerProfile.name} • {activeBookingForFarmer.crop} (
+                  {activeBookingForFarmer.quantity} Qtl)
+                </div>
+              </div>
+
+              {activeBookingForFarmer.stage !== "BOOKED" ? (
+                <div className="p-4 bg-green-50 rounded-2xl border border-green-200 text-xs text-green-900 space-y-1">
+                  <div className="flex items-center justify-center gap-2 font-bold text-sm text-[#2E7D32]">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>Gate Check-in Confirmed ✓</span>
+                  </div>
+                  <p className="text-[11px] text-gray-700">
+                    Arrival recorded. Your Token #{activeBookingForFarmer.tokenDisplay}{" "}
+                    stage is <strong>{activeBookingForFarmer.stage}</strong>. Staff has been notified.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                  <button
+                    onClick={handleIveArrived}
+                    className="flex-1 py-3.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{t("iveArrivedBtn")}</span>
+                  </button>
+                  <button
+                    onClick={() => setCameraModalOpen(true)}
+                    className="flex-1 py-3.5 bg-white border border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] font-extrabold text-xs rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Verify Photo Identity</span>
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -606,72 +731,92 @@ export default function FarmerDashboardView() {
       {/* TAB 3: 7-STAGE WORKFLOW */}
       {activeTab === "workflow" && (
         <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-            <div>
+          {!hasActiveBooking && !isCompleted ? (
+            <div className="text-center py-8 space-y-4">
+              <Sparkles className="w-10 h-10 text-[#2E7D32] mx-auto opacity-40" />
               <h3 className="text-base font-bold text-gray-900">
                 7-Stage Procurement Workflow Tracking
               </h3>
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-gray-500">
-                  Token #{currentBooking?.tokenDisplay}
-                </p>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={() => setAuditInfoOpen(true)}
-                  className="text-xs text-[#2E7D32] hover:underline font-bold flex items-center gap-1 cursor-pointer"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Cryptographically Tracked ⓘ</span>
-                </button>
-              </div>
+              <p className="text-xs text-gray-500 max-w-md mx-auto">
+                No active booking found. Book a procurement slot to track your 7-stage workflow live.
+              </p>
+              <button
+                onClick={() => navigateTo("book-slot")}
+                className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-bold shadow-xs cursor-pointer"
+              >
+                Book Procurement Slot
+              </button>
             </div>
-            <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black">
-              Status: {currentBooking?.stage || "BOOKED"}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {WORKFLOW_STAGES.map((stage, idx) => {
-              const currentIdx = WORKFLOW_STAGES.findIndex(
-                (s) => s.key === currentBooking?.stage,
-              );
-              const isPassed = idx < currentIdx;
-              const isCurrent = idx === currentIdx;
-
-              return (
-                <div
-                  key={stage.key}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
-                    isCurrent
-                      ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
-                      : isPassed
-                        ? "bg-[#FAF8F2] border-green-200"
-                        : "bg-white border-gray-200 opacity-50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase">
-                      Stage 0{idx + 1}
-                    </span>
-                    {isPassed ? (
-                      <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
-                    ) : isCurrent ? (
-                      <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-ping" />
-                    ) : null}
+          ) : (
+            <>
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">
+                    7-Stage Procurement Workflow Tracking
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-gray-500">
+                      Token #{currentBooking?.tokenDisplay}
+                    </p>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => setAuditInfoOpen(true)}
+                      className="text-xs text-[#2E7D32] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Cryptographically Tracked ⓘ</span>
+                    </button>
                   </div>
-                  <h4
-                    className={`text-xs font-bold ${isCurrent ? "text-[#1B4318]" : "text-gray-900"}`}
-                  >
-                    {stage.label}
-                  </h4>
-                  <p className="text-[11px] text-gray-500 mt-1 leading-snug">
-                    {stage.desc}
-                  </p>
                 </div>
-              );
-            })}
-          </div>
+                <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black">
+                  Status: {currentBooking?.stage || "BOOKED"}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {WORKFLOW_STAGES.map((stage, idx) => {
+                  const currentIdx = WORKFLOW_STAGES.findIndex(
+                    (s) => s.key === currentBooking?.stage,
+                  );
+                  const isPassed = idx < currentIdx;
+                  const isCurrent = idx === currentIdx;
+
+                  return (
+                    <div
+                      key={stage.key}
+                      className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+                        isCurrent
+                          ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
+                          : isPassed
+                            ? "bg-[#FAF8F2] border-green-200"
+                            : "bg-white border-gray-200 opacity-50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-black text-gray-400 uppercase">
+                          Stage 0{idx + 1}
+                        </span>
+                        {isPassed ? (
+                          <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
+                        ) : isCurrent ? (
+                          <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-ping" />
+                        ) : null}
+                      </div>
+                      <h4
+                        className={`text-xs font-bold ${isCurrent ? "text-[#1B4318]" : "text-gray-900"}`}
+                      >
+                        {stage.label}
+                      </h4>
+                      <p className="text-[11px] text-gray-500 mt-1 leading-snug">
+                        {stage.desc}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -824,54 +969,75 @@ export default function FarmerDashboardView() {
             </p>
           </div>
 
-          <div className="bg-[#FAF8F2] p-6 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
-                Crop & Weight
-              </span>
-              <p className="text-base font-bold text-gray-900">
-                {currentBooking?.crop} (
-                {currentBooking?.weighedQuantity || currentBooking?.quantity}{" "}
-                Qtl)
+          {!currentBooking ? (
+            <div className="text-center py-8 space-y-4">
+              <FileText className="w-10 h-10 text-[#2E7D32] mx-auto opacity-40" />
+              <h4 className="text-sm font-bold text-gray-900">
+                No Active or Past Procurement Transactions
+              </h4>
+              <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                Disbursement details will appear here once your procurement cycle commences.
               </p>
+              <button
+                onClick={() => navigateTo("book-slot")}
+                className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-bold shadow-xs cursor-pointer"
+              >
+                Book Procurement Slot
+              </button>
             </div>
-            <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
-                Applicable MSP Rate
-              </span>
-              <p className="text-base font-bold text-[#2E7D32]">
-                ₹{currentBooking?.paymentDetails?.mspPerQtl || 2320} / Quintal
-              </p>
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
-                Total Payable Amount
-              </span>
-              <p className="text-2xl font-black text-[#1B4318]">
-                ₹
-                {(
-                  currentBooking?.paymentDetails?.grossAmount || 58417
-                ).toLocaleString()}
-              </p>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="bg-[#FAF8F2] p-6 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                    Crop & Weight
+                  </span>
+                  <p className="text-base font-bold text-gray-900">
+                    {currentBooking?.crop} (
+                    {currentBooking?.weighedQuantity || currentBooking?.quantity || 0}{" "}
+                    Qtl)
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                    Applicable MSP Rate
+                  </span>
+                  <p className="text-base font-bold text-[#2E7D32]">
+                    ₹{currentBooking?.paymentDetails?.mspPerQtl || 2320} / Quintal
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                    Total Payable Amount
+                  </span>
+                  <p className="text-2xl font-black text-[#1B4318]">
+                    ₹
+                    {(
+                      currentBooking?.paymentDetails?.grossAmount ||
+                      (Number(currentBooking?.weighedQuantity || currentBooking?.quantity || 0) * (currentBooking?.paymentDetails?.mspPerQtl || 2320))
+                    ).toLocaleString()}
+                  </p>
+                </div>
+              </div>
 
-          <div className="p-4 bg-white rounded-2xl border border-gray-200 flex items-center justify-between text-xs">
-            <div>
-              <span className="text-gray-500 block">
-                DBT Transaction Reference
-              </span>
-              <span className="font-mono font-bold text-gray-900">
-                {currentBooking?.paymentDetails?.dbtTxnId ||
-                  "DBT-SBI-2026-98124"}
-              </span>
-            </div>
-            <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
-              {currentBooking?.paymentDetails?.disbursed
-                ? "DISBURSED"
-                : "AUTHORIZED BY OFFICER"}
-            </span>
-          </div>
+              <div className="p-4 bg-white rounded-2xl border border-gray-200 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-gray-500 block">
+                    DBT Transaction Reference
+                  </span>
+                  <span className="font-mono font-bold text-gray-900">
+                    {currentBooking?.paymentDetails?.dbtTxnId ||
+                      `DBT-SBI-2026-${currentBooking?.tokenDisplay || "000"}`}
+                  </span>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
+                  {currentBooking?.paymentDetails?.disbursed
+                    ? "DISBURSED"
+                    : "AUTHORIZED BY OFFICER"}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       )}
 

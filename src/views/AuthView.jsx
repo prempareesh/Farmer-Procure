@@ -1,9 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sprout, CheckCircle2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export default function AuthView() {
-  const { registerFarmer, loginUser, t } = useApp();
+  const { user, registerFarmer, loginUser, navigateTo, t } = useApp();
+
+  useEffect(() => {
+    if (user) {
+      const dest =
+        user.role === "farmer"
+          ? "farmer-dash"
+          : user.role === "worker" || user.role === "staff"
+            ? "worker-dash"
+            : "officer-dash";
+      navigateTo(dest);
+    }
+  }, [user, navigateTo]);
 
   const [isRegistering, setIsRegistering] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);

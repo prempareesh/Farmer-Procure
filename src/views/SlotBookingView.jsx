@@ -24,6 +24,8 @@ export default function SlotBookingView() {
     crops,
     farmerProfile,
     timeSlots,
+    bookings,
+    isOffline,
     bookSlot,
     navigateTo,
     t,
@@ -43,18 +45,82 @@ export default function SlotBookingView() {
   const [bookingDate, setBookingDate] = useState(
     new Date().toISOString().split("T")[0],
   );
-  const [selectedSlot, setSelectedSlot] = useState("02:00 PM - 03:00 PM");
+  const [selectedSlot, setSelectedSlot] = useState("08:00 AM - 09:00 AM");
   const [validationError, setValidationError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
-  // Match selected crop profile
+  // Match selected crop profile & centre
   const matchedCrop =
     farmerCrops.find((c) => c.name === selectedCrop) || farmerCrops[0];
   const selectedCentre =
     mandiCentres.find((m) => m.id === selectedMandiId) || mandiCentres[0];
+
+  // USP 2: Real Database-Driven Slot Occupancy & Smart Recommendation Engine
+  const activeBookingsForDateAndCentre = (bookings || []).filter(
+    (b) =>
+      (b.centreId === selectedMandiId ||
+        b.centreCode === selectedCentre.centre_code) &&
+      (b.date === bookingDate || b.slot_date === bookingDate) &&
+      b.stage !== "COMPLETED" &&
+      b.status !== "COMPLETED",
+  );
+
+  // Compute real booked count per slot
+  const dynamicSlots = timeSlots.map((slot) => {
+    const bookedCount = activeBookingsForDateAndCentre.filter(
+      (b) => b.timeSlot === slot.time || b.slot_time === slot.time,
+    ).length;
+    const capacity = slot.capacity || 20;
+    const isFull = bookedCount >= capacity;
+    const available = Math.max(0, capacity - bookedCount);
+    const occupancyRatio = bookedCount / capacity;
+    const congestion = isFull
+      ? "FULL"
+      : occupancyRatio >= 0.75
+        ? "HIGH"
+        : occupancyRatio >= 0.4
+          ? "MEDIUM"
+          : "LOW";
+
+    return {
+      ...slot,
+      booked: bookedCount,
+      capacity,
+      available,
+      isFull,
+      occupancyRatio,
+      congestion,
+      expectedWaitMins: Math.max(5, Math.round(bookedCount * 3)),
+    };
+  });
+
+  // Recommend slot with minimum occupancy among non-full slots
+  const nonFullSlots = dynamicSlots.filter((s) => !s.isFull);
+  const minBooked =
+    nonFullSlots.length > 0
+      ? Math.min(...nonFullSlots.map((s) => s.booked))
+      : -1;
+
+  let recommendedSlotTime = null;
+  if (minBooked >= 0) {
+    const bestSlot = nonFullSlots.find((s) => s.booked === minBooked);
+    if (bestSlot) recommendedSlotTime = bestSlot.time;
+  }
+
+  const enrichedSlots = dynamicSlots.map((slot) => {
+    const isRecommended = slot.time === recommendedSlotTime;
+    return {
+      ...slot,
+      isRecommended,
+      recommendationRationale: isRecommended
+        ? `${t("lowestQueuePressure") || "Lowest current queue pressure"} — ${slot.booked} of ${slot.capacity} slots booked.`
+        : null,
+    };
+  });
+
   const activeSlotObj =
-    timeSlots.find((s) => s.time === selectedSlot) || timeSlots[0];
+    enrichedSlots.find((s) => s.time === selectedSlot) || enrichedSlots[0];
 
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
@@ -109,6 +175,22 @@ export default function SlotBookingView() {
           Farmer: {farmerProfile.name} ({farmerProfile.farmerId})
         </span>
       </div>
+
+      {/* Offline Status Indicator */}
+      {isOffline && (
+        <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-xs text-amber-900 font-bold flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+            <span>
+              {t("offlineModeActive") ||
+                "OFFLINE MODE — Showing last synchronized status"}
+            </span>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-md bg-amber-200 text-amber-900 font-mono text-[10px]">
+            {t("pendingSync") || "PENDING SYNC"}
+          </span>
+        </div>
+      )}
 
       {!confirmedBooking ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -258,18 +340,26 @@ export default function SlotBookingView() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {timeSlots.map((slot) => {
-                    const isFull = slot.booked >= slot.capacity;
+                  {enrichedSlots.map((slot) => {
+                    const isFull = slot.isFull;
                     const isSelected = selectedSlot === slot.time;
-                    const available = slot.capacity - slot.booked;
+                    const available = slot.available;
 
                     return (
                       <div
                         key={slot.time}
                         onClick={() => {
-                          if (!isFull) setSelectedSlot(slot.time);
+                          if (!isFull) {
+                            setSelectedSlot(slot.time);
+                            setValidationError("");
+                          } else {
+                            setValidationError(
+                              t("slotFullError") ||
+                                "Slot full. Please choose another slot.",
+                            );
+                          }
                         }}
-                        className={`p-3 rounded-2xl border transition-all relative ${
+                        className={`p-3.5 rounded-2xl border transition-all relative ${
                           isFull
                             ? "bg-gray-100 border-gray-200 opacity-60 cursor-not-allowed"
                             : isSelected
@@ -278,7 +368,7 @@ export default function SlotBookingView() {
                         }`}
                       >
                         {slot.isRecommended && (
-                          <span className="absolute -top-2 right-3 px-2 py-0.5 rounded-full bg-[#F9A825] text-gray-900 text-[9px] font-black uppercase shadow-xs flex items-center gap-1">
+                          <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 rounded-full bg-[#F9A825] text-gray-900 text-[9px] font-black uppercase shadow-xs flex items-center gap-1 border border-amber-400">
                             <Sparkles className="w-2.5 h-2.5" />{" "}
                             {t("smartSlotRecommendation")}
                           </span>
@@ -294,27 +384,34 @@ export default function SlotBookingView() {
                             </span>
                           ) : (
                             <span className="text-[10px] font-bold text-gray-600">
-                              {t("availableCapacity")}:{" "}
                               <strong className="text-[#2E7D32]">
                                 {available}
                               </strong>{" "}
-                              / {slot.capacity}
+                              / {slot.capacity} {t("availableCapacity")}
                             </span>
                           )}
                         </div>
 
-                        <div className="flex items-center justify-between text-[10px] mt-1.5 font-medium">
-                          <span className="text-gray-500">
+                        {slot.recommendationRationale && (
+                          <p className="text-[10px] text-[#1B4318] font-extrabold mt-1.5 bg-[#E8F5E9]/80 p-1.5 rounded-lg border border-[#A5D6A7]">
+                            💡 {slot.recommendationRationale}
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between text-[10px] mt-2 font-medium pt-1 border-t border-gray-100">
+                          <span className="text-gray-500 font-semibold">
                             Booked: {slot.booked}/{slot.capacity}
                           </span>
                           <span
-                            className={
-                              slot.expectedWaitMins <= 15
-                                ? "text-[#2E7D32] font-bold"
-                                : "text-amber-700"
-                            }
+                            className={`font-extrabold px-1.5 py-0.5 rounded ${
+                              slot.congestion === "LOW"
+                                ? "bg-green-100 text-[#2E7D32]"
+                                : slot.congestion === "MEDIUM"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : "bg-red-100 text-red-800"
+                            }`}
                           >
-                            Exp. Wait: ~{slot.expectedWaitMins} min
+                            {slot.congestion} CONGESTION
                           </span>
                         </div>
                       </div>
