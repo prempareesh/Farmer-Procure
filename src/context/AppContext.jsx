@@ -230,6 +230,11 @@ export function AppProvider({ children }) {
 
   // 4. Primary State Lists
   const [farmersList, setFarmersList] = useState([]);
+  const farmersListRef = useRef(farmersList);
+
+  useEffect(() => {
+    farmersListRef.current = farmersList;
+  }, [farmersList]);
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     try {
@@ -641,11 +646,17 @@ export function AppProvider({ children }) {
               const targetDbId = newDb.id;
               const rawBId = newDb.booking_id || newDb.id;
 
+              console.log("[STAFF_REALTIME_EVENT_RECEIVED]", {
+                event_type: payload.eventType,
+                booking_id: rawBId,
+                payload_timestamp: new Date().toISOString(),
+              });
+
               // Stage 1: Fast Profile Name Resolution & Instant Ingestion
               let fastFarmerName = "Farmer Booking";
               let fastFarmerId = "FRM-2026-PENDING";
 
-              const localProf = farmersList.find(
+              const localProf = (farmersListRef.current || []).find(
                 (f) => f.id === newDb.profile_id || f.farmerId === newDb.profile_id
               );
               if (localProf) {
@@ -674,7 +685,7 @@ export function AppProvider({ children }) {
                 profileId: newDb.profile_id,
                 farmerId: fastFarmerId,
                 farmerName: fastFarmerName,
-                centreId: newDb.centre_id,
+                centreId: newDb.centre_id || "186c9f3d-34bd-4413-9d95-77687b3fb49b",
                 centreCode: "P",
                 centreName: "Karnal Central Grain Mandi",
                 tokenDisplay: "PS-PENDING",
@@ -709,89 +720,109 @@ export function AppProvider({ children }) {
                 return [instantRecord, ...prev];
               });
 
-              // Stage 2: Asynchronous Relational Hydration
-              try {
-                const { data: bFull } = await supabase
-                  .from("bookings")
-                  .select(`
-                    *,
-                    profiles ( id, farmer_id, name, mobile, village, district, state ),
-                    procurement_centres ( id, centre_code, centre_name ),
-                    tokens ( id, token_number, queue_position, centre_code )
-                  `)
-                  .eq("id", targetDbId)
-                  .maybeSingle();
+              console.log("[STAFF_RAW_BOOKING_MERGED]", { booking_id: rawBId });
 
-                if (bFull) {
-                  const p = bFull.profiles || {};
-                  const c = bFull.procurement_centres || {};
-                  const t = (bFull.tokens && bFull.tokens.length > 0) ? bFull.tokens[0] : null;
+              // Stage 2: Asynchronous Relational Hydration with Retry
+              const hydrateBooking = async (retryCount = 0) => {
+                console.log("[STAFF_HYDRATION_STARTED]", { booking_id: rawBId, retry: retryCount });
+                try {
+                  const { data: bFull, error: hErr } = await supabase
+                    .from("bookings")
+                    .select(`
+                      *,
+                      profiles ( id, farmer_id, name, mobile, village, district, state ),
+                      procurement_centres ( id, centre_code, centre_name ),
+                      tokens ( id, token_number, queue_position, centre_code )
+                    `)
+                    .eq("id", targetDbId)
+                    .maybeSingle();
 
-                  const fId = p.farmer_id || bFull.farmer_id || fastFarmerId;
-                  const fName = p.name || bFull.farmer_name || fastFarmerName;
-                  const code = c.centre_code || "P";
-                  const cName = c.centre_name || "Karnal Central Grain Mandi";
-                  const tSeq = t?.queue_position || 1;
-                  const prefix = code === "P" ? "PS" : `${code}S`;
-                  const tDisp = t?.token_number || `${prefix}-${String(tSeq).padStart(3, "0")}`;
-                  const bId = bFull.booking_id || bFull.id;
-
-                  const formattedRecord = {
-                    id: bId,
-                    booking_id: bId,
-                    db_id: bFull.id,
-                    profileId: bFull.profile_id,
-                    profiles: p,
-                    farmerId: fId,
-                    farmerName: fName,
-                    farmerMobile: p.mobile,
-                    centreId: bFull.centre_id,
-                    centreCode: code,
-                    centreName: cName,
-                    tokenDisplay: tDisp,
-                    tokenSeq: tSeq,
-                    crop: "Paddy (Basmati 1121)",
-                    quantity: Number(bFull.expected_quantity || 25),
-                    date: bFull.slot_date,
-                    slot_date: bFull.slot_date,
-                    timeSlot: bFull.slot_time,
-                    slot_time: bFull.slot_time,
-                    stage: bFull.status || "BOOKED",
-                    status: bFull.status || "BOOKED",
-                    stageStatus: "IN_PROGRESS",
-                    faceVerified: false,
-                    paymentDetails: {
-                      mspPerQtl: 2320,
-                      grossAmount: Number(bFull.expected_quantity || 25) * 2320,
-                      dbtTxnId: "DBT-PENDING",
-                      disbursed: bFull.status === "COMPLETED",
-                    },
-                    qrData: `AGRI-PROCURE-${bId}-${tDisp}`,
-                    createdAt: new Date(bFull.created_at || Date.now()).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }),
-                  };
-
-                  setBookings((prev) =>
-                    prev.map((item) =>
-                      item.id === bId || item.booking_id === bId || item.db_id === bFull.id
-                        ? { ...item, ...formattedRecord }
-                        : item
-                    )
-                  );
-
-                  if (payload.eventType === "INSERT") {
-                    addNotification({
-                      title: "Realtime Booking Received",
-                      message: `New booking ${bId} (${fName}) arrived at ${cName}.`,
-                      type: "info",
-                    });
+                  if (hErr) {
+                    console.error("[STAFF_HYDRATION_FAILED]", { booking_id: rawBId, error: hErr.message });
                   }
+
+                  if (bFull) {
+                    const p = bFull.profiles || {};
+                    const c = bFull.procurement_centres || {};
+                    const t = (bFull.tokens && bFull.tokens.length > 0) ? bFull.tokens[0] : null;
+
+                    const fId = p.farmer_id || bFull.farmer_id || fastFarmerId;
+                    const fName = p.name || bFull.farmer_name || fastFarmerName;
+                    const code = c.centre_code || "P";
+                    const cName = c.centre_name || "Karnal Central Grain Mandi";
+                    const tSeq = t?.queue_position || 1;
+                    const prefix = code === "P" ? "PS" : `${code}S`;
+                    const tDisp = t?.token_number || `${prefix}-${String(tSeq).padStart(3, "0")}`;
+                    const bId = bFull.booking_id || bFull.id;
+
+                    const formattedRecord = {
+                      id: bId,
+                      booking_id: bId,
+                      db_id: bFull.id,
+                      profileId: bFull.profile_id,
+                      profiles: p,
+                      farmerId: fId,
+                      farmerName: fName,
+                      farmerMobile: p.mobile,
+                      centreId: bFull.centre_id || "186c9f3d-34bd-4413-9d95-77687b3fb49b",
+                      centreCode: code,
+                      centreName: cName,
+                      tokenDisplay: tDisp,
+                      tokenSeq: tSeq,
+                      crop: "Paddy (Basmati 1121)",
+                      quantity: Number(bFull.expected_quantity || 25),
+                      date: bFull.slot_date,
+                      slot_date: bFull.slot_date,
+                      timeSlot: bFull.slot_time,
+                      slot_time: bFull.slot_time,
+                      stage: bFull.status || "BOOKED",
+                      status: bFull.status || "BOOKED",
+                      stageStatus: "IN_PROGRESS",
+                      faceVerified: false,
+                      paymentDetails: {
+                        mspPerQtl: 2320,
+                        grossAmount: Number(bFull.expected_quantity || 25) * 2320,
+                        dbtTxnId: "DBT-PENDING",
+                        disbursed: bFull.status === "COMPLETED",
+                      },
+                      qrData: `AGRI-PROCURE-${bId}-${tDisp}`,
+                      createdAt: new Date(bFull.created_at || Date.now()).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }),
+                    };
+
+                    setBookings((prev) =>
+                      prev.map((item) =>
+                        item.id === bId || item.booking_id === bId || item.db_id === bFull.id
+                          ? { ...item, ...formattedRecord }
+                          : item
+                      )
+                    );
+
+                    console.log("[STAFF_HYDRATION_COMPLETED]", {
+                      booking_id: bId,
+                      farmer_name: fName,
+                      centre: cName,
+                      token: tDisp,
+                    });
+
+                    if (payload.eventType === "INSERT") {
+                      addNotification({
+                        title: "Realtime Booking Received",
+                        message: `New booking ${bId} (${fName}) arrived at ${cName}.`,
+                        type: "info",
+                      });
+                    }
+                  } else if (retryCount < 2) {
+                    setTimeout(() => hydrateBooking(retryCount + 1), 200);
+                  }
+                } catch (err) {
+                  console.error("[STAFF_HYDRATION_FAILED]", { booking_id: rawBId, error: err.message });
                 }
-              } catch (err) {
-                console.warn("Realtime hydration sync notice:", err);
-              }
+              };
+
+              hydrateBooking(0);
             }
           },
         )
@@ -802,9 +833,14 @@ export function AppProvider({ children }) {
             if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
               const tRow = payload.new;
               if (tRow && tRow.booking_id) {
+                console.log("[TOKEN_REALTIME_RECEIVED]", tRow.booking_id, tRow.token_number);
                 setBookings((prev) =>
                   prev.map((b) => {
-                    if (b.db_id === tRow.booking_id || b.id === tRow.booking_id) {
+                    if (
+                      b.db_id === tRow.booking_id ||
+                      b.id === tRow.booking_id ||
+                      b.booking_id === tRow.booking_id
+                    ) {
                       return {
                         ...b,
                         tokenDisplay: tRow.token_number || b.tokenDisplay,
@@ -899,12 +935,16 @@ export function AppProvider({ children }) {
           }
         })
         .subscribe((status) => {
+          console.log(`[SUBSCRIPTION_STATUS] ${status}`);
           if (
             status === "CHANNEL_ERROR" ||
             status === "TIMED_OUT" ||
             status === "CLOSED"
           ) {
-            // Silently handled in DEMO MODE
+            console.warn(`[SUBSCRIPTION_STATUS] Realtime channel disconnected (${status}). Reconnecting...`);
+            setTimeout(() => {
+              initializeSystem();
+            }, 1000);
           }
         });
 
@@ -1815,6 +1855,15 @@ export function AppProvider({ children }) {
           .single();
 
         if (insertedDb) {
+          console.log("[BOOKING_CREATED]", {
+            booking_id: newBookingId,
+            farmer_id: activeFarmerObj?.farmerId || profileUuid,
+            centre_id: centreUuid,
+            slot_id: bookingData.timeSlot,
+            booking_date: bookingData.date,
+            created_at: new Date().toISOString(),
+          });
+
           await supabase.from("tokens").insert([
             {
               booking_id: insertedDb.id,
@@ -1824,6 +1873,12 @@ export function AppProvider({ children }) {
               date: bookingData.date,
             },
           ]);
+
+          console.log("[TOKEN_CREATED]", {
+            booking_id: insertedDb.id,
+            token: tokenDisplay,
+            token_sequence: nextSeq,
+          });
 
           await supabase.from("audit_logs").insert([
             {
