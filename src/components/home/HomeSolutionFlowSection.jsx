@@ -1,75 +1,88 @@
 import React from "react";
-import {
-  Calendar,
-  Ticket,
-  Activity,
-  TrendingUp,
-  Cpu,
-  CheckCircle2,
-  ShieldCheck,
-  ArrowRight,
-} from "lucide-react";
-import { useApp } from "../../context/AppContext";
+import { ArrowRight, Eye, TrendingUp, HelpCircle, AlertCircle, Cpu, ShieldCheck } from "lucide-react";
 
 export default function HomeSolutionFlowSection() {
-  const { t } = useApp();
-
-  const flowSteps = [
-    { code: t("stepBook"), icon: Calendar },
-    { code: t("stepToken"), icon: Ticket },
-    { code: t("stepTrack"), icon: Activity },
-    { code: t("stepPredict"), icon: TrendingUp },
-    { code: t("stepAct"), icon: Cpu },
-    { code: t("stepProcure"), icon: CheckCircle2 },
-    { code: t("stepVerify"), icon: ShieldCheck },
+  const loopSteps = [
+    {
+      code: "01",
+      name: "OBSERVE",
+      desc: "Live Mandi queue telemetry & truck arrivals ingested in real time.",
+      icon: Eye,
+    },
+    {
+      code: "02",
+      name: "PREDICT",
+      desc: "Machine learning forecasts processing delays & wait times per slot.",
+      icon: TrendingUp,
+    },
+    {
+      code: "03",
+      name: "EXPLAIN",
+      desc: "XAI identifies exact root causes of delay (moisture testing, weighbridge).",
+      icon: HelpCircle,
+    },
+    {
+      code: "04",
+      name: "IDENTIFY",
+      desc: "Detects alternative Mandi centres with minimal queue congestion.",
+      icon: AlertCircle,
+    },
+    {
+      code: "05",
+      name: "ACT",
+      desc: "Re-routes farmer slots dynamically to prevent gate traffic jams.",
+      icon: Cpu,
+    },
+    {
+      code: "06",
+      name: "VERIFY",
+      desc: "1:1 Face verification & SHA-256 audit ledger seal every transaction.",
+      icon: ShieldCheck,
+    },
   ];
 
   return (
     <section
       id="solution"
-      className="w-full py-16 bg-[#FAFBF8] border-b border-[#E8EFE6] font-sans"
+      className="w-full py-20 bg-[#050705] border-b border-[#12351F]/40"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-10">
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-[11px] font-black text-[#2E7D32] bg-[#E8F5E9] px-3.5 py-1.5 rounded-full uppercase tracking-wider border border-[#C8E6C9]">
-            THE AGRIPROCURE SOLUTION
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
+        <div className="max-w-3xl space-y-3">
+          <span className="font-mono text-xs font-bold text-[#79C267] tracking-widest uppercase block">
+            THE INTELLIGENCE LOOP
           </span>
-          <h2 className="text-3xl font-extrabold text-[#111827] tracking-tight">
-            {t("solutionTitle")}
+          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#F1EFE6] leading-tight">
+            How AgriProcure manages <br />
+            <span className="text-[#79C267]">end-to-end procurement.</span>
           </h2>
-          <p className="text-sm text-gray-600 font-medium leading-relaxed">
-            {t("solutionSub")}
-          </p>
         </div>
 
-        {/* Visual Flow Pipeline */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200 shadow-2xs max-w-5xl mx-auto space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-center">
-            {flowSteps.map((step, idx) => {
-              const StepIcon = step.icon;
-              return (
-                <div
-                  key={step.code}
-                  className="relative flex flex-col items-center p-3 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-[#1B4318] text-white flex items-center justify-center font-bold shadow-2xs">
-                    <StepIcon className="w-4 h-4 text-[#F9A825]" />
-                  </div>
-                  <span className="text-xs font-black text-[#111827] tracking-wide">
+        {/* Continuous Flow Loop Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loopSteps.map((step, idx) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={step.code}
+                className="bg-[#0B120C] p-6 rounded-2xl border border-[#12351F] space-y-4 hover:border-[#1D5A2D] transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#79C267] bg-[#12351F] px-2.5 py-1 rounded-md">
                     {step.code}
                   </span>
-                  {idx < flowSteps.length - 1 && (
-                    <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#2E7D32] z-10" />
-                  )}
+                  <Icon className="w-5 h-5 text-[#79C267]" />
                 </div>
-              );
-            })}
-          </div>
-
-          <div className="bg-[#E8F5E9] p-4 rounded-2xl border border-[#C8E6C9] text-center text-xs font-extrabold text-[#1B4318]">
-            ⚡ Shared State Engine: Actions in Farmer, Staff, or Officer portals
-            update the entire Mandi ecosystem live.
-          </div>
+                <div>
+                  <h3 className="font-serif text-xl font-normal text-[#F1EFE6]">
+                    {step.name}
+                  </h3>
+                  <p className="text-xs text-[#A9B0A5] font-sans font-normal mt-2 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
