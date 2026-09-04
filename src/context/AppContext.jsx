@@ -631,13 +631,38 @@ export function AppProvider({ children }) {
           });
 
           setBookings((prev) => {
-            const mapById = new Map();
-            prev.forEach((item) => mapById.set(item.id, item));
-            mapped.forEach((item) => {
-              const existing = mapById.get(item.id);
-              mapById.set(item.id, existing ? { ...existing, ...item } : item);
+            const prevByDbId = new Map();
+            const prevById = new Map();
+            prev.forEach((item) => {
+              if (item.db_id) prevByDbId.set(item.db_id, item);
+              if (item.id) prevById.set(item.id, item);
+              if (item.booking_id) prevById.set(item.booking_id, item);
             });
-            return Array.from(mapById.values());
+
+            const updatedList = [...prev];
+
+            mapped.forEach((dbItem) => {
+              const existing =
+                (dbItem.db_id && prevByDbId.get(dbItem.db_id)) ||
+                (dbItem.id && prevById.get(dbItem.id)) ||
+                (dbItem.booking_id && prevById.get(dbItem.booking_id));
+
+              if (existing) {
+                const index = updatedList.findIndex(
+                  (r) =>
+                    (r.db_id && r.db_id === dbItem.db_id) ||
+                    r.id === existing.id ||
+                    (r.booking_id && r.booking_id === existing.booking_id)
+                );
+                if (index !== -1) {
+                  updatedList[index] = { ...existing, ...dbItem };
+                }
+              } else {
+                updatedList.unshift(dbItem);
+              }
+            });
+
+            return updatedList;
           });
         }
 
@@ -709,6 +734,11 @@ export function AppProvider({ children }) {
                 }
               }
 
+              const localCent = (INITIAL_CENTRES || []).find((c) => c.id === newDb.centre_id);
+              const fastCentreCode = localCent?.centre_code || localCent?.code || "P";
+              const fastCentreName = localCent?.centre_name || localCent?.name || "Karnal Central Grain Mandi";
+              const fastPrefix = fastCentreCode === "P" ? "PS" : `${fastCentreCode}S`;
+
               const instantRecord = {
                 id: rawBId,
                 booking_id: rawBId,
@@ -717,9 +747,9 @@ export function AppProvider({ children }) {
                 farmerId: fastFarmerId,
                 farmerName: fastFarmerName,
                 centreId: newDb.centre_id || "186c9f3d-34bd-4413-9d95-77687b3fb49b",
-                centreCode: "P",
-                centreName: "Karnal Central Grain Mandi",
-                tokenDisplay: "PS-PENDING",
+                centreCode: fastCentreCode,
+                centreName: fastCentreName,
+                tokenDisplay: `${fastPrefix}-PENDING`,
                 tokenSeq: 1,
                 crop: "Paddy (Basmati 1121)",
                 quantity: Number(newDb.expected_quantity || 25),
@@ -773,9 +803,15 @@ export function AppProvider({ children }) {
                   }
 
                   if (bFull) {
+                    const hasToken = bFull.tokens && bFull.tokens.length > 0;
+                    if (!hasToken && retryCount < 5) {
+                      setTimeout(() => hydrateBooking(retryCount + 1), 250);
+                      return;
+                    }
+
                     const p = bFull.profiles || {};
                     const c = bFull.procurement_centres || {};
-                    const t = (bFull.tokens && bFull.tokens.length > 0) ? bFull.tokens[0] : null;
+                    const t = hasToken ? bFull.tokens[0] : null;
 
                     const fId = p.farmer_id || bFull.farmer_id || fastFarmerId;
                     const fName = p.name || bFull.farmer_name || fastFarmerName;

@@ -245,32 +245,38 @@ export default function OfficerDashboardView() {
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-xs">
-                72 Active Bookings • 80% Capacity
+                {bookings.length} Active Bookings • Live Sync
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {bookings.slice(0, 5).map((b) => (
-                <div
-                  key={b.id}
-                  className="p-4 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-black text-sm text-[#1B4318]">
-                      {b.tokenDisplay}
-                    </span>
-                    <span className="text-[10px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
-                      {b.stage}
-                    </span>
-                  </div>
-                  <div className="text-xs font-bold text-gray-900 truncate">
-                    {b.farmerName}
-                  </div>
-                  <div className="text-[10px] text-gray-500">
-                    {b.crop} • {b.quantity} Qtl
-                  </div>
+              {bookings.length === 0 ? (
+                <div className="col-span-5 p-4 text-center text-xs font-bold text-gray-400 bg-[#FAFBF8] rounded-2xl border border-gray-200">
+                  No active bookings in queue
                 </div>
-              ))}
+              ) : (
+                bookings.map((b) => (
+                  <div
+                    key={b.id || b.booking_id || b.db_id}
+                    className="p-4 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-black text-sm text-[#1B4318]">
+                        {b.tokenDisplay}
+                      </span>
+                      <span className="text-[10px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
+                        {b.stage || b.status}
+                      </span>
+                    </div>
+                    <div className="text-xs font-bold text-gray-900 truncate">
+                      {b.farmerName}
+                    </div>
+                    <div className="text-[10px] text-gray-500">
+                      {b.crop} • {b.quantity} Qtl
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
