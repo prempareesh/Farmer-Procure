@@ -482,12 +482,42 @@ export function AppProvider({ children }) {
         setIsDemoMode(false);
         try {
           await loadSupabaseData();
-          activeChannel = subscribeRealtime();
         } catch (err) {
           console.warn("Supabase initialization sync warning:", err);
         }
       }
     }
+
+    // Subscribe Realtime IMMEDIATELY at T=0 so WebSockets are active before initial fetch completes
+    activeChannel = subscribeRealtime();
+    initializeSystem();
+
+    // 10-Second Heartbeat Synchronization for Fail-Safe Multi-Device Accuracy
+    const syncInterval = setInterval(() => {
+      loadSupabaseData();
+    }, 10000);
+
+    // Tab Focus Restoration Reconciliation
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        console.log("[TAB_VISIBILITY_RECONCILIATION] Tab active, reconciling DB state...");
+        loadSupabaseData();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(syncInterval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (activeChannel) {
+        try {
+          supabase.removeChannel(activeChannel);
+        } catch {
+          // Safe channel removal fallback
+        }
+      }
+    };
+  }, []);
 
     async function loadSupabaseData() {
       try {
@@ -954,26 +984,6 @@ export function AppProvider({ children }) {
       activeChannelRef.current = channel;
       return channel;
     }
-
-    initializeSystem();
-    activeChannel = subscribeRealtime();
-
-    // 10-Second Heartbeat Synchronization for Fail-Safe Multi-Device Accuracy
-    const syncInterval = setInterval(() => {
-      initializeSystem();
-    }, 10000);
-
-    return () => {
-      clearInterval(syncInterval);
-      if (activeChannel) {
-        try {
-          supabase.removeChannel(activeChannel);
-        } catch {
-          // Safe channel removal fallback
-        }
-      }
-    };
-  }, []);
 
   // Navigation Guard Helper
   const navigateTo = (view, options = {}) => {
@@ -1569,7 +1579,17 @@ export function AppProvider({ children }) {
   };
 
   // 8. Smart Slot Booking (Supabase `bookings` & `tokens`)
-  const bookSlot = async (bookingData) => {
+  const bookSlot = async (bookingData, reqIdParam) => {
+    const reqId = reqIdParam || "req-" + Date.now() + "-" + Math.floor(1000 + Math.random() * 9000);
+    const activeFarmerObj =
+      user && (user.role === "farmer" || user.farmerId) ? user : farmerProfile;
+
+    console.log("[BOOKING_SUBMIT_STARTED]", {
+      REQUEST_ID: reqId,
+      FARMER_ID: activeFarmerObj?.farmerId || "UNKNOWN",
+      CLIENT_TIME: new Date().toISOString(),
+    });
+
     const centre =
       mandiCentres.find(
         (m) =>
@@ -1594,6 +1614,10 @@ export function AppProvider({ children }) {
         .neq("status", "CANCELLED");
 
       if (serverSlotCount !== null && serverSlotCount >= slotObj.capacity) {
+        console.error("[BOOKING_FLOW_ERROR]", {
+          REQUEST_ID: reqId,
+          EXACT_ERROR: "Slot full. Please choose another slot.",
+        });
         throw new Error("Slot full. Please choose another slot.");
       }
     } catch (err) {
@@ -1614,6 +1638,10 @@ export function AppProvider({ children }) {
     ).length;
 
     if (activeSlotBookings >= slotObj.capacity) {
+      console.error("[BOOKING_FLOW_ERROR]", {
+        REQUEST_ID: reqId,
+        EXACT_ERROR: "Slot full. Please choose another slot.",
+      });
       throw new Error("Slot full. Please choose another slot.");
     }
 
@@ -1795,9 +1823,6 @@ export function AppProvider({ children }) {
       let profileUuid = null;
       let centreUuid = null;
 
-      const activeFarmerObj =
-        user && (user.role === "farmer" || user.farmerId) ? user : farmerProfile;
-
       if (activeFarmerObj?.id && String(activeFarmerObj.id).length > 20) {
         profileUuid = activeFarmerObj.id;
       }
@@ -1847,6 +1872,7 @@ export function AppProvider({ children }) {
       }
 
       if (profileUuid && centreUuid) {
+        console.log("[BOOKING_REQUEST_SENT]", { REQUEST_ID: reqId });
         const { data: insertedDb, error: bErr } = await supabase
           .from("bookings")
           .insert([
@@ -1864,14 +1890,23 @@ export function AppProvider({ children }) {
           .select()
           .single();
 
+        if (bErr) {
+          console.error("[BOOKING_DB_RESPONSE]", {
+            REQUEST_ID: reqId,
+            STATUS: "ERROR",
+            EXACT_ERROR: bErr.message,
+          });
+        }
+
         if (insertedDb) {
-          console.log("[BOOKING_CREATED]", {
-            booking_id: newBookingId,
-            farmer_id: activeFarmerObj?.farmerId || profileUuid,
-            centre_id: centreUuid,
-            slot_id: bookingData.timeSlot,
-            booking_date: bookingData.date,
-            created_at: new Date().toISOString(),
+          console.log("[BOOKING_DB_RESPONSE]", {
+            REQUEST_ID: reqId,
+            STATUS: "SUCCESS",
+            BOOKING_ID: newBookingId,
+          });
+          console.log("[BOOKING_COMMITTED]", {
+            REQUEST_ID: reqId,
+            BOOKING_ID: newBookingId,
           });
 
           await supabase.from("tokens").insert([
@@ -1885,9 +1920,9 @@ export function AppProvider({ children }) {
           ]);
 
           console.log("[TOKEN_CREATED]", {
-            booking_id: insertedDb.id,
-            token: tokenDisplay,
-            token_sequence: nextSeq,
+            REQUEST_ID: reqId,
+            BOOKING_ID: newBookingId,
+            TOKEN: tokenDisplay,
           });
 
           await supabase.from("audit_logs").insert([
@@ -1898,12 +1933,13 @@ export function AppProvider({ children }) {
               previous_hash: prevBlock.currentHash,
             },
           ]);
-        } else if (bErr) {
-          console.warn("Supabase booking insert notice:", bErr.message);
         }
       }
     } catch (err) {
-      console.warn("Supabase booking insert fallback:", err);
+      console.error("[BOOKING_FLOW_ERROR]", {
+        REQUEST_ID: reqId,
+        EXACT_ERROR: err.message,
+      });
     }
 
     addNotification({

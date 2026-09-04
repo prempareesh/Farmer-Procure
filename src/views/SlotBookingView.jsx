@@ -138,13 +138,17 @@ export default function SlotBookingView() {
 
     setIsSubmitting(true);
     try {
-      const newBooking = await bookSlot({
-        centreId: selectedMandiId,
-        crop: selectedCrop,
-        quantity: qtyNum,
-        date: bookingDate,
-        timeSlot: selectedSlot,
-      });
+      const reqId = "req-" + Date.now() + "-" + Math.floor(1000 + Math.random() * 9000);
+      const newBooking = await bookSlot(
+        {
+          centreId: selectedMandiId,
+          crop: selectedCrop,
+          quantity: qtyNum,
+          date: bookingDate,
+          timeSlot: selectedSlot,
+        },
+        reqId
+      );
 
       confetti({
         particleCount: 70,

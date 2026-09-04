@@ -333,6 +333,7 @@ export default function WorkerDashboardView() {
                 {sortedBookings.map((b) => {
                   const isCompletedStage = b.stage === "COMPLETED" || b.status === "COMPLETED";
                   const isRejectedStage = b.stage === "REJECTED" || b.status === "REJECTED";
+                  console.log("[STAFF_ROW_RENDERED]", b.booking_id || b.id);
                   return (
                     <tr key={b.id || b.booking_id} className="hover:bg-green-50/50 transition-colors">
                       <td className="p-3.5 font-mono font-black text-amber-800 text-sm">
