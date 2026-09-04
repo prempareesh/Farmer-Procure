@@ -32,6 +32,7 @@ export default function FarmerDashboardView() {
     deleteCrop,
     bookings,
     activeBooking,
+    identityVerifications,
     servingToken,
     peopleAhead,
     estimatedWaitMins,
@@ -318,6 +319,56 @@ export default function FarmerDashboardView() {
                   {currentBooking?.stage}
                 </span>
               </div>
+
+              {/* Identity Verification Status Banner */}
+              {(() => {
+                const activeVerification = identityVerifications.find(
+                  (v) =>
+                    v.bookingId === currentBooking?.id ||
+                    v.bookingId === currentBooking?.booking_id ||
+                    v.booking_id === currentBooking?.id ||
+                    v.booking_id === currentBooking?.booking_id,
+                );
+                if (activeVerification?.verificationStatus === "VERIFIED") {
+                  return (
+                    <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-emerald-900 font-bold flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span>Identity Verification Status</span>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black border border-emerald-300">
+                        Identity Verified ✓
+                      </span>
+                    </div>
+                  );
+                } else if (
+                  activeVerification?.verificationStatus === "REVIEW_REQUIRED"
+                ) {
+                  return (
+                    <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 font-bold flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-amber-600" />
+                        <span>Identity Verification Status</span>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black border border-amber-300">
+                        Staff Review Required
+                      </span>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-blue-900 font-bold flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-blue-600" />
+                        <span>Identity Verification Status</span>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black border border-blue-300">
+                        Identity Photo Captured ✓ (Pending Arrival Verification)
+                      </span>
+                    </div>
+                  );
+                }
+              })()}
 
               {/* Action Banner for GATE ARRIVAL */}
               {currentBooking?.stage === "BOOKED" && (

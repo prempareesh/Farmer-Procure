@@ -17,6 +17,7 @@ export default function OfficerDashboardView() {
   const {
     farmersList,
     bookings,
+    identityVerifications,
     peopleAhead,
     estimatedWaitMins,
     xaiFactors,
@@ -250,27 +251,53 @@ export default function OfficerDashboardView() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {bookings.slice(0, 5).map((b) => (
-                <div
-                  key={b.id}
-                  className="p-4 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-black text-sm text-[#1B4318]">
-                      {b.tokenDisplay}
-                    </span>
-                    <span className="text-[10px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
-                      {b.stage}
-                    </span>
+              {bookings.slice(0, 5).map((b) => {
+                const verificationRec = identityVerifications.find(
+                  (v) =>
+                    v.bookingId === b.id ||
+                    v.bookingId === b.booking_id ||
+                    v.booking_id === b.id ||
+                    v.booking_id === b.booking_id,
+                );
+
+                return (
+                  <div
+                    key={b.id}
+                    className="p-4 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-black text-sm text-[#1B4318]">
+                        {b.tokenDisplay}
+                      </span>
+                      <span className="text-[10px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
+                        {b.stage}
+                      </span>
+                    </div>
+                    <div className="text-xs font-bold text-gray-900 truncate">
+                      {b.farmerName}
+                    </div>
+                    <div className="text-[10px] text-gray-500">
+                      {b.crop} • {b.quantity} Qtl
+                    </div>
+                    <div className="pt-1">
+                      {verificationRec?.verificationStatus === "VERIFIED" ? (
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[9px] border border-emerald-300">
+                          Identity Verified ✓
+                        </span>
+                      ) : verificationRec?.verificationStatus ===
+                        "REVIEW_REQUIRED" ? (
+                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[9px] border border-amber-300">
+                          Review Required
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[9px] border border-blue-200">
+                          Photo Captured
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-xs font-bold text-gray-900 truncate">
-                    {b.farmerName}
-                  </div>
-                  <div className="text-[10px] text-gray-500">
-                    {b.crop} • {b.quantity} Qtl
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

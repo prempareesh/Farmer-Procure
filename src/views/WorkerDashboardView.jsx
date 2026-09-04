@@ -10,13 +10,17 @@ import {
   Scale,
   DollarSign,
   CheckSquare,
+  ShieldCheck,
+  Camera,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import ArrivalVerificationModal from "../components/ArrivalVerificationModal";
 
 export default function WorkerDashboardView() {
   const {
     user,
     bookings,
+    identityVerifications,
     workerAssignedStage,
     setWorkerAssignedStage,
     advanceBookingStage,
@@ -28,6 +32,7 @@ export default function WorkerDashboardView() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedFarmer, setSearchedFarmer] = useState(null);
+  const [verifyingArrivalBooking, setVerifyingArrivalBooking] = useState(null);
 
   // Weight Entry Modal / Form
   const [weighingBookingId, setWeighingBookingId] = useState(null);
@@ -277,119 +282,161 @@ export default function WorkerDashboardView() {
               </p>
             </div>
           ) : (
-            filteredBookings.map((b) => (
-              <div
-                key={b.id}
-                className="p-5 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-base font-black text-[#1B4318]">
-                      Token #{b.tokenDisplay}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
-                      {b.stage}
-                    </span>
-                    <span className="text-xs text-gray-400 font-mono">
-                      [{b.farmerId}]
-                    </span>
+            filteredBookings.map((b) => {
+              const verificationRec = identityVerifications.find(
+                (v) =>
+                  v.bookingId === b.id ||
+                  v.bookingId === b.booking_id ||
+                  v.booking_id === b.id ||
+                  v.booking_id === b.booking_id,
+              );
+
+              return (
+                <div
+                  key={b.id}
+                  className="p-5 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-base font-black text-[#1B4318]">
+                        Token #{b.tokenDisplay}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
+                        {b.stage}
+                      </span>
+
+                      {/* 1:1 Identity Verification Status Chip */}
+                      {verificationRec?.verificationStatus === "VERIFIED" ? (
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-300">
+                          Identity Verified ✓
+                        </span>
+                      ) : verificationRec?.verificationStatus ===
+                        "REVIEW_REQUIRED" ? (
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">
+                          Staff Review Required
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200">
+                          Pending Arrival Verification
+                        </span>
+                      )}
+
+                      <span className="text-xs text-gray-400 font-mono">
+                        [{b.farmerId}]
+                      </span>
+                    </div>
+
+                    <h4 className="text-sm font-bold text-gray-900">
+                      {b.farmerName}
+                    </h4>
+                    <p className="text-xs text-gray-600 font-medium">
+                      Crop: <strong>{b.crop}</strong> • Booked:{" "}
+                      <strong className="text-[#2E7D32]">
+                        {b.quantity} Qtl
+                      </strong>{" "}
+                      {b.weighedQuantity &&
+                        `• Weighed: ${b.weighedQuantity} Qtl`}{" "}
+                      • Center: {b.centreName}
+                    </p>
                   </div>
 
-                  <h4 className="text-sm font-bold text-gray-900">
-                    {b.farmerName}
-                  </h4>
-                  <p className="text-xs text-gray-600 font-medium">
-                    Crop: <strong>{b.crop}</strong> • Booked:{" "}
-                    <strong className="text-[#2E7D32]">{b.quantity} Qtl</strong>{" "}
-                    {b.weighedQuantity && `• Weighed: ${b.weighedQuantity} Qtl`}{" "}
-                    • Center: {b.centreName}
-                  </p>
-                </div>
-
-                {/* Worker Sequential Action Controls */}
-                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase block sm:inline">
-                    {t("nextActionLabel")}:
-                  </span>
-
-                  {b.stage === "BOOKED" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "BOOKED")}
-                      className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>VERIFY ARRIVAL</span>
-                    </button>
-                  )}
-
-                  {b.stage === "ARRIVED" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "ARRIVED")}
-                      className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckSquare className="w-4 h-4" />
-                      <span>{t("startQualityCheckBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "QUALITY_CHECK" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "QUALITY_CHECK")}
-                      className="px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <Scale className="w-4 h-4" />
-                      <span>{t("recordWeightBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "WEIGHING" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "WEIGHING")}
-                      className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>{t("completeProcurementBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "PROCUREMENT" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
-                      className="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <DollarSign className="w-4 h-4" />
-                      <span>{t("recordPaymentBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "PAYMENT" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "PAYMENT")}
-                      className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>UPLOAD RECEIPT & COMPLETE</span>
-                    </button>
-                  )}
-
-                  {b.stage === "COMPLETED" && (
-                    <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
-                      {t("transactionCompletedBadge")}
+                  {/* Worker Sequential Action Controls */}
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase block sm:inline">
+                      {t("nextActionLabel")}:
                     </span>
-                  )}
 
-                  {b.stage !== "COMPLETED" && (
-                    <button
-                      onClick={() => setRejectingBookingId(b.id)}
-                      className="px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <XCircle className="w-4 h-4" />
-                      <span>Reject</span>
-                    </button>
-                  )}
+                    {(b.stage === "BOOKED" || b.stage === "ARRIVED") && (
+                      <button
+                        onClick={() => setVerifyingArrivalBooking(b)}
+                        className="px-3.5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-[#F9A825]" />
+                        <span>VERIFY FARMER IDENTITY</span>
+                      </button>
+                    )}
+
+                    {b.stage === "BOOKED" && (
+                      <button
+                        onClick={() => handleStageAdvance(b.id, "BOOKED")}
+                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>GATE ARRIVAL</span>
+                      </button>
+                    )}
+
+                    {b.stage === "ARRIVED" && (
+                      <button
+                        onClick={() => handleStageAdvance(b.id, "ARRIVED")}
+                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <CheckSquare className="w-4 h-4" />
+                        <span>{t("startQualityCheckBtn")}</span>
+                      </button>
+                    )}
+
+                    {b.stage === "QUALITY_CHECK" && (
+                      <button
+                        onClick={() =>
+                          handleStageAdvance(b.id, "QUALITY_CHECK")
+                        }
+                        className="px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <Scale className="w-4 h-4" />
+                        <span>{t("recordWeightBtn")}</span>
+                      </button>
+                    )}
+
+                    {b.stage === "WEIGHING" && (
+                      <button
+                        onClick={() => handleStageAdvance(b.id, "WEIGHING")}
+                        className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{t("completeProcurementBtn")}</span>
+                      </button>
+                    )}
+
+                    {b.stage === "PROCUREMENT" && (
+                      <button
+                        onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
+                        className="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>{t("recordPaymentBtn")}</span>
+                      </button>
+                    )}
+
+                    {b.stage === "PAYMENT" && (
+                      <button
+                        onClick={() => handleStageAdvance(b.id, "PAYMENT")}
+                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>UPLOAD RECEIPT & COMPLETE</span>
+                      </button>
+                    )}
+
+                    {b.stage === "COMPLETED" && (
+                      <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
+                        {t("transactionCompletedBadge")}
+                      </span>
+                    )}
+
+                    {b.stage !== "COMPLETED" && (
+                      <button
+                        onClick={() => setRejectingBookingId(b.id)}
+                        className="px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <XCircle className="w-4 h-4" />
+                        <span>Reject</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
@@ -643,6 +690,13 @@ export default function WorkerDashboardView() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Mandi Arrival 1:1 Face Verification Modal */}
+      <ArrivalVerificationModal
+        isOpen={!!verifyingArrivalBooking}
+        onClose={() => setVerifyingArrivalBooking(null)}
+        booking={verifyingArrivalBooking}
+      />
     </div>
   );
 }
