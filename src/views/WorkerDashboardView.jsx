@@ -11,7 +11,6 @@ import {
   DollarSign,
   CheckSquare,
   ShieldCheck,
-  Camera,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import ArrivalVerificationModal from "../components/ArrivalVerificationModal";
@@ -149,39 +148,39 @@ export default function WorkerDashboardView() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 selection:bg-[#164A29] selection:text-[#79C267]">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1A2E1E] pb-6">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigateTo("home")}
-              className="p-2 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-[#2E7D32] transition-colors cursor-pointer"
+              className="p-2 rounded bg-[#071008] border border-[#1A2E1E] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            <h1 className="text-3xl font-serif text-[#F2F0E8] tracking-tight">
               {t("workerPortal")}
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#1B4318] text-white text-[10px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30 uppercase">
               STAFF DESK
             </span>
           </div>
-          <p className="text-xs text-gray-500 font-semibold mt-1">
+          <p className="text-xs text-[#A6ADA3] font-mono mt-1">
             Logged in as {user?.name || "Sukhvinder Singh"} • Mandi Staff ID:{" "}
             {user?.id || "WRK-HR-108"}
           </p>
         </div>
 
         {/* Assigned Stage Selector */}
-        <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-xs">
-          <span className="text-[11px] font-bold text-gray-500 pl-2">
+        <div className="flex items-center gap-3 bg-[#071008] p-2 rounded border border-[#1A2E1E]">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-[#A6ADA3] pl-1">
             Assigned Duty:
           </span>
           <select
             value={workerAssignedStage}
             onChange={(e) => setWorkerAssignedStage(e.target.value)}
-            className="px-3 py-1.5 rounded-xl text-xs font-black bg-[#E8F5E9] text-[#1B4318] border border-[#A5D6A7] focus:outline-none cursor-pointer"
+            className="px-3 py-1.5 rounded-sm text-xs font-mono bg-[#050805] text-[#79C267] border border-[#79C267]/30 focus:outline-none cursor-pointer"
           >
             <option value="ALL">All Stages Work Queue</option>
             <option value="BOOKED">Booked (Pending Arrival)</option>
@@ -197,23 +196,23 @@ export default function WorkerDashboardView() {
       </div>
 
       {/* Farmer Search Bar */}
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-          <Search className="w-4 h-4 text-[#2E7D32]" />
+      <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-4">
+        <h3 className="text-xs font-mono uppercase tracking-wider text-[#A6ADA3] flex items-center gap-2">
+          <Search className="w-4 h-4 text-[#79C267]" />
           <span>Search Farmer by Permanent ID (FRM-2026-XXXXXX) or Mobile</span>
         </h3>
 
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <form onSubmit={handleSearch} className="flex gap-3">
           <input
             type="text"
             placeholder="e.g. FRM-2026-000123 or 9876543210"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-bold focus:outline-none focus:border-[#2E7D32] bg-[#FAF8F2]"
+            className="flex-1 px-4 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
           />
           <button
             type="submit"
-            className="px-5 py-2.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
+            className="px-5 py-2.5 bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider rounded-sm border border-[#79C267]/30 transition-all cursor-pointer"
           >
             Search Profile
           </button>
@@ -224,21 +223,21 @@ export default function WorkerDashboardView() {
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-[#E8F5E9]/60 rounded-2xl border border-[#A5D6A7] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs"
+            className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#1B4318] text-white flex items-center justify-center font-bold">
-                <User className="w-5 h-5 text-[#F9A825]" />
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded bg-[#164A29] text-[#79C267] border border-[#79C267]/30 flex items-center justify-center">
+                <User className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-extrabold text-gray-900">
+                <h4 className="font-serif text-[#F2F0E8] text-sm">
                   {searchedFarmer.name}
                 </h4>
-                <p className="text-gray-600 font-mono text-[11px]">
+                <p className="text-[#A6ADA3] text-[11px]">
                   ID: {searchedFarmer.farmerId} • Mobile: +91{" "}
                   {searchedFarmer.mobile}
                 </p>
-                <p className="text-gray-500 text-[10px]">
+                <p className="text-[#A6ADA3]/70 text-[10px]">
                   {searchedFarmer.village}, {searchedFarmer.district} (
                   {searchedFarmer.state})
                 </p>
@@ -246,7 +245,7 @@ export default function WorkerDashboardView() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-white text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
+              <span className="px-2.5 py-1 rounded bg-[#164A29]/60 text-[#79C267] text-[10px] border border-[#79C267]/30">
                 {searchedFarmer.crops?.length || 4} Registered Crops
               </span>
             </div>
@@ -254,30 +253,30 @@ export default function WorkerDashboardView() {
         )}
 
         {searchedFarmer === "NOT_FOUND" && (
-          <div className="p-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-200">
+          <div className="p-3 bg-red-950/40 text-red-300 text-xs font-mono rounded-sm border border-red-900/60">
             No farmer found matching query "{searchQuery}". Please check the ID.
           </div>
         )}
       </div>
 
       {/* Assigned Tasks Queue Table */}
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-5">
+        <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
           <div>
-            <h3 className="text-base font-bold text-gray-900">
+            <h3 className="text-lg font-serif text-[#F2F0E8]">
               {t("todayAppointments")}
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-mono text-[#A6ADA3]">
               {filteredBookings.length} {t("pendingActionsCount")}
             </p>
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredBookings.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <CheckCircle2 className="w-10 h-10 mx-auto text-[#2E7D32] mb-2" />
-              <p className="text-xs font-bold text-gray-700">
+            <div className="text-center py-12 text-[#A6ADA3] space-y-2">
+              <CheckCircle2 className="w-10 h-10 mx-auto text-[#79C267]" />
+              <p className="text-xs font-mono">
                 No pending actions in this queue.
               </p>
             </div>
@@ -294,44 +293,44 @@ export default function WorkerDashboardView() {
               return (
                 <div
                   key={b.id}
-                  className="p-5 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="p-5 rounded-sm bg-[#050805] border border-[#1A2E1E] flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-base font-black text-[#1B4318]">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 flex-wrap font-mono">
+                      <span className="text-base font-serif text-[#79C267]">
                         Token #{b.tokenDisplay}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
+                      <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] border border-[#79C267]/30">
                         {b.stage}
                       </span>
 
                       {/* 1:1 Identity Verification Status Chip */}
                       {verificationRec?.verificationStatus === "VERIFIED" ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-300">
+                        <span className="px-2.5 py-0.5 rounded bg-[#12351F] text-[#79C267] text-[10px] border border-[#79C267]/40">
                           Identity Verified ✓
                         </span>
                       ) : verificationRec?.verificationStatus ===
                         "REVIEW_REQUIRED" ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">
+                        <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-300 text-[10px] border border-amber-800/50">
                           Staff Review Required
                         </span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200">
+                        <span className="px-2.5 py-0.5 rounded bg-[#071008] text-[#A6ADA3] text-[10px] border border-[#1A2E1E]">
                           Pending Arrival Verification
                         </span>
                       )}
 
-                      <span className="text-xs text-gray-400 font-mono">
+                      <span className="text-xs text-[#A6ADA3] font-mono">
                         [{b.farmerId}]
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-bold text-gray-900">
+                    <h4 className="text-base font-serif text-[#F2F0E8]">
                       {b.farmerName}
                     </h4>
-                    <p className="text-xs text-gray-600 font-medium">
-                      Crop: <strong>{b.crop}</strong> • Booked:{" "}
-                      <strong className="text-[#2E7D32]">
+                    <p className="text-xs text-[#A6ADA3] font-sans">
+                      Crop: <strong className="text-[#F2F0E8]">{b.crop}</strong> • Booked:{" "}
+                      <strong className="text-[#79C267]">
                         {b.quantity} Qtl
                       </strong>{" "}
                       {b.weighedQuantity &&
@@ -341,17 +340,17 @@ export default function WorkerDashboardView() {
                   </div>
 
                   {/* Worker Sequential Action Controls */}
-                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase block sm:inline">
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0">
+                    <span className="text-[10px] text-[#A6ADA3] font-mono uppercase block sm:inline">
                       {t("nextActionLabel")}:
                     </span>
 
                     {(b.stage === "BOOKED" || b.stage === "ARRIVED") && (
                       <button
                         onClick={() => setVerifyingArrivalBooking(b)}
-                        className="px-3.5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <ShieldCheck className="w-4 h-4 text-[#F9A825]" />
+                        <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                         <span>VERIFY FARMER IDENTITY</span>
                       </button>
                     )}
@@ -359,9 +358,9 @@ export default function WorkerDashboardView() {
                     {b.stage === "BOOKED" && (
                       <button
                         onClick={() => handleStageAdvance(b.id, "BOOKED")}
-                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                         <span>GATE ARRIVAL</span>
                       </button>
                     )}
@@ -369,9 +368,9 @@ export default function WorkerDashboardView() {
                     {b.stage === "ARRIVED" && (
                       <button
                         onClick={() => handleStageAdvance(b.id, "ARRIVED")}
-                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <CheckSquare className="w-4 h-4" />
+                        <CheckSquare className="w-4 h-4 text-[#79C267]" />
                         <span>{t("startQualityCheckBtn")}</span>
                       </button>
                     )}
@@ -381,9 +380,9 @@ export default function WorkerDashboardView() {
                         onClick={() =>
                           handleStageAdvance(b.id, "QUALITY_CHECK")
                         }
-                        className="px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <Scale className="w-4 h-4" />
+                        <Scale className="w-4 h-4 text-[#79C267]" />
                         <span>{t("recordWeightBtn")}</span>
                       </button>
                     )}
@@ -391,9 +390,9 @@ export default function WorkerDashboardView() {
                     {b.stage === "WEIGHING" && (
                       <button
                         onClick={() => handleStageAdvance(b.id, "WEIGHING")}
-                        className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                         <span>{t("completeProcurementBtn")}</span>
                       </button>
                     )}
@@ -401,9 +400,9 @@ export default function WorkerDashboardView() {
                     {b.stage === "PROCUREMENT" && (
                       <button
                         onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
-                        className="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <DollarSign className="w-4 h-4" />
+                        <DollarSign className="w-4 h-4 text-[#79C267]" />
                         <span>{t("recordPaymentBtn")}</span>
                       </button>
                     )}
@@ -411,15 +410,15 @@ export default function WorkerDashboardView() {
                     {b.stage === "PAYMENT" && (
                       <button
                         onClick={() => handleStageAdvance(b.id, "PAYMENT")}
-                        className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
                       >
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                         <span>UPLOAD RECEIPT & COMPLETE</span>
                       </button>
                     )}
 
                     {b.stage === "COMPLETED" && (
-                      <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
+                      <span className="px-3 py-1.5 rounded bg-[#164A29] text-[#79C267] font-mono text-xs border border-[#79C267]/30">
                         {t("transactionCompletedBadge")}
                       </span>
                     )}
@@ -427,7 +426,7 @@ export default function WorkerDashboardView() {
                     {b.stage !== "COMPLETED" && (
                       <button
                         onClick={() => setRejectingBookingId(b.id)}
-                        className="px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                        className="px-3 py-2.5 rounded-sm bg-red-950/50 hover:bg-red-900/60 text-red-300 font-mono text-xs uppercase border border-red-900/60 flex items-center gap-1 transition-all cursor-pointer"
                       >
                         <XCircle className="w-4 h-4" />
                         <span>Reject</span>
@@ -444,31 +443,31 @@ export default function WorkerDashboardView() {
       {/* Weighbridge Entry Modal */}
       <AnimatePresence>
         {weighingBookingId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs selection:bg-[#164A29] selection:text-[#79C267]">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden"
+              className="w-full max-w-md bg-[#071008] rounded-md border border-[#1A2E1E] overflow-hidden"
             >
-              <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <Scale className="w-6 h-6 text-[#F9A825]" />
+              <div className="bg-[#164A29] text-[#F2F0E8] p-6 flex items-center justify-between border-b border-[#79C267]/30">
+                <div className="flex items-center gap-3">
+                  <Scale className="w-6 h-6 text-[#79C267]" />
                   <div>
-                    <h3 className="text-base font-bold">
+                    <h3 className="text-base font-serif">
                       Record Digital Weighbridge Weight
                     </h3>
-                    <p className="text-xs text-[#A5D6A7]">Gross Tare Logged</p>
+                    <p className="text-xs font-mono text-[#79C267]">Gross Tare Logged</p>
                   </div>
                 </div>
               </div>
 
               <form
                 onSubmit={handleWeighingSubmit}
-                className="p-6 space-y-4 bg-[#FAFBF8]"
+                className="p-6 space-y-4 bg-[#050805]"
               >
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase mb-1.5">
                     {t("enterWeighedQuantity")} *
                   </label>
                   <input
@@ -477,21 +476,21 @@ export default function WorkerDashboardView() {
                     value={weighedInput}
                     onChange={(e) => setWeighedInput(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-black text-gray-900 bg-white focus:ring-2 focus:ring-[#2E7D32]"
+                    className="w-full px-4 py-3 rounded-sm border border-[#1A2E1E] text-base font-mono text-[#F2F0E8] bg-[#071008] focus:border-[#79C267]"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                <div className="flex justify-end gap-3 pt-3 border-t border-[#1A2E1E]">
                   <button
                     type="button"
                     onClick={() => setWeighingBookingId(null)}
-                    className="px-4 py-2 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white text-xs font-extrabold shadow-xs cursor-pointer"
+                    className="px-5 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 cursor-pointer"
                   >
                     Confirm Weighbridge Weight & Advance
                   </button>
@@ -505,21 +504,21 @@ export default function WorkerDashboardView() {
       {/* Mandatory Rejection Reason & Proof Modal */}
       <AnimatePresence>
         {rejectingBookingId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs selection:bg-[#164A29] selection:text-[#79C267]">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-red-200 overflow-hidden"
+              className="w-full max-w-lg bg-[#071008] rounded-md border border-red-900/60 overflow-hidden"
             >
-              <div className="bg-red-600 text-white p-6 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle className="w-6 h-6 text-white" />
+              <div className="bg-red-950/80 text-red-100 p-6 flex items-center justify-between border-b border-red-900/50">
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="w-6 h-6 text-red-400" />
                   <div>
-                    <h3 className="text-base font-bold">
+                    <h3 className="text-base font-serif text-red-200">
                       Mandatory Rejection Documentation
                     </h3>
-                    <p className="text-xs text-red-100">
+                    <p className="text-xs font-mono text-red-300">
                       Audit compliance requires reason & supporting proof
                     </p>
                   </div>
@@ -528,17 +527,17 @@ export default function WorkerDashboardView() {
 
               <form
                 onSubmit={handleRejectSubmit}
-                className="p-6 space-y-4 bg-[#FAF8F2]"
+                className="p-6 space-y-4 bg-[#050805]"
               >
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase mb-1">
                     Standard Rejection Reason *
                   </label>
                   <select
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                     required
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#071008] text-[#F2F0E8] focus:border-red-500"
                   >
                     <option value="Moisture content exceeds 17% threshold">
                       Moisture content exceeds 17% threshold
@@ -559,7 +558,7 @@ export default function WorkerDashboardView() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase mb-1">
                     Detailed Inspection Remarks *
                   </label>
                   <textarea
@@ -568,35 +567,35 @@ export default function WorkerDashboardView() {
                     value={rejectRemarks}
                     onChange={(e) => setRejectRemarks(e.target.value)}
                     required
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-sm border border-[#1A2E1E] text-xs font-sans bg-[#071008] text-[#F2F0E8] focus:border-red-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase mb-1">
                     Supporting Proof Document / Photo *
                   </label>
-                  <div className="p-3 bg-white rounded-xl border border-dashed border-gray-300 flex items-center justify-between text-xs font-mono">
-                    <span className="truncate text-gray-600">
+                  <div className="p-3 bg-[#071008] rounded-sm border border-dashed border-[#1A2E1E] flex items-center justify-between text-xs font-mono">
+                    <span className="truncate text-[#A6ADA3]">
                       {proofFileName}
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-green-100 text-[#2E7D32] font-bold text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px]">
                       ATTACHED
                     </span>
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                <div className="flex justify-end gap-3 pt-3 border-t border-[#1A2E1E]">
                   <button
                     type="button"
                     onClick={() => setRejectingBookingId(null)}
-                    className="px-4 py-2 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 rounded-sm border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs cursor-pointer"
+                    className="px-5 py-2 rounded-sm bg-red-900 hover:bg-red-800 text-red-100 text-xs font-mono uppercase tracking-wider cursor-pointer"
                   >
                     Confirm Rejection & Log SHA-256
                   </button>
@@ -610,21 +609,21 @@ export default function WorkerDashboardView() {
       {/* Receipt Upload Modal for Staff */}
       <AnimatePresence>
         {receiptUploadBookingId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs selection:bg-[#164A29] selection:text-[#79C267]">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden"
+              className="w-full max-w-md bg-[#071008] rounded-md border border-[#1A2E1E] overflow-hidden"
             >
-              <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <CheckSquare className="w-6 h-6 text-[#F9A825]" />
+              <div className="bg-[#164A29] text-[#F2F0E8] p-6 flex items-center justify-between border-b border-[#79C267]/30">
+                <div className="flex items-center gap-3">
+                  <CheckSquare className="w-6 h-6 text-[#79C267]" />
                   <div>
-                    <h3 className="text-base font-bold">
+                    <h3 className="text-base font-serif">
                       Upload Official Procurement Receipt
                     </h3>
-                    <p className="text-xs text-[#A5D6A7]">
+                    <p className="text-xs font-mono text-[#79C267]">
                       Required for Transaction Completion
                     </p>
                   </div>
@@ -633,10 +632,10 @@ export default function WorkerDashboardView() {
 
               <form
                 onSubmit={handleReceiptUploadSubmit}
-                className="p-6 space-y-4 font-sans text-xs"
+                className="p-6 space-y-4 font-sans text-xs bg-[#050805]"
               >
-                <div className="p-3 bg-[#FAF8F2] rounded-xl border border-gray-200 text-gray-700 space-y-1">
-                  <div className="font-bold text-[#1B4318]">
+                <div className="p-3 bg-[#071008] rounded-sm border border-[#1A2E1E] text-[#A6ADA3] space-y-1 font-mono">
+                  <div className="text-[#F2F0E8]">
                     Booking Verification:
                   </div>
                   <div>
@@ -652,7 +651,7 @@ export default function WorkerDashboardView() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-gray-700 font-bold block">
+                  <label className="text-[#A6ADA3] font-mono uppercase tracking-wider text-[11px] block">
                     Select Receipt Document File:
                   </label>
                   <input
@@ -661,27 +660,27 @@ export default function WorkerDashboardView() {
                     onChange={(e) => setReceiptFileName(e.target.value)}
                     placeholder="e.g. final_procurement_receipt_P147.pdf"
                     required
-                    className="w-full p-2.5 rounded-xl border border-gray-300 font-mono text-xs bg-white focus:ring-2 focus:ring-[#2E7D32]"
+                    className="w-full p-2.5 rounded-sm border border-[#1A2E1E] font-mono text-xs bg-[#071008] text-[#F2F0E8] focus:border-[#79C267]"
                   />
-                  <p className="text-[10px] text-gray-500">
+                  <p className="text-[10px] text-[#A6ADA3]/60 font-mono">
                     PDF, JPG or PNG format. Hashed with SHA-256 seal upon
                     upload.
                   </p>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+                <div className="flex justify-end gap-3 pt-3 border-t border-[#1A2E1E]">
                   <button
                     type="button"
                     onClick={() => setReceiptUploadBookingId(null)}
-                    className="px-4 py-2 rounded-xl border border-gray-300 font-bold text-gray-700 hover:bg-gray-50 cursor-pointer"
+                    className="px-4 py-2 rounded-sm border border-[#1A2E1E] font-mono text-xs text-[#A6ADA3] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-2 bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 cursor-pointer flex items-center gap-1.5"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                     <span>Upload & Complete Transaction</span>
                   </button>
                 </div>
@@ -700,3 +699,4 @@ export default function WorkerDashboardView() {
     </div>
   );
 }
+

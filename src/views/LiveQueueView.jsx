@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  ArrowRight,
   CheckCircle2,
   RotateCw,
   QrCode,
@@ -56,12 +55,12 @@ export default function LiveQueueView() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6 font-mono">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigateTo("home")}
-          className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 text-xs font-mono text-[#A6ADA3] hover:text-[#79C267] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("home")}</span>
@@ -70,7 +69,7 @@ export default function LiveQueueView() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigateTo("qr-scanner")}
-            className="px-3.5 py-1.5 rounded-xl bg-white border border-[#C8E6C9] text-xs font-bold text-[#2E7D32] hover:bg-[#E8F5E9] flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="px-3.5 py-1.5 border border-[#1A2E1E] bg-[#071008] text-xs font-mono uppercase text-[#79C267] hover:border-[#79C267]/40 flex items-center gap-1.5 cursor-pointer"
           >
             <QrCode className="w-3.5 h-3.5" />
             <span>{t("gateScanner")}</span>
@@ -78,14 +77,14 @@ export default function LiveQueueView() {
           {user?.role !== "farmer" ? (
             <button
               onClick={() => navigateTo("audit")}
-              className="px-3.5 py-1.5 rounded-xl bg-[#1B4318] text-white text-xs font-bold hover:bg-[#2E7D32] flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="px-3.5 py-1.5 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-[#F9A825]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#79C267]" />
               <span>{t("auditTrail")}</span>
             </button>
           ) : (
-            <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] border border-[#A5D6A7] text-[11px] font-extrabold text-[#2E7D32] flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#2E7D32]" />
+            <span className="px-3 py-1.5 border border-[#79C267]/40 bg-[#0A180D] text-[11px] font-mono text-[#79C267] flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#79C267]" />
               <span>Cryptographically Tracked</span>
             </span>
           )}
@@ -97,30 +96,30 @@ export default function LiveQueueView() {
         {/* LEFT 7 COLS: Live Queue Telemetry */}
         <div className="lg:col-span-7 space-y-6">
           {/* Header Card */}
-          <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-[#071008] p-6 border border-[#1A2E1E] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-green-500 animate-ping" />
-                <h2 className="text-lg font-black text-gray-900">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#79C267] animate-pulse" />
+                <h2 className="text-xl font-serif text-[#F2F0E8]">
                   {t("liveQueueTitle")}
                 </h2>
               </div>
-              <p className="text-xs text-gray-500 font-semibold mt-0.5">
+              <p className="text-xs text-[#A6ADA3] font-mono mt-0.5">
                 {t("liveQueueSub")}
               </p>
             </div>
 
             {/* Auto-Refresh Ticker Control */}
-            <div className="flex items-center gap-2 bg-[#FAF8F2] p-1.5 rounded-xl border border-gray-200 text-xs">
-              <span className="text-[11px] font-bold text-gray-600 pl-2">
+            <div className="flex items-center gap-2 bg-[#050805] p-1.5 border border-[#1A2E1E] text-xs font-mono">
+              <span className="text-[11px] text-[#A6ADA3] pl-2">
                 Auto-Refresh (15s):
               </span>
               <button
                 onClick={() => setAutoQueueTicker(!autoQueueTicker)}
-                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
+                className={`px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider transition-all cursor-pointer ${
                   autoQueueTicker
-                    ? "bg-[#2E7D32] text-white"
-                    : "bg-gray-200 text-gray-700"
+                    ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/40"
+                    : "bg-[#071008] text-[#A6ADA3] border border-[#1A2E1E]"
                 }`}
               >
                 {autoQueueTicker ? "ON" : "OFF"}
@@ -129,88 +128,88 @@ export default function LiveQueueView() {
           </div>
 
           {/* 4 Telemetry Metrics Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 font-mono">
             {/* Metric 1: Current Serving Token */}
-            <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex flex-col justify-between">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="bg-[#071008] p-5 border border-[#1A2E1E] flex flex-col justify-between">
+              <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider">
                 {t("nowServingGate")}
               </span>
-              <div className="text-3xl font-black text-[#2E7D32] mt-2">
+              <div className="text-3xl font-serif text-[#79C267] mt-2">
                 P-{servingToken}
               </div>
-              <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+              <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#1A2E1E] text-[11px] text-[#A6ADA3]">
                 <span>Weighbridge Lane #1-4</span>
                 <button
                   onClick={advanceQueueToken}
-                  className="text-[#2E7D32] font-bold hover:underline flex items-center gap-0.5"
+                  className="text-[#79C267] hover:underline flex items-center gap-0.5 cursor-pointer uppercase text-[10px]"
                   title="Simulate advancing token"
                 >
-                  <RotateCw className="w-3 h-3" /> Advance +1
+                  <RotateCw className="w-3 h-3 text-[#79C267]" /> Advance +1
                 </button>
               </div>
             </div>
 
             {/* Metric 2: Your Assigned Token */}
-            <div className="bg-white rounded-3xl p-5 shadow-md border border-[#A5D6A7] flex flex-col justify-between ring-2 ring-[#2E7D32]/15">
-              <span className="text-[11px] font-bold text-[#2E7D32] uppercase tracking-wider">
+            <div className="bg-[#071008] p-5 border border-[#79C267]/40 flex flex-col justify-between">
+              <span className="text-[10px] text-[#79C267] uppercase tracking-wider">
                 {t("yourTokenNumber")}
               </span>
-              <div className="text-3xl font-black text-[#1B4318] mt-2">
+              <div className="text-3xl font-serif text-[#F2F0E8] mt-2">
                 P-{currentBooking ? currentBooking.tokenNumber : 125}
               </div>
-              <div className="mt-3 pt-2 border-t border-green-100 text-[11px] text-[#2E7D32] font-bold">
+              <div className="mt-3 pt-2 border-t border-[#1A2E1E] text-[11px] text-[#79C267]">
                 {currentBooking ? currentBooking.crop.split(" ")[0] : "Paddy"} (
                 {currentBooking?.quantity || 45} Qtl)
               </div>
             </div>
 
             {/* Metric 3: People Ahead */}
-            <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex flex-col justify-between">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="bg-[#071008] p-5 border border-[#1A2E1E] flex flex-col justify-between">
+              <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider">
                 {t("peopleAheadLabel")}
               </span>
-              <div className="text-3xl font-black text-amber-600 mt-2">
+              <div className="text-3xl font-serif text-[#F2F0E8] mt-2">
                 {peopleAhead}
               </div>
-              <div className="mt-3 pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+              <div className="mt-3 pt-2 border-t border-[#1A2E1E] text-[11px] text-[#A6ADA3]">
                 Smooth vehicle intake pace
               </div>
             </div>
 
             {/* Metric 4: Estimated Wait Time */}
-            <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex flex-col justify-between">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="bg-[#071008] p-5 border border-[#1A2E1E] flex flex-col justify-between">
+              <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider">
                 {t("estimatedWaitLabel")}
               </span>
-              <div className="text-3xl font-black text-gray-900 mt-2">
+              <div className="text-3xl font-serif text-[#F2F0E8] mt-2">
                 {estimatedWaitMins} - {estimatedWaitMins + 6}{" "}
-                <span className="text-sm font-semibold text-gray-500">
+                <span className="text-xs font-mono text-[#A6ADA3]">
                   mins
                 </span>
               </div>
-              <div className="mt-3 pt-2 border-t border-gray-100 text-[11px] text-[#2E7D32] font-semibold flex items-center gap-1">
+              <div className="mt-3 pt-2 border-t border-[#1A2E1E] text-[11px] text-[#79C267] flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> AI Congestion Adjusted
               </div>
             </div>
           </div>
 
           {/* Quick Simulation Bar for Judges */}
-          <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9] flex items-center justify-between text-xs">
-            <span className="font-bold text-gray-700">
+          <div className="p-4 bg-[#050805] border border-[#1A2E1E] flex items-center justify-between text-xs font-mono">
+            <span className="text-[#A6ADA3] text-[11px] uppercase">
               ⚡ SIH Demo Controls:
             </span>
             <div className="flex gap-2">
               <button
                 onClick={advanceQueueToken}
-                className="px-3 py-1.5 rounded-lg bg-white border border-gray-300 font-bold text-gray-800 hover:bg-gray-50"
+                className="px-3 py-1.5 border border-[#1A2E1E] bg-[#071008] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] text-[11px] uppercase tracking-wider cursor-pointer"
               >
                 +1 Vehicle Processed
               </button>
               <button
                 onClick={() => setServingToken(124)}
-                className="px-3 py-1.5 rounded-lg bg-[#2E7D32] text-white font-bold hover:bg-[#1B4318]"
+                className="px-3 py-1.5 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] text-[11px] uppercase tracking-wider cursor-pointer"
               >
-                Fast-Forward to Your Turn
+                Fast-Forward
               </button>
             </div>
           </div>
@@ -218,19 +217,18 @@ export default function LiveQueueView() {
 
         {/* RIGHT 5 COLS: 6-Stage Workflow Progress Tracker */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-5">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="bg-[#071008] p-6 border border-[#1A2E1E] space-y-5">
+            <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-3">
               <div>
-                <h3 className="text-base font-bold text-gray-900">
-                  Procurement Workflow Progress
+                <h3 className="text-lg font-serif text-[#F2F0E8]">
+                  Procurement Progress
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Token #{currentBooking?.tokenNumber || 125} •
-                  Cryptographically Tracked
+                <p className="text-[11px] font-mono text-[#A6ADA3]">
+                  Token #{currentBooking?.tokenNumber || 125} • Cryptographic
                 </p>
               </div>
 
-              <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black border border-[#A5D6A7]">
+              <span className="px-3 py-1 border border-[#79C267]/40 bg-[#0A180D] text-[#79C267] text-xs font-mono uppercase">
                 {currentBooking
                   ? getStageLabel(currentBooking.stage)
                   : getStageLabel("BOOKED")}
@@ -238,7 +236,7 @@ export default function LiveQueueView() {
             </div>
 
             {/* Visual 6-Stage Timeline */}
-            <div className="space-y-3 relative">
+            <div className="space-y-3 relative font-mono">
               {WORKFLOW_STAGES.map((stage, idx) => {
                 const currentIdx = WORKFLOW_STAGES.findIndex(
                   (s) => s.key === currentBooking?.stage,
@@ -249,25 +247,25 @@ export default function LiveQueueView() {
                 return (
                   <div
                     key={stage.key}
-                    className={`p-3.5 rounded-2xl border transition-all flex items-start gap-3.5 ${
+                    className={`p-3.5 border transition-all flex items-start gap-3.5 ${
                       isCurrent
-                        ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
+                        ? "bg-[#0A180D] border-[#79C267]/60 text-[#F2F0E8]"
                         : isPassed
-                          ? "bg-[#FAF8F2] border-green-200"
-                          : "bg-white border-gray-200 opacity-50"
+                          ? "bg-[#050805] border-[#1A2E1E] text-[#A6ADA3]"
+                          : "bg-[#050805]/40 border-[#1A2E1E]/50 text-[#A6ADA3]/40"
                     }`}
                   >
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5 ${
+                      className={`w-6 h-6 border flex items-center justify-center text-xs font-mono shrink-0 mt-0.5 ${
                         isCurrent
-                          ? "bg-[#2E7D32] text-white shadow-xs"
+                          ? "bg-[#164A29] border-[#79C267]/40 text-[#79C267]"
                           : isPassed
-                            ? "bg-green-700 text-white"
-                            : "bg-gray-200 text-gray-500"
+                            ? "bg-[#0A180D] border-[#79C267]/40 text-[#79C267]"
+                            : "bg-[#050805] border-[#1A2E1E] text-[#A6ADA3]"
                       }`}
                     >
                       {isPassed ? (
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-3.5 h-3.5" />
                       ) : (
                         idx + 1
                       )}
@@ -276,17 +274,17 @@ export default function LiveQueueView() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h4
-                          className={`text-xs font-bold ${isCurrent ? "text-[#1B4318]" : "text-gray-800"}`}
+                          className={`text-xs font-mono uppercase ${isCurrent ? "text-[#F2F0E8]" : "text-[#A6ADA3]"}`}
                         >
                           {getStageLabel(stage.key)}
                         </h4>
                         {isCurrent && (
-                          <span className="text-[10px] font-black text-[#2E7D32] uppercase animate-pulse">
+                          <span className="text-[10px] font-mono text-[#79C267] uppercase animate-pulse">
                             Active Step
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-500 mt-0.5">
+                      <p className="text-[11px] text-[#A6ADA3] font-mono mt-0.5">
                         {stage.desc}
                       </p>
                     </div>
@@ -295,21 +293,20 @@ export default function LiveQueueView() {
               })}
             </div>
 
-            {/* Advance Stage Control: Only rendered for Staff / Officer / Worker roles */}
+            {/* Advance Stage Control */}
             {user?.role !== "farmer" ? (
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-[#1A2E1E]">
                 <button
                   onClick={handleNextStage}
-                  className="w-full py-3 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Advance to Next Stage</span>
-                  <ArrowRight className="w-4 h-4 text-[#F9A825]" />
+                  <span>Advance Stage →</span>
                 </button>
               </div>
             ) : (
-              <div className="pt-2 border-t border-gray-100 text-center">
-                <div className="py-2.5 px-4 bg-[#FAF8F2] rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 flex items-center justify-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#2E7D32]" />
+              <div className="pt-2 border-t border-[#1A2E1E] text-center">
+                <div className="py-2.5 px-4 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] flex items-center justify-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#79C267]" />
                   <span>
                     Live Progress • Stage processing managed by Mandi Staff
                   </span>

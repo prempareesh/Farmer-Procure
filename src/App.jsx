@@ -36,7 +36,7 @@ function MainApp() {
     currentView === "how-it-works";
 
   return (
-    <div className="min-h-screen w-screen bg-[#FAFBF8] text-[#111827] flex flex-col justify-between relative selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-screen w-screen bg-[#050805] text-[#E8E7DE] flex flex-col justify-between relative selection:bg-[#164A29] selection:text-[#79C267]">
       {/* 1. Universal Header Navigation Bar */}
       <Header />
 

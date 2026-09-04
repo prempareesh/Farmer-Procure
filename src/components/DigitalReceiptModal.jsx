@@ -47,63 +47,63 @@ export default function DigitalReceiptModal({ isOpen, onClose, booking }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in selection:bg-[#2E7D32] selection:text-white print:p-0 print:bg-white">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden print:shadow-none print:border-none print:w-full">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in selection:bg-[#79C267] selection:text-[#050805] print:p-0 print:bg-white">
+      <div className="relative w-full max-w-lg bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] overflow-hidden print:shadow-none print:border-none print:w-full print:bg-white print:text-black">
         {/* Top Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between print:bg-white print:text-black print:border-b print:border-gray-300">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between print:bg-white print:text-black print:border-b print:border-gray-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825] print:border">
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267] print:border">
               <Sprout className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold tracking-tight">
+              <h3 className="text-xl font-serif font-normal tracking-wide text-[#F2F0E8]">
                 {t("brandName")}
               </h3>
-              <p className="text-[11px] text-[#A5D6A7] font-medium print:text-gray-600">
+              <p className="text-[11px] font-mono text-[#A6ADA3] print:text-gray-600">
                 {t("officialReceiptHeader")}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer print:hidden"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer print:hidden"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Receipt Content Body */}
-        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto bg-[#FAFBF8] print:max-h-none print:p-4">
+        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto bg-[#071008] font-mono print:max-h-none print:p-4 print:bg-white">
           {/* Status Stamp */}
-          <div className="bg-[#E8F5E9] border border-[#A5D6A7] p-3 rounded-2xl flex items-center justify-between text-xs">
-            <span className="font-black text-[#1B4318] flex items-center gap-1.5 uppercase tracking-wider">
-              <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
+          <div className="bg-[#0A180D] border border-[#79C267]/40 p-3 flex items-center justify-between text-xs">
+            <span className="font-mono text-[#79C267] flex items-center gap-1.5 uppercase tracking-wider">
+              <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
               {t("transactionCompletedBadge")}
             </span>
-            <span className="text-[10px] font-mono text-gray-500 font-bold">
+            <span className="text-[10px] font-mono text-[#A6ADA3]">
               {bookingId}
             </span>
           </div>
 
           {/* Farmer & Crop Details Grid */}
-          <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 text-xs">
-            <div className="grid grid-cols-2 gap-3 border-b border-gray-100 pb-3">
+          <div className="bg-[#050805] p-4 border border-[#1A2E1E] space-y-3 text-xs">
+            <div className="grid grid-cols-2 gap-3 border-b border-[#1A2E1E] pb-3">
               <div>
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("farmerRole")}
                 </span>
-                <span className="font-extrabold text-[#111827] text-sm">
+                <span className="font-serif text-[#F2F0E8] text-base block mt-0.5">
                   {farmerName}
                 </span>
-                <span className="text-[10px] font-mono text-gray-500 block">
+                <span className="text-[10px] font-mono text-[#79C267]">
                   {farmerId}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("tokenNumberLabel")}
                 </span>
-                <span className="font-black text-2xl text-[#1B4318]">
+                <span className="font-serif text-2xl text-[#79C267]">
                   {tokenDisplay}
                 </span>
               </div>
@@ -111,32 +111,32 @@ export default function DigitalReceiptModal({ isOpen, onClose, booking }) {
 
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div>
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("cropLabel")}
                 </span>
-                <span className="font-bold text-[#111827]">{crop}</span>
+                <span className="font-mono text-[#F2F0E8]">{crop}</span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("bookedQuantityLabel")}
                 </span>
-                <span className="font-bold text-gray-700">
+                <span className="font-mono text-[#E8E7DE]">
                   {bookedQuantity} Qtl
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("finalWeighedQuantityLabel")}
                 </span>
-                <span className="font-black text-[#2E7D32] text-sm">
+                <span className="font-mono text-[#79C267] text-sm font-bold">
                   {weighedQuantity} Qtl
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-gray-400 font-bold uppercase block">
+                <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                   {t("targetMandiCentre")}
                 </span>
-                <span className="font-bold text-gray-800 text-[11px]">
+                <span className="font-mono text-[#E8E7DE] text-[11px]">
                   {centreName}
                 </span>
               </div>
@@ -144,42 +144,42 @@ export default function DigitalReceiptModal({ isOpen, onClose, booking }) {
           </div>
 
           {/* MSP Payment Box */}
-          <div className="bg-[#1B4318] text-white p-4 rounded-2xl flex items-center justify-between">
+          <div className="bg-[#164A29]/30 border border-[#79C267]/30 text-[#F2F0E8] p-4 flex items-center justify-between">
             <div>
-              <span className="text-[10px] text-[#C8E6C9] font-bold uppercase block">
+              <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                 {t("totalMspAmountLabel")}
               </span>
-              <div className="text-2xl font-black text-[#F9A825]">
+              <div className="text-2xl font-serif text-[#79C267] mt-0.5">
                 ₹{grossAmount.toLocaleString()}
               </div>
-              <span className="text-[10px] text-[#C8E6C9] font-mono">
+              <span className="text-[10px] font-mono text-[#A6ADA3]">
                 {dbtTxnId}
               </span>
             </div>
             <div className="text-right">
-              <span className="px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black uppercase">
+              <span className="px-2 py-0.5 border border-[#79C267]/40 bg-[#0A180D] text-[#79C267] text-[10px] font-mono uppercase tracking-wider">
                 {t("paymentCompletedBadge")}
               </span>
-              <p className="text-[10px] text-white/70 mt-1">{completedAt}</p>
+              <p className="text-[10px] font-mono text-[#A6ADA3] mt-1.5">{completedAt}</p>
             </div>
           </div>
 
           {/* Milestone Timeline */}
-          <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-2 text-xs">
-            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block mb-1">
+          <div className="bg-[#050805] p-4 border border-[#1A2E1E] space-y-2 text-xs">
+            <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider block mb-1">
               {t("timelineSummary")}
             </span>
             <div className="space-y-1.5 text-[11px]">
               {history.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between text-gray-700 py-0.5"
+                  className="flex items-center justify-between text-[#E8E7DE] py-0.5"
                 >
-                  <span className="flex items-center gap-1.5 font-medium text-gray-800">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2E7D32]" />
+                  <span className="flex items-center gap-1.5 font-mono text-[#E8E7DE]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#79C267]" />
                     <span>{item.label || item.stage}</span>
                   </span>
-                  <span className="font-mono text-[10px] text-gray-400">
+                  <span className="font-mono text-[10px] text-[#A6ADA3]">
                     {item.time || "Completed"}
                   </span>
                 </div>
@@ -188,35 +188,35 @@ export default function DigitalReceiptModal({ isOpen, onClose, booking }) {
           </div>
 
           {/* Security Hash & QR Stamp */}
-          <div className="bg-white p-3.5 rounded-2xl border border-gray-200 flex items-center justify-between gap-3 text-xs">
+          <div className="bg-[#050805] p-3.5 border border-[#1A2E1E] flex items-center justify-between gap-3 text-xs">
             <div className="space-y-0.5 flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 text-[#1B4318] font-bold text-[11px]">
-                <ShieldCheck className="w-4 h-4 text-[#F9A825]" />
+              <div className="flex items-center gap-1.5 text-[#79C267] font-mono text-[11px]">
+                <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                 <span>{t("auditTrailBannerText")}</span>
               </div>
-              <p className="text-[9px] font-mono text-gray-400 truncate">
+              <p className="text-[9px] font-mono text-[#A6ADA3] truncate">
                 {booking.createdHash ||
                   "0x7f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a"}
               </p>
             </div>
-            <div className="w-12 h-12 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center shrink-0">
-              <QrCode className="w-8 h-8 text-[#1B4318]" />
+            <div className="w-12 h-12 bg-[#0A180D] border border-[#1A2E1E] flex items-center justify-center shrink-0">
+              <QrCode className="w-8 h-8 text-[#79C267]" />
             </div>
           </div>
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="p-4 bg-white border-t border-gray-200 flex items-center justify-end gap-3 print:hidden">
+        <div className="p-4 bg-[#0A180D] border-t border-[#1A2E1E] flex items-center justify-end gap-3 print:hidden">
           <button
             onClick={handlePrint}
-            className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>{t("printReceipt")}</span>
           </button>
           <button
             onClick={handlePrint}
-            className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="px-5 py-2 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>{t("downloadReceipt")}</span>

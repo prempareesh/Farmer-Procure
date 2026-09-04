@@ -1,137 +1,91 @@
 import React from "react";
+import { Sparkles, CheckCircle2, Clock } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export default function BenefitsSection() {
-  const { t } = useApp();
+  const { navigateTo, t } = useApp();
 
   return (
     <section
       id="benefits"
-      className="w-full py-12 lg:py-16 bg-[#FAFBF8] border-b border-[#E8EFE6] selection:bg-[#2E7D32] selection:text-white"
+      className="w-full py-20 lg:py-28 bg-[#050805] text-[#E8E7DE] border-b border-[#1A2E1E]"
     >
-      <div className="max-w-6xl mx-auto px-6 lg:px-12 space-y-10">
-        {/* Editorial Section Header */}
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black text-[#111827] tracking-tight">
-            {t("benefitsTitle")}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* LEFT COLUMN: Editorial Typography */}
+        <div className="lg:col-span-6 space-y-6">
+          <span className="text-[11px] font-mono text-[#79C267] uppercase tracking-widest block">
+            SMART SLOT RECOMMENDATION
+          </span>
+
+          <h2 className="font-serif text-4xl sm:text-6xl text-[#F2F0E8] font-normal leading-[1.05] tracking-tight">
+            Choose the slot <br />
+            <span className="italic text-[#79C267]">before the queue</span>{" "}
+            <br />
+            chooses for you.
           </h2>
-          <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
-            Replacing queue uncertainty with predictive timing and operational
-            clarity.
+
+          <p className="text-sm text-[#A6ADA3] font-normal leading-relaxed max-w-lg">
+            AgriProcure recommends optimal 15-minute slot windows based on
+            predicted Mandi intake pressure, saving hours of reactive waiting in
+            line.
           </p>
+
+          <div className="pt-2">
+            <button
+              onClick={() => navigateTo("book-slot")}
+              className="px-6 py-3.5 rounded-lg bg-[#12351F] hover:bg-[#164A29] border border-[#1A2E1E] text-[#F2F0E8] font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg"
+            >
+              Reserve Recommended Slot →
+            </button>
+          </div>
         </div>
 
-        {/* Human-Designed Editorial 3-Column Composition */}
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200/80 pt-2">
-          {/* Column 1: Farmers */}
-          <div className="py-6 md:py-0 md:px-8 first:pl-0 last:pr-0 space-y-4">
-            <div className="flex items-center gap-2.5 pb-2 border-b border-gray-200/60">
-              <span className="text-lg select-none">🌾</span>
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider">
-                {t("benefitsFarmerTitle")}
-              </h3>
+        {/* RIGHT COLUMN: Real Recommendation UI */}
+        <div className="lg:col-span-6">
+          <div className="bg-[#071008] rounded-2xl border border-[#1A2E1E] p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-3 font-mono text-xs">
+              <span className="text-[#A6ADA3] uppercase">
+                AVAILABLE PROCURE SLOTS
+              </span>
+              <span className="text-[#79C267] font-bold">
+                RECOMMENDED WINDOW
+              </span>
             </div>
 
-            <ul className="space-y-3 text-xs font-semibold text-gray-700 leading-normal">
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
+            {/* Recommended Slot Option */}
+            <div className="p-4 bg-[#12351F] rounded-xl border border-[#79C267]/50 space-y-2 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#79C267]" />
+                  <span className="font-mono text-base font-bold text-[#F2F0E8]">
+                    02:00 PM – 02:30 PM
+                  </span>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-md bg-[#79C267] text-[#050805] text-[10px] font-mono font-black uppercase">
+                  RECOMMENDED
                 </span>
-                <span>{t("benefitsFarmer1")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsFarmer2")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsFarmer3")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsFarmer4")}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 2: Mandi Staff */}
-          <div className="py-6 md:py-0 md:px-8 space-y-4">
-            <div className="flex items-center gap-2.5 pb-2 border-b border-gray-200/60">
-              <span className="text-lg select-none">⚙️</span>
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider">
-                {t("benefitsStaffTitle")}
-              </h3>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono text-[#E8E7DE]">
+                <span>Expected wait: ~19 min</span>
+                <span className="text-[#79C267]">Capacity: 6/20 (Optimal)</span>
+              </div>
             </div>
 
-            <ul className="space-y-3 text-xs font-semibold text-gray-700 leading-normal">
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsStaff1")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsStaff2")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsStaff3")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsStaff4")}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Command Officers */}
-          <div className="py-6 md:py-0 md:px-8 space-y-4">
-            <div className="flex items-center gap-2.5 pb-2 border-b border-gray-200/60">
-              <span className="text-lg select-none">🛡️</span>
-              <h3 className="text-xs font-black text-[#111827] uppercase tracking-wider">
-                {t("benefitsOfficerTitle")}
-              </h3>
+            {/* Congested Alternative Slot Option */}
+            <div className="p-4 bg-[#0A120C] rounded-xl border border-[#1A2E1E] opacity-60 space-y-2">
+              <div className="flex items-center justify-between font-mono text-xs">
+                <span className="text-[#A6ADA3]">04:00 PM – 04:30 PM</span>
+                <span className="text-amber-400">HIGH CONGESTION</span>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono text-[#A6ADA3]">
+                <span>Expected wait: ~47 min</span>
+                <span>Capacity: 18/20 (Heavy Intake)</span>
+              </div>
             </div>
 
-            <ul className="space-y-3 text-xs font-semibold text-gray-700 leading-normal">
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsOfficer1")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsOfficer2")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsOfficer3")}</span>
-              </li>
-              <li className="flex items-start gap-2.5 group hover:text-[#1B4318] transition-colors">
-                <span className="text-[#2E7D32] font-bold text-xs shrink-0 select-none">
-                  ✓
-                </span>
-                <span>{t("benefitsOfficer4")}</span>
-              </li>
-            </ul>
+            <p className="text-[11px] text-[#A6ADA3] font-mono italic pt-1">
+              • Recommendation algorithm protects farmer arrival distribution.
+            </p>
           </div>
         </div>
       </div>

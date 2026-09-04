@@ -47,52 +47,52 @@ export default function AboutContact() {
   };
 
   return (
-    <section id="about" className="py-20 bg-white relative">
+    <section id="about" className="py-20 bg-[#050805] text-[#E8E7DE] relative font-mono">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ABOUT US BANNER */}
-        <div className="bg-[#FAF8F2] rounded-3xl p-8 sm:p-12 border border-[#E8E4D9] mb-16 shadow-sm">
+        <div className="bg-[#071008] p-8 sm:p-12 border border-[#1A2E1E] mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-4">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32] bg-[#E8F5E9] px-3.5 py-1.5 rounded-full border border-[#A5D6A7]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#79C267] bg-[#0A180D] px-3 py-1 border border-[#79C267]/30">
                 {t("aboutTitle")}
               </span>
-              <h2 className="text-3xl font-extrabold text-[#1B1B1B]">
+              <h2 className="text-3xl font-serif text-[#F2F0E8] font-normal tracking-wide">
                 {t("whatIsAgriProcure")}
               </h2>
-              <p className="text-base text-gray-700 leading-relaxed font-medium">
+              <p className="text-sm font-mono text-[#A6ADA3] leading-relaxed">
                 {t("whatIsDesc")}
               </p>
-              <div className="flex flex-wrap gap-4 pt-2 text-xs font-bold text-gray-700">
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2.5 rounded-xl border border-gray-200 shadow-xs">
-                  <Sprout className="w-4 h-4 text-[#2E7D32]" />
+              <div className="flex flex-wrap gap-4 pt-2 text-xs font-mono text-[#E8E7DE]">
+                <div className="flex items-center gap-2 bg-[#050805] px-3.5 py-2 border border-[#1A2E1E]">
+                  <Sprout className="w-4 h-4 text-[#79C267]" />
                   <span>{t("farmerPortal")}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2.5 rounded-xl border border-gray-200 shadow-xs">
-                  <ShieldCheck className="w-4 h-4 text-[#2E7D32]" />
+                <div className="flex items-center gap-2 bg-[#050805] px-3.5 py-2 border border-[#1A2E1E]">
+                  <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                   <span>SHA-256 Audit Ledger</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-3.5 py-2.5 rounded-xl border border-gray-200 shadow-xs">
-                  <HeartHandshake className="w-4 h-4 text-[#2E7D32]" />
+                <div className="flex items-center gap-2 bg-[#050805] px-3.5 py-2 border border-[#1A2E1E]">
+                  <HeartHandshake className="w-4 h-4 text-[#79C267]" />
                   <span>{t("brandTagline")}</span>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-4 bg-[#1B4318] text-white p-6 rounded-2xl space-y-3 shadow-md">
+            <div className="lg:col-span-4 bg-[#0A180D] border border-[#79C267]/40 text-[#F2F0E8] p-6 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F9A825] flex items-center justify-center text-gray-900 font-bold">
-                  <Phone className="w-5 h-5" />
+                <div className="w-9 h-9 border border-[#79C267]/40 bg-[#164A29] text-[#79C267] flex items-center justify-center font-bold">
+                  <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-[#A5D6A7] block">
+                  <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block tracking-wider">
                     {t("helpSupport")}
                   </span>
-                  <span className="text-base font-extrabold">
+                  <span className="text-base font-serif text-[#79C267]">
                     1800-PROCURE-AI
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-white/80 leading-relaxed">
+              <p className="text-xs font-mono text-[#A6ADA3] leading-relaxed">
                 {t("addressText")}
               </p>
             </div>
@@ -104,10 +104,10 @@ export default function AboutContact() {
           {/* LEFT: FAQ Accordion (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             <div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#79C267]">
                 FAQS
               </span>
-              <h3 className="text-2xl font-extrabold text-[#1B1B1B] mt-1">
+              <h3 className="text-2xl font-serif text-[#F2F0E8] font-normal mt-1">
                 Frequently Asked Questions
               </h3>
             </div>
@@ -118,20 +118,20 @@ export default function AboutContact() {
                 return (
                   <div
                     key={idx}
-                    className="border border-gray-200 rounded-2xl overflow-hidden transition-all bg-white"
+                    className="border border-[#1A2E1E] bg-[#071008] overflow-hidden transition-all"
                   >
                     <button
                       onClick={() => setOpenFaq(isOpen ? -1 : idx)}
-                      className="w-full p-4 text-left flex items-center justify-between font-bold text-gray-900 text-sm hover:text-[#2E7D32] transition-colors"
+                      className="w-full p-4 text-left flex items-center justify-between font-mono text-[#F2F0E8] text-xs hover:text-[#79C267] transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
                       <ChevronDown
-                        className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? "rotate-180 text-[#2E7D32]" : ""}`}
+                        className={`w-4 h-4 text-[#A6ADA3] transition-transform ${isOpen ? "rotate-180 text-[#79C267]" : ""}`}
                       />
                     </button>
 
                     {isOpen && (
-                      <div className="px-4 pb-4 text-xs text-gray-600 font-medium leading-relaxed border-t border-gray-100 pt-3 bg-gray-50/40">
+                      <div className="px-4 pb-4 text-xs font-mono text-[#A6ADA3] leading-relaxed border-t border-[#1A2E1E] pt-3 bg-[#050805]">
                         {faq.a}
                       </div>
                     )}
@@ -142,23 +142,23 @@ export default function AboutContact() {
           </div>
 
           {/* RIGHT: Contact Form (5 cols) */}
-          <div className="lg:col-span-5 bg-[#FAF8F2] p-8 rounded-3xl border border-[#E8E4D9] space-y-5 shadow-sm">
+          <div className="lg:col-span-5 bg-[#071008] p-8 border border-[#1A2E1E] space-y-5">
             <div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#79C267]">
                 {t("contact")}
               </span>
-              <h3 className="text-xl font-extrabold text-[#1B1B1B] mt-1">
+              <h3 className="text-xl font-serif text-[#F2F0E8] font-normal mt-1">
                 {t("contactTitle")}
               </h3>
-              <p className="text-xs text-gray-600 font-medium mt-1">
+              <p className="text-xs font-mono text-[#A6ADA3] mt-1">
                 {t("contactSub")}
               </p>
             </div>
 
             {!submitted ? (
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("nameLabel")}
                   </label>
                   <input
@@ -169,12 +169,12 @@ export default function AboutContact() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-serif text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("mobileLabel")}
                   </label>
                   <input
@@ -185,12 +185,12 @@ export default function AboutContact() {
                       setFormData({ ...formData, contact: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("messageLabel")}
                   </label>
                   <textarea
@@ -201,31 +201,31 @@ export default function AboutContact() {
                       setFormData({ ...formData, message: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267] resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm shadow-md transition-all active:scale-95"
+                  className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
                 >
                   {t("sendMessage")}
                 </button>
               </form>
             ) : (
-              <div className="p-6 bg-white rounded-2xl border border-green-200 text-center space-y-3">
-                <CheckCircle2 className="w-12 h-12 text-[#2E7D32] mx-auto" />
-                <h4 className="text-base font-bold text-gray-900">
+              <div className="p-6 bg-[#050805] border border-[#1A2E1E] text-center space-y-3">
+                <CheckCircle2 className="w-10 h-10 text-[#79C267] mx-auto" />
+                <h4 className="text-base font-serif text-[#F2F0E8]">
                   {t("messageSentSuccess")}
                 </h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs font-mono text-[#A6ADA3]">
                   Thank you,{" "}
-                  <span className="font-bold text-gray-900">
+                  <span className="text-[#F2F0E8]">
                     {formData.name}
                   </span>
                   .
                 </p>
-                <div className="text-[11px] font-mono bg-[#E8F5E9] text-[#1B4318] p-2 rounded-lg font-bold">
+                <div className="text-[11px] font-mono bg-[#0A180D] border border-[#79C267]/40 text-[#79C267] p-2 font-bold">
                   Reference Ticket: {inquiryToken}
                 </div>
                 <button
@@ -233,7 +233,7 @@ export default function AboutContact() {
                     setSubmitted(false);
                     setFormData({ name: "", contact: "", message: "" });
                   }}
-                  className="text-xs text-[#2E7D32] font-bold underline pt-2"
+                  className="text-xs font-mono text-[#79C267] uppercase underline pt-2 cursor-pointer"
                 >
                   {t("sendMessage")}
                 </button>

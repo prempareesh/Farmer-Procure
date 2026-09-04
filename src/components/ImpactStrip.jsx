@@ -29,20 +29,20 @@ export default function ImpactStrip() {
   ];
 
   return (
-    <div className="w-full bg-[#1B4318] text-white py-3.5 px-6 lg:px-12 z-20 shrink-0 border-t border-white/10 shadow-2xl">
+    <div className="w-full bg-[#071008] text-[#E8E7DE] py-4 px-6 lg:px-12 z-20 shrink-0 border-t border-[#1A2E1E]">
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 items-center">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={idx} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-white shrink-0 shadow-inner">
-                <Icon className="w-5 h-5" />
+            <div key={idx} className="flex items-center gap-3.5">
+              <div className="w-9 h-9 rounded-md border border-[#1A2E1E] bg-[#050805] flex items-center justify-center text-[#79C267] shrink-0">
+                <Icon className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-black text-white leading-none tracking-tight">
+                <div className="text-xl sm:text-2xl font-serif text-[#F2F0E8] leading-none tracking-tight">
                   {stat.value}
                 </div>
-                <div className="text-[11px] text-[#A5D6A7] font-semibold mt-1">
+                <div className="text-[11px] text-[#A6ADA3] uppercase tracking-wider font-mono mt-1">
                   {stat.label}
                 </div>
               </div>
@@ -53,3 +53,4 @@ export default function ImpactStrip() {
     </div>
   );
 }
+

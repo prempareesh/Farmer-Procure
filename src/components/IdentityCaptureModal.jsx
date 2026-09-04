@@ -6,7 +6,6 @@ import {
   AlertCircle,
   ShieldCheck,
   X,
-  Sparkles,
   Sun,
 } from "lucide-react";
 import { analyzeFrame, extractFaceEmbedding } from "../utils/faceVerification";
@@ -156,19 +155,19 @@ export default function IdentityCaptureModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-[#E0ECE0] overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200 selection:bg-[#164A29] selection:text-[#79C267]">
+      <div className="bg-[#071008] rounded-md w-full max-w-lg border border-[#1A2E1E] overflow-hidden flex flex-col max-h-[92vh]">
         {/* Modal Header */}
-        <div className="p-5 bg-gradient-to-r from-[#1B4318] to-[#2E7D32] text-white flex items-center justify-between shrink-0">
+        <div className="p-5 bg-[#164A29] text-[#F2F0E8] flex items-center justify-between shrink-0 border-b border-[#79C267]/30">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#F9A825]">
+            <div className="w-9 h-9 rounded bg-[#050805] border border-[#1A2E1E] flex items-center justify-center text-[#79C267]">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black tracking-tight">
+              <h3 className="text-base font-serif tracking-tight">
                 Identity Verification Photo
               </h3>
-              <p className="text-xs text-emerald-100 font-semibold">
+              <p className="text-xs font-mono text-[#79C267]">
                 Live capture for 1:1 Mandi arrival verification
               </p>
             </div>
@@ -178,34 +177,34 @@ export default function IdentityCaptureModal({
               stopCamera();
               onClose();
             }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="p-2 rounded bg-[#050805] hover:bg-[#0A120C] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-4 overflow-y-auto flex-1 text-center">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1 text-center bg-[#050805]">
           {cameraError ? (
-            <div className="p-6 bg-red-50 rounded-2xl border border-red-200 text-center space-y-3">
-              <AlertCircle className="w-10 h-10 text-red-600 mx-auto" />
-              <h4 className="text-sm font-bold text-red-900">
+            <div className="p-6 bg-red-950/40 rounded-sm border border-red-900/60 text-center space-y-3 font-mono">
+              <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
+              <h4 className="text-sm font-serif text-red-300">
                 Camera Permission Required
               </h4>
-              <p className="text-xs text-red-700">{cameraError}</p>
+              <p className="text-xs text-red-300/80">{cameraError}</p>
               <button
                 onClick={startCamera}
-                className="px-5 py-2 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors"
+                className="px-5 py-2.5 rounded-sm bg-red-900 text-red-100 text-xs font-mono uppercase tracking-wider hover:bg-red-800 transition-colors"
               >
                 Retry Camera Access
               </button>
             </div>
           ) : !capturedImage ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Guidance Info Banner */}
-              <div className="p-3 bg-[#FAF8F2] rounded-2xl border border-amber-200 text-xs text-amber-900 font-semibold flex items-center justify-between text-left">
+              <div className="p-3 bg-[#071008] rounded-sm border border-[#1A2E1E] text-xs text-[#A6ADA3] font-mono flex items-center justify-between text-left">
                 <div className="flex items-center gap-2">
-                  <Sun className="w-4 h-4 text-amber-600 shrink-0" />
+                  <Sun className="w-4 h-4 text-amber-400 shrink-0" />
                   <span>
                     Position face inside the oval. Avoid direct sunlight glare &
                     ensure only one person is visible.
@@ -214,7 +213,7 @@ export default function IdentityCaptureModal({
               </div>
 
               {/* Video Camera Viewport & Overlay */}
-              <div className="relative w-full aspect-[4/3] bg-black rounded-2xl overflow-hidden shadow-inner flex items-center justify-center">
+              <div className="relative w-full aspect-[4/3] bg-black rounded-sm overflow-hidden border border-[#1A2E1E] flex items-center justify-center">
                 <video
                   ref={videoRef}
                   playsInline
@@ -223,23 +222,23 @@ export default function IdentityCaptureModal({
                 />
                 <canvas ref={canvasRef} className="hidden" />
 
-                {/* Subtle Face Alignment Oval Guide */}
+                {/* Face Alignment Oval Guide */}
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                   <div
                     className={`w-48 h-64 sm:w-56 sm:h-72 rounded-[50%] border-2 transition-all duration-300 ${
                       qualityState.isValid
-                        ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_20px_rgba(52,211,153,0.4)]"
-                        : "border-amber-400/70 bg-amber-500/5"
+                        ? "border-[#79C267] bg-[#79C267]/10"
+                        : "border-amber-500/50 bg-amber-500/5"
                     }`}
                   />
                 </div>
 
                 {/* Realtime Live Quality Status Chip */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-sm bg-[#050805]/90 border border-[#1A2E1E] text-[#F2F0E8] text-xs font-mono flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${
                       qualityState.isValid
-                        ? "bg-emerald-400 animate-pulse"
+                        ? "bg-[#79C267] animate-pulse"
                         : "bg-amber-400"
                     }`}
                   />
@@ -252,13 +251,13 @@ export default function IdentityCaptureModal({
                 type="button"
                 onClick={handleCapturePhoto}
                 disabled={!qualityState.isValid}
-                className={`w-full py-3.5 rounded-2xl text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`w-full py-3.5 rounded-sm font-mono text-xs uppercase tracking-widest border transition-all cursor-pointer ${
                   qualityState.isValid
-                    ? "bg-[#1B4318] hover:bg-[#2E7D32] text-white active:scale-95"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    ? "bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] border-[#79C267]/30"
+                    : "bg-[#071008] text-[#A6ADA3]/40 border-[#1A2E1E] cursor-not-allowed"
                 }`}
               >
-                <Camera className="w-4 h-4 text-[#F9A825]" />
+                <Camera className="w-4 h-4 text-[#79C267] inline-block mr-2" />
                 <span>
                   {qualityState.isValid
                     ? "Capture Identity Photo"
@@ -268,20 +267,20 @@ export default function IdentityCaptureModal({
             </div>
           ) : (
             /* PREVIEW CAPTURED PHOTO SCREEN */
-            <div className="space-y-4">
-              <div className="relative w-48 h-48 mx-auto rounded-3xl overflow-hidden border-4 border-[#2E7D32] shadow-xl">
+            <div className="space-y-4 font-mono">
+              <div className="relative w-48 h-48 mx-auto rounded-sm overflow-hidden border-2 border-[#79C267]">
                 <img
                   src={capturedImage}
                   alt="Farmer Identity Capture"
                   className="w-full h-full object-cover scale-x-[-1]"
                 />
-                <div className="absolute bottom-2 right-2 p-1.5 rounded-full bg-[#2E7D32] text-white">
+                <div className="absolute bottom-2 right-2 p-1.5 rounded bg-[#164A29] text-[#79C267]">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
               </div>
 
-              <div className="p-3 bg-[#E8F5E9] rounded-2xl border border-[#A5D6A7] text-xs text-[#1B4318] font-extrabold flex items-center justify-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#2E7D32]" />
+              <div className="p-3 bg-[#12351F]/60 rounded-sm border border-[#79C267]/30 text-xs text-[#79C267] font-mono flex items-center justify-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                 <span>
                   Identity photo captured ✓ (128-d Feature Vector Encoded)
                 </span>
@@ -291,25 +290,25 @@ export default function IdentityCaptureModal({
                 <button
                   type="button"
                   onClick={handleRetake}
-                  className="flex-1 py-3 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 rounded-sm border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4 text-[#79C267]" />
                   <span>Retake Photo</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleConfirmPhoto}
-                  className="flex-1 py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-black shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-[#F9A825]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                   <span>Confirm Photo</span>
                 </button>
               </div>
             </div>
           )}
 
-          <p className="text-[10px] text-gray-400 font-medium">
+          <p className="text-[10px] text-[#A6ADA3] font-mono">
             Privacy Protected • Biometric features encrypted and referenced
             exclusively to this booking ID.
           </p>
@@ -318,3 +317,4 @@ export default function IdentityCaptureModal({
     </div>
   );
 }
+

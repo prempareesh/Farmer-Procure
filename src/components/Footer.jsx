@@ -26,68 +26,63 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-[#111C10] text-[#FAFBF8] border-t border-[#1F331D] selection:bg-[#2E7D32] selection:text-white">
-      {/* LAYER 1: MAIN FOOTER CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
-          {/* BRAND COLUMN (Left: 5 cols on lg) */}
+    <footer className="w-full bg-[#050805] text-[#E8E7DE] border-t border-[#1A2E1E]">
+      {/* MAIN FOOTER CONTENT */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* BRAND COLUMN */}
           <div className="lg:col-span-5 space-y-4">
             <div
               onClick={() => scrollToSection("hero")}
               className="flex items-center gap-3 cursor-pointer group w-fit"
             >
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825] border border-white/15">
-                <Sprout className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-lg bg-[#12351F] border border-[#1A2E1E] flex items-center justify-center text-[#79C267]">
+                <Sprout className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xl font-extrabold tracking-tight text-white block">
-                  {t("brandName")}
-                </span>
-                <span className="text-[11px] text-[#A5D6A7] font-semibold">
-                  {t("brandTagline")}
-                </span>
-              </div>
+              <span className="font-serif text-2xl font-normal text-[#F2F0E8] tracking-wider">
+                AGRIPROCURE
+              </span>
             </div>
 
-            <p className="text-xs text-white/70 leading-relaxed font-normal max-w-md">
+            <p className="text-xs text-[#A6ADA3] leading-relaxed max-w-md">
               {t("footerDesc")}
             </p>
 
             <div className="pt-2">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-[#A5D6A7] font-mono font-medium">
-                🌱 {t("footerProjectTag")}
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#071008] border border-[#1A2E1E] text-[11px] text-[#79C267] font-mono">
+                {t("footerProjectTag")}
               </span>
             </div>
           </div>
 
-          {/* NAVIGATION COLUMNS (Right: 7 cols on lg) */}
+          {/* NAVIGATION COLUMNS */}
           <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
             {/* COLUMN 1: QUICK ACCESS */}
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-[#A5D6A7] uppercase tracking-wider">
+              <h4 className="text-[11px] font-bold text-[#79C267] uppercase tracking-widest">
                 {t("footerNavQuickAccess")}
               </h4>
-              <ul className="space-y-2.5 text-xs font-semibold text-white/80">
+              <ul className="space-y-2 text-xs font-medium text-[#A6ADA3]">
                 <li>
                   <button
                     onClick={() => scrollToSection("hero")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavHome")}</span>
+                    {t("footerNavHome")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => scrollToSection("how-it-works")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavHowItWorks")}</span>
+                    {t("footerNavHowItWorks")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => navigateTo("auth")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 text-[#F9A825] cursor-pointer"
+                    className="hover:text-[#79C267] transition-colors flex items-center gap-1 cursor-pointer"
                   >
                     <span>{t("footerNavSignIn")}</span>
                     <ArrowUpRight className="w-3 h-3" />
@@ -98,32 +93,32 @@ export default function Footer() {
 
             {/* COLUMN 2: FOR FARMERS */}
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-[#A5D6A7] uppercase tracking-wider">
+              <h4 className="text-[11px] font-bold text-[#79C267] uppercase tracking-widest">
                 {t("footerNavForFarmers")}
               </h4>
-              <ul className="space-y-2.5 text-xs font-semibold text-white/80">
+              <ul className="space-y-2 text-xs font-medium text-[#A6ADA3]">
                 <li>
                   <button
                     onClick={() => navigateTo("book-slot")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavBookSlot")}</span>
+                    {t("footerNavBookSlot")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => navigateTo("queue")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavLiveQueue")}</span>
+                    {t("footerNavLiveQueue")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => navigateTo("farmer-dash")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavFarmerPortal")}</span>
+                    {t("footerNavFarmerPortal")}
                   </button>
                 </li>
               </ul>
@@ -131,32 +126,32 @@ export default function Footer() {
 
             {/* COLUMN 3: PLATFORM */}
             <div className="space-y-3 col-span-2 sm:col-span-1">
-              <h4 className="text-[11px] font-black text-[#A5D6A7] uppercase tracking-wider">
+              <h4 className="text-[11px] font-bold text-[#79C267] uppercase tracking-widest">
                 {t("footerNavPlatform")}
               </h4>
-              <ul className="space-y-2.5 text-xs font-semibold text-white/80">
+              <ul className="space-y-2 text-xs font-medium text-[#A6ADA3]">
                 <li>
                   <button
                     onClick={() => scrollToSection("problem")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavAbout")}</span>
+                    {t("footerNavAbout")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => scrollToSection("benefits")}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavFeatures")}</span>
+                    {t("footerNavFeatures")}
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => setContactModalOpen(true)}
-                    className="hover:text-white hover:underline transition-colors flex items-center gap-1 cursor-pointer"
+                    className="hover:text-[#F2F0E8] transition-colors cursor-pointer"
                   >
-                    <span>{t("footerNavContact")}</span>
+                    {t("footerNavContact")}
                   </button>
                 </li>
               </ul>
@@ -165,36 +160,33 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* LAYER 2: BOTTOM LEGAL & COPYRIGHT STRIP */}
-      <div className="border-t border-white/10 bg-[#0B120B] py-6 px-6 lg:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-white/60">
-          {/* Copyright Notice */}
+      {/* BOTTOM LEGAL STRIP */}
+      <div className="border-t border-[#1A2E1E] bg-[#071008] py-6 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#A6ADA3]">
           <div className="text-center sm:text-left">
             <span>{t("footerCopyright")}</span>
           </div>
 
-          {/* Legal Links & Language Selector */}
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-white/60">
-              <span className="hover:text-white cursor-pointer">
+            <div className="flex items-center gap-4 text-[#A6ADA3]">
+              <span className="hover:text-[#F2F0E8] cursor-pointer">
                 {t("footerPrivacy")}
               </span>
               <span>•</span>
-              <span className="hover:text-white cursor-pointer">
+              <span className="hover:text-[#F2F0E8] cursor-pointer">
                 {t("footerTerms")}
               </span>
               <span>•</span>
-              <span className="hover:text-white cursor-pointer">
+              <span className="hover:text-[#F2F0E8] cursor-pointer">
                 {t("footerAccessibility")}
               </span>
             </div>
 
-            {/* Language Trigger */}
             <button
               onClick={() => setLanguageModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors text-xs font-bold cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#12351F] text-[#F2F0E8] hover:bg-[#164A29] border border-[#1A2E1E] transition-colors text-xs font-bold cursor-pointer"
             >
-              <Globe className="w-3.5 h-3.5 text-[#F9A825]" />
+              <Globe className="w-3.5 h-3.5 text-[#79C267]" />
               <span className="uppercase">{currentLang}</span>
             </button>
           </div>

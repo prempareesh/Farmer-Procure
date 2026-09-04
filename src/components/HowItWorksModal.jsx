@@ -75,34 +75,34 @@ export default function HowItWorksModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in selection:bg-[#79C267] selection:text-[#050805]">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative w-full max-w-2xl bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <Zap className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <Zap className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">{t("howProcureIntelWorks")}</h3>
-              <p className="text-xs text-[#A5D6A7]">{t("sixStagePipeline")}</p>
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">{t("howProcureIntelWorks")}</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">{t("sixStagePipeline")}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto bg-[#FAF8F2]">
+        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto bg-[#071008] font-mono">
           {/* Step Selector Pills */}
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
             {steps.map((step, idx) => {
@@ -112,14 +112,14 @@ export default function HowItWorksModal({ isOpen, onClose }) {
                 <button
                   key={step.id}
                   onClick={() => setActiveStep(idx)}
-                  className={`p-2.5 rounded-xl text-center border transition-all cursor-pointer ${
+                  className={`p-2.5 text-center border transition-all cursor-pointer font-mono ${
                     isActive
-                      ? "bg-[#2E7D32] text-white border-[#2E7D32] shadow-sm font-bold scale-105"
-                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 text-xs"
+                      ? "bg-[#164A29] text-[#F2F0E8] border-[#79C267]/50"
+                      : "bg-[#050805] text-[#A6ADA3] border-[#1A2E1E] hover:border-[#79C267]/30 hover:text-[#F2F0E8]"
                   }`}
                 >
-                  <Icon className="w-4 h-4 mx-auto mb-1" />
-                  <span className="text-[10px] font-bold block">
+                  <Icon className="w-4 h-4 mx-auto mb-1 text-[#79C267]" />
+                  <span className="text-[10px] uppercase block tracking-wider">
                     {step.title}
                   </span>
                 </button>
@@ -128,24 +128,23 @@ export default function HowItWorksModal({ isOpen, onClose }) {
           </div>
 
           {/* Active Step Content */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 space-y-3 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black text-[#2E7D32] bg-[#E8F5E9] px-2.5 py-1 rounded-lg">
-                {t("stepLabel")} {steps[activeStep].num}:{" "}
-                {steps[activeStep].title}
+          <div className="bg-[#050805] p-5 border border-[#1A2E1E] space-y-4">
+            <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-3">
+              <span className="text-xs font-mono text-[#79C267] bg-[#0A180D] px-2.5 py-1 border border-[#79C267]/30 uppercase">
+                {t("stepLabel")} {steps[activeStep].num}: {steps[activeStep].title}
               </span>
-              <span className="text-xs font-semibold text-gray-500">
+              <span className="text-xs font-mono text-[#A6ADA3]">
                 {steps[activeStep].subtitle}
               </span>
             </div>
 
-            <p className="text-sm text-gray-800 font-medium leading-relaxed">
+            <p className="text-sm font-serif text-[#F2F0E8] leading-relaxed">
               {steps[activeStep].description}
             </p>
 
-            <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#E8E4D9] flex items-center justify-between text-xs font-bold">
-              <span className="text-gray-600">Metric Status:</span>
-              <span className="text-[#2E7D32]">
+            <div className="bg-[#0A180D] p-3 border border-[#1A2E1E] flex items-center justify-between text-xs font-mono">
+              <span className="text-[#A6ADA3]">Metric Status:</span>
+              <span className="text-[#79C267]">
                 {steps[activeStep].metrics}
               </span>
             </div>
@@ -158,7 +157,7 @@ export default function HowItWorksModal({ isOpen, onClose }) {
                   prev > 0 ? prev - 1 : steps.length - 1,
                 )
               }
-              className="px-4 py-2 rounded-xl text-xs font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] text-xs font-mono uppercase tracking-wider cursor-pointer"
             >
               {t("btnPrevious")}
             </button>
@@ -168,7 +167,7 @@ export default function HowItWorksModal({ isOpen, onClose }) {
                   prev < steps.length - 1 ? prev + 1 : 0,
                 )
               }
-              className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#2E7D32] hover:bg-[#1B4318] cursor-pointer"
+              className="px-5 py-2 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] text-xs font-mono uppercase tracking-wider cursor-pointer"
             >
               {t("btnNext")}
             </button>

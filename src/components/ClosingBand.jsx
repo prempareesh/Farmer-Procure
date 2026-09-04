@@ -6,23 +6,23 @@ export default function ClosingBand() {
   const { navigateTo, t } = useApp();
 
   return (
-    <section className="w-full py-12 bg-[#FAFBF8] border-t border-[#E8EFE6]">
+    <section className="w-full py-12 bg-[#050805] text-[#E8E7DE] border-t border-[#1A2E1E] font-mono">
       <div className="max-w-4xl mx-auto px-6 text-center space-y-4">
         {/* Action Link / Button */}
         <div>
           <button
             onClick={() => navigateTo("book-slot")}
-            className="inline-flex items-center gap-2 text-sm sm:text-base font-bold text-[#1B4318] hover:text-[#2E7D32] transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-2 text-sm sm:text-base font-serif text-[#F2F0E8] hover:text-[#79C267] transition-colors group cursor-pointer"
           >
             <span>{t("btnBookSlot")}</span>
-            <ArrowRight className="w-4 h-4 text-[#2E7D32] group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-[#79C267] group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
         {/* Footer Minimal Copyright Notice */}
-        <div className="pt-6 border-t border-gray-100 text-[11px] text-gray-500 font-medium flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="pt-6 border-t border-[#1A2E1E] text-[11px] text-[#A6ADA3] font-mono flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>{t("copyright")}</span>
-          <span className="text-gray-400">{t("brandTagline")}</span>
+          <span className="text-[#A6ADA3]/60">{t("brandTagline")}</span>
         </div>
       </div>
     </section>

@@ -96,41 +96,41 @@ export default function SlotBookingModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative w-full max-w-xl bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden font-mono"
       >
         {/* Header */}
-        <div className="bg-[#2E7D32] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <Calendar className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">Book AI Procurement Slot</h3>
-              <p className="text-xs text-white/80">
-                Procure Intelligence • Smart Scheduling
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">Book AI Procurement Slot</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
+                Procure Intelligence • Predictive Slot Dispatch
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 max-h-[80vh] overflow-y-auto">
+        <div className="p-6 max-h-[80vh] overflow-y-auto bg-[#071008]">
           {step === 1 ? (
             <form onSubmit={handleConfirm} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-1">
                     Farmer Name
                   </label>
                   <input
@@ -140,11 +140,11 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                       setFormData({ ...formData, farmerName: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-serif text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                  <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-1">
                     Mobile Number
                   </label>
                   <input
@@ -154,14 +154,14 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-[#2E7D32]" />
+                <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#79C267]" />
                   Target Mandi Procurement Hub
                 </label>
                 <select
@@ -169,10 +169,10 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                   onChange={(e) =>
                     setFormData({ ...formData, mandi: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:border-[#2E7D32] bg-white"
+                  className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                 >
                   {mandis.map((m, i) => (
-                    <option key={i} value={m}>
+                    <option key={i} value={m} className="bg-[#050805] text-[#F2F0E8]">
                       {m}
                     </option>
                   ))}
@@ -181,8 +181,8 @@ export default function SlotBookingModal({ isOpen, onClose }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1">
-                    <Wheat className="w-3.5 h-3.5 text-[#2E7D32]" />
+                  <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-1 flex items-center gap-1">
+                    <Wheat className="w-3.5 h-3.5 text-[#79C267]" />
                     Crop Variety
                   </label>
                   <select
@@ -190,18 +190,18 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                     onChange={(e) =>
                       setFormData({ ...formData, crop: e.target.value })
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:border-[#2E7D32] bg-white"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   >
                     {crops.map((c, i) => (
-                      <option key={i} value={c}>
+                      <option key={i} value={c} className="bg-[#050805] text-[#F2F0E8]">
                         {c}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1 flex items-center gap-1">
-                    <Truck className="w-3.5 h-3.5 text-[#2E7D32]" />
+                  <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-1 flex items-center gap-1">
+                    <Truck className="w-3.5 h-3.5 text-[#79C267]" />
                     Estimated Load (Quintals)
                   </label>
                   <input
@@ -210,19 +210,19 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                     onChange={(e) =>
                       setFormData({ ...formData, quantity: e.target.value })
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
               </div>
 
               {/* Time Slot AI Selection */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2 flex items-center justify-between">
+                <label className="block text-[11px] text-[#A6ADA3] uppercase tracking-wider mb-2 flex items-center justify-between">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-[#2E7D32]" />
+                    <Clock className="w-3.5 h-3.5 text-[#79C267]" />
                     Select AI Recommended Slot
                   </span>
-                  <span className="text-[11px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-mono text-[#79C267] bg-[#0A180D] px-2 py-0.5 border border-[#79C267]/30">
                     Predictive SLA Engine
                   </span>
                 </label>
@@ -231,10 +231,10 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                   {slots.map((s, idx) => (
                     <label
                       key={idx}
-                      className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                      className={`flex items-center justify-between p-3 border cursor-pointer transition-all ${
                         formData.timeSlot === s.time
-                          ? "border-[#2E7D32] bg-[#E8F5E9]/60 ring-2 ring-[#2E7D32]"
-                          : "border-gray-200 hover:border-gray-300 bg-gray-50/50"
+                          ? "border-[#79C267] bg-[#0A180D] text-[#F2F0E8]"
+                          : "border-[#1A2E1E] bg-[#050805] text-[#A6ADA3] hover:border-[#79C267]/30"
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -245,19 +245,19 @@ export default function SlotBookingModal({ isOpen, onClose }) {
                           onChange={() =>
                             setFormData({ ...formData, timeSlot: s.time })
                           }
-                          className="accent-[#2E7D32]"
+                          className="accent-[#79C267]"
                         />
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-xs font-mono font-bold text-[#F2F0E8]">
                           {s.time}
                         </span>
                       </div>
                       <span
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                        className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border ${
                           s.status === "green"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-[#0A180D] border-[#79C267]/40 text-[#79C267]"
                             : s.status === "yellow"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
+                              ? "bg-amber-950/40 border-amber-500/40 text-amber-300"
+                              : "bg-red-950/40 border-red-500/40 text-red-400"
                         }`}
                       >
                         {s.congestion}
@@ -270,7 +270,7 @@ export default function SlotBookingModal({ isOpen, onClose }) {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-2xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-base shadow-lg shadow-[#2E7D32]/30 transition-all"
+                  className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Generate Digital Mandi Token
                 </button>
@@ -279,74 +279,74 @@ export default function SlotBookingModal({ isOpen, onClose }) {
           ) : (
             /* Step 2: Digital Receipt Pass */
             <div className="space-y-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-inner">
-                <CheckCircle2 className="w-10 h-10" />
+              <div className="w-12 h-12 border border-[#79C267]/40 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
 
               <div>
-                <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32] bg-[#E8F5E9] px-3 py-1 rounded-full">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#79C267] bg-[#0A180D] px-3 py-1 border border-[#79C267]/40">
                   Slot Confirmed & Hash Issued
                 </span>
-                <h4 className="text-2xl font-black text-gray-900 mt-2">
+                <h4 className="text-2xl font-serif text-[#F2F0E8] mt-2">
                   Digital Mandi Token
                 </h4>
-                <p className="text-xs text-gray-500 mt-1 font-mono">
+                <p className="text-xs text-[#A6ADA3] mt-1 font-mono">
                   Token ID: {bookingPass.token}
                 </p>
               </div>
 
               {/* Token Card details */}
-              <div className="bg-[#FAF8F2] p-5 rounded-2xl border border-[#E8E4D9] text-left space-y-3">
-                <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-[#050805] p-5 border border-[#1A2E1E] text-left space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div>
-                    <span className="text-gray-500 font-medium">Farmer:</span>
-                    <p className="font-bold text-gray-900">
+                    <span className="text-[#A6ADA3] text-[10px] uppercase block">Farmer:</span>
+                    <p className="font-serif text-sm text-[#F2F0E8]">
                       {bookingPass.farmerName}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 font-medium">Phone:</span>
-                    <p className="font-bold text-gray-900">
+                    <span className="text-[#A6ADA3] text-[10px] uppercase block">Phone:</span>
+                    <p className="text-[#E8E7DE]">
                       {bookingPass.phone}
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-[#A6ADA3] text-[10px] uppercase block">
                       Mandi Centre:
                     </span>
-                    <p className="font-bold text-gray-900">
+                    <p className="text-[#E8E7DE]">
                       {bookingPass.mandi}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-[#A6ADA3] text-[10px] uppercase block">
                       Crop & Load:
                     </span>
-                    <p className="font-bold text-gray-900">
+                    <p className="text-[#79C267]">
                       {bookingPass.crop} ({bookingPass.quantity})
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 font-medium">
+                    <span className="text-[#A6ADA3] text-[10px] uppercase block">
                       Scheduled Time:
                     </span>
-                    <p className="font-bold text-[#2E7D32]">
+                    <p className="text-[#79C267]">
                       {bookingPass.timeSlot}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-gray-200 flex items-center justify-between">
+                <div className="pt-3 border-t border-[#1A2E1E] flex items-center justify-between">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">
+                    <span className="text-[10px] text-[#A6ADA3] uppercase block">
                       SHA-256 Audit Stamp
                     </span>
-                    <code className="text-[10px] text-[#2E7D32] bg-white px-2 py-1 rounded border border-gray-200 block font-mono">
+                    <code className="text-[10px] text-[#79C267] bg-[#071008] px-2 py-1 border border-[#1A2E1E] block font-mono">
                       {bookingPass.shaHash.substring(0, 24)}...
                     </code>
                   </div>
-                  <div className="w-16 h-16 bg-white p-1 rounded-lg border border-gray-300 flex items-center justify-center">
-                    <QrCode className="w-12 h-12 text-gray-900" />
+                  <div className="w-12 h-12 bg-[#0A180D] border border-[#1A2E1E] flex items-center justify-center shrink-0">
+                    <QrCode className="w-8 h-8 text-[#79C267]" />
                   </div>
                 </div>
               </div>
@@ -354,17 +354,17 @@ export default function SlotBookingModal({ isOpen, onClose }) {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => alert("Token PDF downloaded to your device!")}
-                  className="flex-1 py-3 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md"
+                  className="flex-1 py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download Digital Pass</span>
+                  <Download className="w-4 h-4 text-[#79C267]" />
+                  <span>Download Pass</span>
                 </button>
                 <button
                   onClick={() => {
                     setStep(1);
                     onClose();
                   }}
-                  className="px-5 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-sm"
+                  className="px-5 py-3 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Close
                 </button>

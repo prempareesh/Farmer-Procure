@@ -33,40 +33,40 @@ export default function ContactModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        className="relative w-full max-w-lg bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <MessageSquare className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">Mandi Helpdesk & Support</h3>
-              <p className="text-xs text-[#A5D6A7]">
-                Farmer Query & Assistance Desk
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">Mandi Telemetry Support</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
+                Farmer Query & Dispatch Assistance
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 bg-[#FAF8F2]">
+        <div className="p-6 bg-[#071008] font-mono">
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-3.5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Your Name *
                 </label>
                 <input
@@ -75,12 +75,12 @@ export default function ContactModal() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-serif text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Mobile / WhatsApp Number *
                 </label>
                 <input
@@ -90,12 +90,12 @@ export default function ContactModal() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Message / Mandi Assistance Required *
                 </label>
                 <textarea
@@ -104,33 +104,32 @@ export default function ContactModal() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3.5 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267] resize-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5 text-[#79C267]" />
                 <span>Submit Inquiry Ticket</span>
               </button>
             </form>
           ) : (
-            <div className="py-8 text-center space-y-3">
-              <div className="w-14 h-14 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-xs">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="py-8 text-center space-y-3 bg-[#050805] border border-[#1A2E1E] p-6">
+              <div className="w-12 h-12 border border-[#79C267]/40 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
-              <h4 className="text-base font-bold text-gray-900">
+              <h4 className="text-lg font-serif text-[#F2F0E8]">
                 Inquiry Ticket #TKT-8841 Created
               </h4>
-              <p className="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-                Thank you! Our procurement support executive will contact your
-                registered mobile number shortly.
+              <p className="text-xs text-[#A6ADA3] font-mono max-w-sm mx-auto leading-relaxed">
+                Thank you! Our procurement support executive will contact your registered mobile number shortly.
               </p>
               <button
                 onClick={handleClose}
-                className="mt-3 px-5 py-2 bg-[#1B4318] text-white font-bold text-xs rounded-xl hover:bg-[#2E7D32]"
+                className="mt-3 px-5 py-2 bg-[#164A29] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider hover:bg-[#12351F] cursor-pointer"
               >
                 Done
               </button>

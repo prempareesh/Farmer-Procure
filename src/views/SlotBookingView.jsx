@@ -97,7 +97,7 @@ export default function SlotBookingView() {
         particleCount: 70,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ["#2E7D32", "#4CAF50", "#F9A825"],
+        colors: ["#164A29", "#79C267", "#F2F0E8"],
       });
 
       setIsSubmitting(false);
@@ -109,18 +109,18 @@ export default function SlotBookingView() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6 selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8 selection:bg-[#164A29] selection:text-[#79C267]">
       {/* Navigation Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-6">
         <button
           onClick={() => navigateTo("farmer-dash")}
-          className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-xs font-mono text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("farmerPortal")}</span>
         </button>
 
-        <span className="text-xs font-mono font-bold text-gray-700 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-2xs">
+        <span className="text-xs font-mono text-[#79C267] bg-[#071008] px-3 py-1.5 rounded border border-[#1A2E1E]">
           Farmer: {farmerProfile.name} ({farmerProfile.farmerId})
         </span>
       </div>
@@ -129,16 +129,16 @@ export default function SlotBookingView() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Booking Form */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0]">
+            <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E]">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#1B4318] text-white flex items-center justify-center font-bold shadow-xs">
-                  <Calendar className="w-6 h-6 text-[#F9A825]" />
+                <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+                  <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-extrabold text-gray-900">
+                  <h2 className="text-2xl font-serif text-[#F2F0E8]">
                     {t("bookSlot")}
                   </h2>
-                  <p className="text-xs text-gray-500 font-semibold mt-0.5">
+                  <p className="text-xs text-[#A6ADA3] font-mono mt-0.5">
                     {t("brandTagline")}
                   </p>
                 </div>
@@ -147,31 +147,31 @@ export default function SlotBookingView() {
 
             <form
               onSubmit={handleBookingSubmit}
-              className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-5"
+              className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6"
             >
               {/* STEP 1: SELECT PROCUREMENT CENTRE */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-700 uppercase flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-[#2E7D32]" />
+              <div className="space-y-2.5">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-[#79C267]" />
                   {t("selectMandi")}
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {mandiCentres.map((centre) => {
                     const isSelected = selectedMandiId === centre.id;
                     return (
                       <div
                         key={centre.id}
                         onClick={() => setSelectedMandiId(centre.id)}
-                        className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                        className={`p-4 rounded-sm border cursor-pointer transition-all ${
                           isSelected
-                            ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
-                            : "bg-[#FAF8F2] border-gray-200 hover:bg-white"
+                            ? "bg-[#164A29]/30 border-[#79C267]"
+                            : "bg-[#050805] border-[#1A2E1E] hover:border-[#79C267]/40"
                         }`}
                       >
-                        <h4 className="text-xs font-bold text-gray-900">
+                        <h4 className="text-xs font-serif text-[#F2F0E8]">
                           {centre.name || centre.centre_name}
                         </h4>
-                        <p className="text-[11px] text-gray-500 mt-1">
+                        <p className="text-[11px] text-[#A6ADA3] font-mono mt-1">
                           {centre.district}, {centre.state} •{" "}
                           {centre.activeCounters || 4}{" "}
                           {t("digitalWeighbridgesText")}
@@ -186,14 +186,14 @@ export default function SlotBookingView() {
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5 flex items-center gap-1">
-                      <Sprout className="w-4 h-4 text-[#2E7D32]" />{" "}
+                    <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                      <Sprout className="w-4 h-4 text-[#79C267]" />{" "}
                       {t("selectCrop")}
                     </label>
                     <select
                       value={selectedCrop}
                       onChange={(e) => setSelectedCrop(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2] focus:outline-none focus:border-[#2E7D32] cursor-pointer"
+                      className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#050805] text-[#F2F0E8] focus:border-[#79C267] cursor-pointer"
                     >
                       {farmerCrops.map((c) => (
                         <option key={c.id || c.name} value={c.name}>
@@ -205,7 +205,7 @@ export default function SlotBookingView() {
 
                   {/* STEP 4: ENTER QUANTITY FOR THIS VISIT */}
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                    <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                       {t("quantityForThisVisitLabel")} *
                     </label>
                     <input
@@ -216,33 +216,33 @@ export default function SlotBookingView() {
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2] focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#050805] text-[#F2F0E8] focus:border-[#79C267]"
                     />
                   </div>
                 </div>
 
                 {/* Registered Crop Profile Context Box */}
                 {matchedCrop && (
-                  <div className="p-3.5 bg-[#FAF8F2] rounded-2xl border border-gray-200 text-xs text-gray-600 flex items-center justify-between">
+                  <div className="p-3.5 bg-[#050805] rounded-sm border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Info className="w-4 h-4 text-[#2E7D32] shrink-0" />
+                      <Info className="w-4 h-4 text-[#79C267] shrink-0" />
                       <div>
-                        <span className="font-bold text-gray-800">
+                        <span className="text-[#F2F0E8]">
                           {t("registeredCropInfoLabel")}:{" "}
                         </span>
                         <span>
                           {t("areaLabel")}:{" "}
-                          <strong>
+                          <strong className="text-[#79C267]">
                             {matchedCrop.areaAcres} {t("acres")}
                           </strong>{" "}
                           • {t("expectedProductionLabel")}:{" "}
-                          <strong>
+                          <strong className="text-[#79C267]">
                             {matchedCrop.expectedYieldQuintals} Qtl
                           </strong>
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden sm:inline">
+                    <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider hidden sm:inline">
                       Profile Context
                     </span>
                   </div>
@@ -251,7 +251,7 @@ export default function SlotBookingView() {
 
               {/* STEP 5: SELECT DATE */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                   {t("selectDate")}
                 </label>
                 <input
@@ -259,20 +259,20 @@ export default function SlotBookingView() {
                   value={bookingDate}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => setBookingDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2]"
+                  className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#050805] text-[#F2F0E8] focus:border-[#79C267]"
                 />
               </div>
 
               {/* STEP 6: AVAILABLE TIME SLOTS */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-gray-700 uppercase flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-[#2E7D32]" />
+                  <label className="text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-[#79C267]" />
                     {t("selectTimeSlot")}
                   </label>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {timeSlots.map((slot) => {
                     const isFull = slot.booked >= slot.capacity;
                     const isSelected = selectedSlot === slot.time;
@@ -284,33 +284,33 @@ export default function SlotBookingView() {
                         onClick={() => {
                           if (!isFull) setSelectedSlot(slot.time);
                         }}
-                        className={`p-3 rounded-2xl border transition-all relative ${
+                        className={`p-3.5 rounded-sm border transition-all relative font-mono ${
                           isFull
-                            ? "bg-gray-100 border-gray-200 opacity-60 cursor-not-allowed"
+                            ? "bg-[#050805]/40 border-[#1A2E1E]/40 opacity-40 cursor-not-allowed"
                             : isSelected
-                              ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs cursor-pointer"
-                              : "bg-[#FAF8F2] border-gray-200 hover:bg-white cursor-pointer"
+                              ? "bg-[#164A29]/30 border-[#79C267]"
+                              : "bg-[#050805] border-[#1A2E1E] hover:border-[#79C267]/40 cursor-pointer"
                         }`}
                       >
                         {slot.isRecommended && (
-                          <span className="absolute -top-2 right-3 px-2 py-0.5 rounded-full bg-[#F9A825] text-gray-900 text-[9px] font-black uppercase shadow-xs flex items-center gap-1">
-                            <Sparkles className="w-2.5 h-2.5" />{" "}
+                          <span className="absolute -top-2 right-3 px-2 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[9px] font-mono uppercase border border-[#79C267]/30 flex items-center gap-1">
+                            <Sparkles className="w-2.5 h-2.5 text-[#79C267]" />{" "}
                             {t("smartSlotRecommendation")}
                           </span>
                         )}
 
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-gray-900">
+                          <span className="text-xs font-serif text-[#F2F0E8]">
                             {slot.time}
                           </span>
                           {isFull ? (
-                            <span className="px-2 py-0.5 rounded-md bg-red-100 text-red-700 text-[10px] font-black">
+                            <span className="px-2 py-0.5 rounded bg-red-950/60 text-red-300 text-[10px] border border-red-800/50">
                               {t("fullCapacity")}
                             </span>
                           ) : (
-                            <span className="text-[10px] font-bold text-gray-600">
+                            <span className="text-[10px] text-[#A6ADA3]">
                               {t("availableCapacity")}:{" "}
-                              <strong className="text-[#2E7D32]">
+                              <strong className="text-[#79C267]">
                                 {available}
                               </strong>{" "}
                               / {slot.capacity}
@@ -318,15 +318,15 @@ export default function SlotBookingView() {
                           )}
                         </div>
 
-                        <div className="flex items-center justify-between text-[10px] mt-1.5 font-medium">
-                          <span className="text-gray-500">
+                        <div className="flex items-center justify-between text-[10px] mt-2 text-[#A6ADA3]">
+                          <span>
                             Booked: {slot.booked}/{slot.capacity}
                           </span>
                           <span
                             className={
                               slot.expectedWaitMins <= 15
-                                ? "text-[#2E7D32] font-bold"
-                                : "text-amber-700"
+                                ? "text-[#79C267]"
+                                : "text-amber-400"
                             }
                           >
                             Exp. Wait: ~{slot.expectedWaitMins} min
@@ -339,22 +339,22 @@ export default function SlotBookingView() {
               </div>
 
               {/* STEP 7: IDENTITY VERIFICATION PHOTO CAPTURE */}
-              <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#A5D6A7] space-y-3">
+              <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-[#2E7D32]" />
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="w-5 h-5 text-[#79C267]" />
                     <div>
-                      <h4 className="text-xs font-black text-gray-900 uppercase">
+                      <h4 className="text-xs font-mono text-[#F2F0E8] uppercase tracking-wider">
                         Identity Verification
                       </h4>
-                      <p className="text-[11px] text-gray-600 font-semibold">
+                      <p className="text-[11px] text-[#A6ADA3] font-sans">
                         Take a clear photo to verify your identity when you
                         arrive.
                       </p>
                     </div>
                   </div>
                   {identityPhotoData && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
+                    <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30">
                       Identity Photo Captured ✓
                     </span>
                   )}
@@ -364,25 +364,25 @@ export default function SlotBookingView() {
                   <button
                     type="button"
                     onClick={() => setIsCaptureModalOpen(true)}
-                    className="w-full py-3 rounded-xl bg-white border border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] font-extrabold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3 rounded-sm bg-[#071008] border border-[#1A2E1E] hover:border-[#79C267]/50 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Camera className="w-4 h-4 text-[#F9A825]" />
+                    <Camera className="w-4 h-4 text-[#79C267]" />
                     <span>Take Identity Photo (Camera Required)</span>
                   </button>
                 ) : (
-                  <div className="flex items-center gap-3 p-2 bg-white rounded-xl border border-emerald-200">
-                    <div className="w-14 h-14 rounded-lg overflow-hidden border border-emerald-400 shrink-0">
+                  <div className="flex items-center gap-3 p-3 bg-[#071008] rounded-sm border border-[#1A2E1E]">
+                    <div className="w-14 h-14 rounded overflow-hidden border border-[#79C267]/40 shrink-0">
                       <img
                         src={identityPhotoData.photoUrl}
                         alt="Identity Capture"
                         className="w-full h-full object-cover scale-x-[-1]"
                       />
                     </div>
-                    <div className="flex-1 text-xs font-semibold text-gray-700">
-                      <p className="text-[#1B4318] font-bold">
+                    <div className="flex-1 text-xs font-mono text-[#A6ADA3]">
+                      <p className="text-[#79C267]">
                         Photo Encoded & Reference Saved
                       </p>
-                      <p className="text-[10px] text-gray-400 font-mono">
+                      <p className="text-[10px] text-[#A6ADA3]/60">
                         128-d Vector Encrypted •{" "}
                         {new Date(
                           identityPhotoData.capturedAt,
@@ -392,9 +392,9 @@ export default function SlotBookingView() {
                     <button
                       type="button"
                       onClick={() => setIsCaptureModalOpen(true)}
-                      className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-[11px] font-bold cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 rounded-sm border border-[#1A2E1E] text-[#A6ADA3] hover:text-[#F2F0E8] text-[11px] font-mono cursor-pointer flex items-center gap-1"
                     >
-                      <RefreshCw className="w-3.5 h-3.5" />
+                      <RefreshCw className="w-3.5 h-3.5 text-[#79C267]" />
                       <span>Retake</span>
                     </button>
                   </div>
@@ -402,7 +402,7 @@ export default function SlotBookingView() {
               </div>
 
               {validationError && (
-                <div className="p-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-200">
+                <div className="p-3 bg-red-950/40 text-red-300 text-xs font-mono rounded-sm border border-red-900/60">
                   {validationError}
                 </div>
               )}
@@ -410,10 +410,10 @@ export default function SlotBookingView() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 rounded-2xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-black text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-widest border border-[#79C267]/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isSubmitting ? "Processing..." : t("confirmBookingBtn")}
-                <ArrowRight className="w-4 h-4 text-[#F9A825]" />
+                <ArrowRight className="w-4 h-4 text-[#79C267]" />
               </button>
             </form>
           </div>
@@ -431,55 +431,55 @@ export default function SlotBookingView() {
           {/* STEP 7 & 8: BOOKING SUMMARY & PREDICTION SIDEBAR */}
           <div className="lg:col-span-5 space-y-6">
             {/* BOOKING SUMMARY CARD */}
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-              <h3 className="text-sm font-black text-[#1B4318] uppercase tracking-wider flex items-center gap-2 border-b border-gray-100 pb-3">
-                <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
+            <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-4">
+              <h3 className="text-xs font-mono text-[#79C267] uppercase tracking-wider flex items-center gap-2 border-b border-[#1A2E1E] pb-3">
+                <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                 <span>{t("bookingSummaryTitle")}</span>
               </h3>
 
-              <div className="space-y-2.5 text-xs font-medium text-gray-700">
-                <div className="flex justify-between border-b border-gray-50 pb-2">
-                  <span className="text-gray-400">
+              <div className="space-y-3 text-xs font-mono text-[#A6ADA3]">
+                <div className="flex justify-between border-b border-[#1A2E1E] pb-2">
+                  <span>
                     {t("targetMandiCentre")}:
                   </span>
-                  <span className="font-bold text-gray-900 text-right max-w-44">
+                  <span className="font-serif text-[#F2F0E8] text-right max-w-44">
                     {selectedCentre.name || selectedCentre.centre_name}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b border-gray-50 pb-2">
-                  <span className="text-gray-400">{t("cropLabel")}:</span>
-                  <span className="font-bold text-gray-900">
+                <div className="flex justify-between border-b border-[#1A2E1E] pb-2">
+                  <span>{t("cropLabel")}:</span>
+                  <span className="font-serif text-[#F2F0E8]">
                     {selectedCrop}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b border-gray-50 pb-2">
-                  <span className="text-gray-400">
+                <div className="flex justify-between border-b border-[#1A2E1E] pb-2">
+                  <span>
                     {t("visitQuantitySummary")}:
                   </span>
-                  <span className="font-black text-[#2E7D32] text-sm">
+                  <span className="font-serif text-[#79C267] text-sm">
                     {quantity || "0"} Qtl
                   </span>
                 </div>
 
-                <div className="flex justify-between border-b border-gray-50 pb-2">
-                  <span className="text-gray-400">
+                <div className="flex justify-between border-b border-[#1A2E1E] pb-2">
+                  <span>
                     {t("procurementDateLabel")}:
                   </span>
-                  <span className="font-bold text-gray-900">{bookingDate}</span>
+                  <span className="text-[#F2F0E8]">{bookingDate}</span>
                 </div>
 
-                <div className="flex justify-between border-b border-gray-50 pb-2">
-                  <span className="text-gray-400">{t("slotLabel")}:</span>
-                  <span className="font-bold text-gray-900">
+                <div className="flex justify-between border-b border-[#1A2E1E] pb-2">
+                  <span>{t("slotLabel")}:</span>
+                  <span className="text-[#F2F0E8]">
                     {selectedSlot}
                   </span>
                 </div>
 
                 <div className="flex justify-between pt-1">
-                  <span className="text-gray-400">{t("estWait")}:</span>
-                  <span className="font-bold text-[#1B4318]">
+                  <span>{t("estWait")}:</span>
+                  <span className="text-[#79C267]">
                     ~{activeSlotObj.expectedWaitMins || 19} min
                   </span>
                 </div>
@@ -487,12 +487,12 @@ export default function SlotBookingView() {
             </div>
 
             {/* Atomic Protocol Note */}
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-3">
-              <h3 className="text-xs font-bold text-gray-900 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#2E7D32]" />
+            <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-3">
+              <h3 className="text-xs font-mono text-[#F2F0E8] uppercase tracking-wider flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#79C267]" />
                 <span>Atomic Capacity Lock Protocol</span>
               </h3>
-              <p className="text-xs text-gray-600 leading-relaxed font-medium">
+              <p className="text-xs text-[#A6ADA3] leading-relaxed font-sans">
                 Upon confirmation, your appointment token capacity is locked in
                 real-time across Mandi Staff & Officer command towers.
               </p>
@@ -504,35 +504,35 @@ export default function SlotBookingView() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-3xl p-8 shadow-xl border border-[#A5D6A7] max-w-2xl mx-auto space-y-6 text-center selection:bg-[#2E7D32] selection:text-white"
+          className="bg-[#071008] rounded-md p-8 border border-[#79C267]/40 max-w-2xl mx-auto space-y-6 text-center selection:bg-[#164A29] selection:text-[#79C267]"
         >
-          <div className="w-16 h-16 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
           <div>
-            <h2 className="text-2xl font-black text-gray-900">
+            <h2 className="text-2xl font-serif text-[#F2F0E8]">
               Mandi Token Assigned: {confirmedBooking.tokenDisplay}
             </h2>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs font-mono text-[#A6ADA3] mt-1">
               Procurement Centre: {confirmedBooking.centreName} • Daily Queue
               Starts 9:00 AM
             </p>
           </div>
 
-          <div className="p-5 bg-[#FAF8F2] rounded-2xl border border-gray-200 flex flex-col items-center space-y-2">
-            <QrCode className="w-28 h-28 text-[#1B4318]" />
-            <p className="text-xs font-mono font-bold text-gray-700">
+          <div className="p-6 bg-[#050805] rounded-md border border-[#1A2E1E] flex flex-col items-center space-y-3 font-mono">
+            <QrCode className="w-28 h-28 text-[#79C267]" />
+            <p className="text-xs text-[#F2F0E8] font-bold">
               Token #{confirmedBooking.tokenDisplay}
             </p>
-            <p className="text-xs text-[#2E7D32] font-extrabold">
+            <p className="text-xs text-[#79C267]">
               {confirmedBooking.crop} ({confirmedBooking.quantity} Qtl)
             </p>
           </div>
 
           <button
             onClick={() => navigateTo("farmer-dash")}
-            className="w-full py-3.5 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="w-full py-3.5 bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider rounded-sm border border-[#79C267]/30 transition-colors cursor-pointer"
           >
             Go to Farmer Dashboard & Live Queue →
           </button>
@@ -541,3 +541,4 @@ export default function SlotBookingView() {
     </div>
   );
 }
+

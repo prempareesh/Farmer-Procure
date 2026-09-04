@@ -4,8 +4,6 @@ import {
   X,
   Sprout,
   Phone,
-  Mail,
-  MapPin,
   CheckCircle2,
   ShieldCheck,
 } from "lucide-react";
@@ -31,22 +29,22 @@ export default function AboutContactModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative w-full max-w-lg bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <Sprout className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <Sprout className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">About AgriProcure</h3>
-              <p className="text-xs text-[#A5D6A7]">
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">About AgriProcure</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
                 Smart India Hackathon 2026 Project
               </p>
             </div>
@@ -56,32 +54,32 @@ export default function AboutContactModal({
               setSubmitted(false);
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto bg-[#FAF8F2]">
+        <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto bg-[#071008] font-mono">
           {/* Tab Switcher */}
-          <div className="flex bg-white p-1 rounded-2xl border border-gray-200">
+          <div className="flex bg-[#050805] p-1 border border-[#1A2E1E]">
             <button
               onClick={() => setTab("about")}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
                 tab === "about"
-                  ? "bg-[#2E7D32] text-white shadow-xs"
-                  : "text-gray-700 hover:text-[#2E7D32]"
+                  ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/40"
+                  : "text-[#A6ADA3] hover:text-[#F2F0E8]"
               }`}
             >
               Platform Story & Helpline
             </button>
             <button
               onClick={() => setTab("contact")}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
                 tab === "contact"
-                  ? "bg-[#2E7D32] text-white shadow-xs"
-                  : "text-gray-700 hover:text-[#2E7D32]"
+                  ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/40"
+                  : "text-[#A6ADA3] hover:text-[#F2F0E8]"
               }`}
             >
               Contact / Inquiry
@@ -90,38 +88,36 @@ export default function AboutContactModal({
 
           {tab === "about" ? (
             <div className="space-y-4">
-              <div className="bg-white p-4 rounded-2xl border border-gray-200 space-y-2">
-                <h4 className="text-sm font-extrabold text-gray-900">
+              <div className="bg-[#050805] p-4 border border-[#1A2E1E] space-y-2">
+                <h4 className="text-base font-serif text-[#F2F0E8]">
                   Empowering India's Farming Community
                 </h4>
-                <p className="text-xs text-gray-700 leading-relaxed font-medium">
-                  AgriProcure (Procure Intelligence) eliminates long Mandi queue
-                  delays and brings 100% cryptographic transparency to MSP
-                  procurement through AI scheduling and SHA-256 audit trails.
+                <p className="text-xs font-mono text-[#A6ADA3] leading-relaxed">
+                  AgriProcure (Procure Intelligence) eliminates long Mandi queue delays and brings 100% cryptographic transparency to MSP procurement through AI scheduling and SHA-256 audit trails.
                 </p>
               </div>
 
-              <div className="bg-[#1B4318] text-white p-4 rounded-2xl flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F9A825] text-gray-900 flex items-center justify-center font-bold">
-                  <Phone className="w-5 h-5" />
+              <div className="bg-[#0A180D] border border-[#79C267]/40 text-[#F2F0E8] p-4 flex items-center gap-3">
+                <div className="w-9 h-9 border border-[#79C267]/40 bg-[#164A29] text-[#79C267] flex items-center justify-center font-bold">
+                  <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold text-[#A5D6A7] block">
+                  <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block tracking-wider">
                     24/7 Farmer Helpline (Toll-Free)
                   </span>
-                  <span className="text-base font-extrabold">
+                  <span className="text-base font-serif text-[#79C267]">
                     1800-PROCURE-AI
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-xs font-bold text-gray-700">
-                <div className="bg-white p-2.5 rounded-xl border border-gray-200 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#2E7D32]" />
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono text-[#E8E7DE]">
+                <div className="bg-[#050805] p-3 border border-[#1A2E1E] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                   <span>SHA-256 Verified</span>
                 </div>
-                <div className="bg-white p-2.5 rounded-xl border border-gray-200 flex items-center gap-2">
-                  <Sprout className="w-4 h-4 text-[#2E7D32]" />
+                <div className="bg-[#050805] p-3 border border-[#1A2E1E] flex items-center gap-2">
+                  <Sprout className="w-4 h-4 text-[#79C267]" />
                   <span>Farmer First</span>
                 </div>
               </div>
@@ -129,10 +125,10 @@ export default function AboutContactModal({
           ) : !submitted ? (
             <form
               onSubmit={handleSubmit}
-              className="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"
+              className="bg-[#050805] p-4 border border-[#1A2E1E] space-y-3"
             >
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Your Name
                 </label>
                 <input
@@ -143,11 +139,11 @@ export default function AboutContactModal({
                     setFormData({ ...formData, name: e.target.value })
                   }
                   required
-                  className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3 py-2 bg-[#071008] border border-[#1A2E1E] text-xs font-serif text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Mobile / Email
                 </label>
                 <input
@@ -158,11 +154,11 @@ export default function AboutContactModal({
                     setFormData({ ...formData, contact: e.target.value })
                   }
                   required
-                  className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3 py-2 bg-[#071008] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   Message
                 </label>
                 <textarea
@@ -173,23 +169,23 @@ export default function AboutContactModal({
                     setFormData({ ...formData, message: e.target.value })
                   }
                   required
-                  className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3 py-2 bg-[#071008] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267] resize-none"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs rounded-xl shadow-xs"
+                className="w-full py-2.5 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
               >
                 Submit Inquiry
               </button>
             </form>
           ) : (
-            <div className="bg-white p-6 rounded-2xl border border-green-200 text-center space-y-2">
-              <CheckCircle2 className="w-10 h-10 text-[#2E7D32] mx-auto" />
-              <h4 className="text-sm font-bold text-gray-900">
+            <div className="bg-[#050805] p-6 border border-[#1A2E1E] text-center space-y-2">
+              <CheckCircle2 className="w-8 h-8 text-[#79C267] mx-auto" />
+              <h4 className="text-base font-serif text-[#F2F0E8]">
                 Inquiry Received!
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs font-mono text-[#A6ADA3]">
                 Our procurement officer will respond shortly.
               </p>
             </div>

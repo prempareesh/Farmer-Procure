@@ -88,26 +88,26 @@ export default function IdentityCameraModal({ isOpen, onClose, onConfirm }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden space-y-4 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in selection:bg-[#79C267] selection:text-[#050805]">
+      <div className="relative w-full max-w-md bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden space-y-4 p-6 font-mono">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center font-bold">
+            <div className="w-8 h-8 border border-[#79C267]/30 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center">
               <Camera className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-[#111827]">
+              <h3 className="text-base font-serif text-[#F2F0E8]">
                 {t("identityVerificationTitle")}
               </h3>
-              <p className="text-[11px] text-gray-500 font-medium">
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
                 {t("takePhotoSub")}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors cursor-pointer"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -115,21 +115,21 @@ export default function IdentityCameraModal({ isOpen, onClose, onConfirm }) {
 
         {/* Explicit Consent Step */}
         {!hasConsent ? (
-          <div className="bg-[#FAFBF8] p-5 rounded-2xl border border-gray-200 space-y-4 text-xs">
+          <div className="bg-[#050805] p-5 border border-[#1A2E1E] space-y-4 text-xs">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="w-6 h-6 text-[#2E7D32] shrink-0 mt-0.5" />
+              <ShieldCheck className="w-5 h-5 text-[#79C267] shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <h4 className="font-bold text-gray-900">
+                <h4 className="font-serif text-[#F2F0E8] text-sm">
                   Privacy & Photo Verification Consent
                 </h4>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-[#A6ADA3] leading-relaxed font-mono text-[11px]">
                   {t("privacyNoticeText")}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setHasConsent(true)}
-              className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-colors cursor-pointer"
             >
               I Consent & Enable Camera
             </button>
@@ -137,7 +137,7 @@ export default function IdentityCameraModal({ isOpen, onClose, onConfirm }) {
         ) : (
           /* Camera Preview & Capture Area */
           <div className="space-y-4">
-            <div className="relative w-full h-64 bg-gray-900 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-200">
+            <div className="relative w-full h-64 bg-[#050805] border border-[#1A2E1E] overflow-hidden flex items-center justify-center">
               {capturedImage ? (
                 <img
                   src={capturedImage}
@@ -147,12 +147,12 @@ export default function IdentityCameraModal({ isOpen, onClose, onConfirm }) {
               ) : cameraError ? (
                 <div className="text-center p-4 space-y-2">
                   <AlertCircle className="w-8 h-8 text-amber-400 mx-auto" />
-                  <p className="text-xs font-bold text-white">
+                  <p className="text-xs font-mono text-[#F2F0E8]">
                     {t("cameraPermissionError")}
                   </p>
                   <button
                     onClick={handleCapture}
-                    className="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold cursor-pointer"
+                    className="px-3 py-1.5 border border-[#1A2E1E] bg-[#164A29] text-[#F2F0E8] text-[11px] font-mono uppercase tracking-wider cursor-pointer"
                   >
                     Use Sample Photo Fallback
                   </button>
@@ -172,25 +172,25 @@ export default function IdentityCameraModal({ isOpen, onClose, onConfirm }) {
             {!capturedImage ? (
               <button
                 onClick={handleCapture}
-                className="w-full py-3.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
-                <Camera className="w-4 h-4" />
+                <Camera className="w-4 h-4 text-[#79C267]" />
                 <span>{t("capturePhotoBtn")}</span>
               </button>
             ) : (
               <div className="flex gap-2">
                 <button
                   onClick={handleRetake}
-                  className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="flex-1 py-3 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>{t("retakeBtn")}</span>
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="flex-1 py-3 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                  className="flex-1 py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                   <span>{t("confirmPhotoBtn")}</span>
                 </button>
               </div>

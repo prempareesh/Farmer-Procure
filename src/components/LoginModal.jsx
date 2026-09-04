@@ -75,65 +75,65 @@ export default function LoginModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative w-full max-w-md bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden font-mono"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">Procure Intelligence Portal</h3>
-              <p className="text-xs text-[#A5D6A7]">
-                Secure Farmer & Officer Single Sign-On
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">Procure Telemetry Portal</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
+                Single Sign-On Authentication
               </p>
             </div>
           </div>
           <button
             onClick={handleReset}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6">
+        <div className="p-6 bg-[#071008]">
           {!loggedInUser ? (
             <div>
               {/* Role Switcher Tabs */}
-              <div className="flex bg-[#F4F9F4] p-1 rounded-2xl mb-6 border border-[#C8E6C9]">
+              <div className="flex bg-[#050805] p-1 mb-6 border border-[#1A2E1E]">
                 <button
                   type="button"
                   onClick={() => {
                     setRole("farmer");
                     setOtpSent(false);
                   }}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     role === "farmer"
-                      ? "bg-[#2E7D32] text-white shadow-sm"
-                      : "text-gray-700 hover:text-[#2E7D32]"
+                      ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/40"
+                      : "text-[#A6ADA3] hover:text-[#F2F0E8]"
                   }`}
                 >
-                  <User className="w-4 h-4" />
+                  <User className="w-3.5 h-3.5" />
                   <span>Farmer Login</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole("officer")}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     role === "officer"
-                      ? "bg-[#2E7D32] text-white shadow-sm"
-                      : "text-gray-700 hover:text-[#2E7D32]"
+                      ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/40"
+                      : "text-[#A6ADA3] hover:text-[#F2F0E8]"
                   }`}
                 >
-                  <Building className="w-4 h-4" />
+                  <Building className="w-3.5 h-3.5" />
                   <span>Officer / Admin</span>
                 </button>
               </div>
@@ -143,12 +143,12 @@ export default function LoginModal({ isOpen, onClose }) {
                 !otpSent ? (
                   <form onSubmit={handleSendOtp} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5 flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5 text-[#2E7D32]" />
+                      <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-[#79C267]" />
                         Farmer Mobile Number
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-[#A6ADA3]">
                           +91
                         </span>
                         <input
@@ -158,45 +158,44 @@ export default function LoginModal({ isOpen, onClose }) {
                           onChange={(e) => setPhone(e.target.value)}
                           required
                           maxLength="10"
-                          className="w-full pl-14 pr-4 py-3 rounded-xl border border-gray-300 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32]"
+                          className="w-full pl-14 pr-4 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                         />
                       </div>
-                      <p className="text-[11px] text-gray-500 mt-1.5">
-                        You will receive an instant 6-digit OTP for secure
-                        authentication.
+                      <p className="text-[10px] font-mono text-[#A6ADA3]/60 mt-1.5">
+                        Instant 6-digit OTP will be dispatched via SMS gateway.
                       </p>
                     </div>
 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-3.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                      className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
                       {isLoading ? (
-                        <span>Sending OTP...</span>
+                        <span>Dispatching OTP...</span>
                       ) : (
                         <>
                           <span>Get OTP</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-4 h-4 text-[#79C267]" />
                         </>
                       )}
                     </button>
                   </form>
                 ) : (
                   <form onSubmit={handleVerifyOtp} className="space-y-4">
-                    <div className="bg-[#E8F5E9] p-3 rounded-xl border border-[#A5D6A7] text-xs text-[#1B4318] font-semibold flex items-center justify-between">
+                    <div className="bg-[#0A180D] p-3 border border-[#79C267]/40 text-xs text-[#79C267] font-mono flex items-center justify-between">
                       <span>OTP sent to +91 {phone}</span>
                       <button
                         type="button"
                         onClick={() => setOtpSent(false)}
-                        className="text-[#2E7D32] underline font-bold"
+                        className="text-[#79C267] underline uppercase text-[10px]"
                       >
                         Change
                       </button>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                      <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                         Enter 6-Digit OTP
                       </label>
                       <input
@@ -206,14 +205,14 @@ export default function LoginModal({ isOpen, onClose }) {
                         onChange={(e) => setOtp(e.target.value)}
                         required
                         maxLength="6"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-mono tracking-widest text-center font-bold text-gray-900 focus:outline-none focus:border-[#2E7D32]"
+                        className="w-full px-4 py-2.5 bg-[#050805] border border-[#1A2E1E] text-base font-mono tracking-widest text-center text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-3.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       {isLoading
                         ? "Verifying OTP..."
@@ -225,7 +224,7 @@ export default function LoginModal({ isOpen, onClose }) {
                 /* Officer Login Form */
                 <form onSubmit={handleOfficerLogin} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                    <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                       Govt Officer ID / Aadhaar SSO
                     </label>
                     <input
@@ -234,13 +233,13 @@ export default function LoginModal({ isOpen, onClose }) {
                       value={officerId}
                       onChange={(e) => setOfficerId(e.target.value)}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-4 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5 flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5 text-[#2E7D32]" />
+                    <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-[#79C267]" />
                       Password / Security PIN
                     </label>
                     <input
@@ -249,14 +248,14 @@ export default function LoginModal({ isOpen, onClose }) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-4 py-2.5 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {isLoading ? "Authenticating..." : "Sign In as Officer"}
                   </button>
@@ -265,33 +264,33 @@ export default function LoginModal({ isOpen, onClose }) {
             </div>
           ) : (
             /* Successful Login State */
-            <div className="text-center space-y-4 py-2">
-              <div className="w-14 h-14 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-inner">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="text-center space-y-4 py-2 bg-[#050805] p-5 border border-[#1A2E1E]">
+              <div className="w-12 h-12 border border-[#79C267]/40 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
 
               <div>
-                <span className="text-xs font-extrabold uppercase tracking-widest text-[#2E7D32] bg-[#E8F5E9] px-3 py-1 rounded-full">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#79C267] bg-[#0A180D] px-3 py-1 border border-[#79C267]/40">
                   Authentication Successful
                 </span>
-                <h4 className="text-xl font-bold text-gray-900 mt-2">
+                <h4 className="text-xl font-serif text-[#F2F0E8] mt-2">
                   {loggedInUser.name}
                 </h4>
-                <p className="text-xs text-gray-500 font-medium">
+                <p className="text-xs text-[#A6ADA3] font-mono">
                   {loggedInUser.role} • {loggedInUser.mandi}
                 </p>
               </div>
 
-              <div className="bg-[#FAF8F2] p-4 rounded-2xl border border-[#E8E4D9] text-left text-xs space-y-1.5 font-medium text-gray-700">
+              <div className="bg-[#071008] p-4 border border-[#1A2E1E] text-left text-xs font-mono space-y-1.5 text-[#E8E7DE]">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Security Token:</span>
-                  <span className="font-mono text-[#2E7D32] font-bold">
+                  <span className="text-[#A6ADA3]">Security Token:</span>
+                  <span className="font-mono text-[#79C267]">
                     SHA256-AUTH-OK
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Access Level:</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="text-[#A6ADA3]">Access Level:</span>
+                  <span className="text-[#F2F0E8]">
                     Mandi Slot & Telemetry Access
                   </span>
                 </div>
@@ -304,13 +303,13 @@ export default function LoginModal({ isOpen, onClose }) {
                     const dash = document.getElementById("dashboard");
                     if (dash) dash.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="flex-1 py-3 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs shadow-md"
+                  className="flex-1 py-2.5 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Go to AI Dashboard
                 </button>
                 <button
                   onClick={handleReset}
-                  className="px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs"
+                  className="px-4 py-2.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Logout
                 </button>

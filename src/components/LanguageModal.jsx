@@ -37,28 +37,27 @@ export default function LanguageModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 15 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        className="w-full max-w-lg bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 text-[#F9A825] flex items-center justify-center mx-auto mb-3 shadow-xs">
-            <Globe className="w-6 h-6" />
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 text-center border-b border-[#1A2E1E]">
+          <div className="w-10 h-10 border border-[#79C267]/30 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center mx-auto mb-3">
+            <Globe className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-extrabold tracking-tight">
-            Select Preferred Language / भाषा चुनें / భాషను ఎంచుకోండి
+          <h2 className="text-xl font-serif font-normal tracking-wide text-[#F2F0E8]">
+            Select Language / भाषा चुनें / భాషను ఎంచుకోండి
           </h2>
-          <p className="text-xs text-[#A5D6A7] mt-1 font-semibold">
-            Choose your language for a customized agricultural procurement
-            experience
+          <p className="text-[11px] font-mono text-[#A6ADA3] mt-1">
+            Choose your language for precision procurement telemetry
           </p>
         </div>
 
         {/* Language Options */}
-        <div className="p-6 space-y-3 bg-[#FAF8F2]">
+        <div className="p-6 space-y-3 bg-[#071008] font-mono">
           {languages.map((lang) => {
             const isSelected = currentLang === lang.code;
 
@@ -66,34 +65,34 @@ export default function LanguageModal({ isOpen, onClose }) {
               <div
                 key={lang.code}
                 onClick={() => handleSelect(lang.code)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                className={`p-4 border transition-all cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
-                    : "bg-white border-gray-200 hover:border-[#A5D6A7] hover:shadow-xs"
+                    ? "bg-[#0A180D] border-[#79C267]/60 text-[#F2F0E8]"
+                    : "bg-[#050805] border-[#1A2E1E] text-[#A6ADA3] hover:border-[#79C267]/30 hover:text-[#F2F0E8]"
                 }`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-base font-extrabold text-gray-900">
+                    <span className="text-base font-serif text-[#F2F0E8]">
                       {lang.native}
                     </span>
-                    <span className="text-xs text-gray-400 font-bold">
+                    <span className="text-xs font-mono text-[#79C267]">
                       ({lang.name})
                     </span>
                   </div>
-                  <p className="text-[11px] text-gray-600 font-medium mt-0.5">
+                  <p className="text-[11px] font-mono text-[#A6ADA3] mt-1">
                     {lang.desc}
                   </p>
                 </div>
 
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                  className={`w-6 h-6 border flex items-center justify-center shrink-0 ${
                     isSelected
-                      ? "bg-[#2E7D32] text-white shadow-xs"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-[#164A29] border-[#79C267]/40 text-[#79C267]"
+                      : "bg-[#050805] border-[#1A2E1E] text-transparent"
                   }`}
                 >
-                  <Check className="w-4 h-4" />
+                  <Check className="w-3.5 h-3.5" />
                 </div>
               </div>
             );
@@ -101,10 +100,9 @@ export default function LanguageModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-white border-t border-gray-100 text-center">
-          <p className="text-[11px] font-semibold text-gray-500">
-            You can change your language preference anytime from the header menu
-            or profile settings.
+        <div className="p-4 bg-[#0A180D] border-t border-[#1A2E1E] text-center font-mono">
+          <p className="text-[11px] text-[#A6ADA3]">
+            Language preferences persist across sessions and mobile views.
           </p>
         </div>
       </motion.div>

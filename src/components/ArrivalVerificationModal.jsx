@@ -219,21 +219,20 @@ export default function ArrivalVerificationModal({
   if (!isOpen || !booking) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-[#E0ECE0] overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="bg-[#071008] text-[#E8E7DE] rounded-none w-full max-w-lg border border-[#1A2E1E] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="p-5 bg-gradient-to-r from-[#1B4318] to-[#2E7D32] text-white flex items-center justify-between shrink-0">
+        <div className="p-5 bg-[#0A180D] border-b border-[#1A2E1E] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#F9A825]">
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black tracking-tight">
-                Mandi Gate Arrival Face Verification
+              <h3 className="text-lg font-serif font-normal text-[#F2F0E8] tracking-wide">
+                Mandi Gate Arrival Verification
               </h3>
-              <p className="text-xs text-emerald-100 font-semibold">
-                Token #{booking.tokenDisplay || "P001"} • {booking.farmerName} (
-                {booking.farmerId})
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
+                Token #{booking.tokenDisplay || "P001"} • {booking.farmerName} ({booking.farmerId})
               </p>
             </div>
           </div>
@@ -242,60 +241,60 @@ export default function ArrivalVerificationModal({
               stopCamera();
               onClose();
             }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-4 overflow-y-auto flex-1 text-center">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1 text-center font-mono">
           {/* Booking Info Card */}
-          <div className="p-3.5 bg-[#FAF8F2] rounded-2xl border border-gray-200 text-xs font-semibold grid grid-cols-2 gap-2 text-left">
+          <div className="p-4 bg-[#050805] border border-[#1A2E1E] text-xs grid grid-cols-2 gap-3 text-left">
             <div>
-              <span className="text-[10px] text-gray-400 font-bold uppercase block">
+              <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                 Farmer Name
               </span>
-              <span className="text-gray-900 font-black">
+              <span className="text-[#F2F0E8] font-serif text-sm">
                 {booking.farmerName}
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-gray-400 font-bold uppercase block">
+              <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                 Farmer ID
               </span>
-              <span className="text-[#1B4318] font-mono font-black">
+              <span className="text-[#79C267] font-mono">
                 {booking.farmerId}
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-gray-400 font-bold uppercase block">
+              <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                 Token Number
               </span>
-              <span className="text-gray-900 font-black">
+              <span className="text-[#F2F0E8] font-serif text-sm">
                 #{booking.tokenDisplay}
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-gray-400 font-bold uppercase block">
+              <span className="text-[10px] text-[#A6ADA3] uppercase block tracking-wider">
                 Crop / Quantity
               </span>
-              <span className="text-[#2E7D32] font-black">
+              <span className="text-[#79C267]">
                 {booking.crop} ({booking.quantity} Qtl)
               </span>
             </div>
           </div>
 
           {cameraError ? (
-            <div className="p-6 bg-red-50 rounded-2xl border border-red-200 text-center space-y-3">
-              <AlertTriangle className="w-10 h-10 text-red-600 mx-auto" />
-              <h4 className="text-sm font-bold text-red-900">
+            <div className="p-6 bg-[#1C0A0A] border border-red-900/50 text-center space-y-3">
+              <AlertTriangle className="w-8 h-8 text-red-400 mx-auto" />
+              <h4 className="text-sm font-serif text-red-200">
                 Camera Access Error
               </h4>
-              <p className="text-xs text-red-700">{cameraError}</p>
+              <p className="text-xs text-red-300 font-mono">{cameraError}</p>
               <button
                 onClick={startCamera}
-                className="px-5 py-2 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors"
+                className="px-4 py-2 bg-red-950 hover:bg-red-900 border border-red-700 text-red-200 text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer"
               >
                 Retry Live Camera
               </button>
@@ -303,18 +302,17 @@ export default function ArrivalVerificationModal({
           ) : !capturedArrivalPhoto ? (
             <div className="space-y-3">
               {/* Guidance Info Banner */}
-              <div className="p-3 bg-[#FAF8F2] rounded-2xl border border-amber-200 text-xs text-amber-900 font-semibold flex items-center justify-between text-left">
+              <div className="p-3 bg-[#050805] border border-[#1A2E1E] text-xs text-[#A6ADA3] flex items-center justify-between text-left">
                 <div className="flex items-center gap-2">
-                  <Sun className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>
-                    Capture live arrival photo of the farmer at Mandi Gate for
-                    1:1 facial verification.
+                  <Sun className="w-4 h-4 text-[#79C267] shrink-0" />
+                  <span className="text-[11px]">
+                    Capture live arrival photo of farmer at Mandi Gate for 1:1 facial comparison.
                   </span>
                 </div>
               </div>
 
               {/* Video Camera Viewport & Overlay */}
-              <div className="relative w-full aspect-[4/3] bg-black rounded-2xl overflow-hidden shadow-inner flex items-center justify-center">
+              <div className="relative w-full aspect-[4/3] bg-[#050805] border border-[#1A2E1E] overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
                   playsInline
@@ -326,21 +324,21 @@ export default function ArrivalVerificationModal({
                 {/* Face Alignment Oval Guide */}
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                   <div
-                    className={`w-48 h-64 sm:w-56 sm:h-72 rounded-[50%] border-2 transition-all duration-300 ${
+                    className={`w-48 h-64 sm:w-56 sm:h-72 border transition-all duration-300 ${
                       qualityState.isValid
-                        ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_20px_rgba(52,211,153,0.4)]"
-                        : "border-amber-400/70 bg-amber-500/5"
+                        ? "border-[#79C267] bg-[#79C267]/10 shadow-[0_0_20px_rgba(121,194,103,0.3)]"
+                        : "border-[#1A2E1E] bg-black/40"
                     }`}
                   />
                 </div>
 
                 {/* Realtime Live Quality Status Chip */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#071008]/90 border border-[#1A2E1E] text-[#F2F0E8] text-xs font-mono flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${
                       qualityState.isValid
-                        ? "bg-emerald-400 animate-pulse"
-                        : "bg-amber-400"
+                        ? "bg-[#79C267] animate-pulse"
+                        : "bg-amber-500"
                     }`}
                   />
                   <span>{qualityState.message}</span>
@@ -352,13 +350,13 @@ export default function ArrivalVerificationModal({
                 type="button"
                 onClick={handleCaptureArrivalPhoto}
                 disabled={!qualityState.isValid}
-                className={`w-full py-3.5 rounded-2xl text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`w-full py-3 border text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   qualityState.isValid
-                    ? "bg-[#1B4318] hover:bg-[#2E7D32] text-white active:scale-95"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    ? "bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] border-[#79C267]/40"
+                    : "bg-[#050805] text-[#A6ADA3]/40 border-[#1A2E1E] cursor-not-allowed"
                 }`}
               >
-                <Camera className="w-4 h-4 text-[#F9A825]" />
+                <Camera className="w-4 h-4 text-[#79C267]" />
                 <span>
                   {qualityState.isValid
                     ? "Capture Arrival Photo & Verify"
@@ -370,63 +368,54 @@ export default function ArrivalVerificationModal({
             /* VERIFICATION RESULT SCREEN */
             <div className="space-y-4">
               {verifying ? (
-                <div className="p-8 text-center space-y-3">
-                  <div className="w-12 h-12 border-4 border-[#2E7D32] border-t-transparent rounded-full animate-spin mx-auto" />
-                  <p className="text-xs font-bold text-gray-700">
-                    Comparing arrival capture against booking biometric
-                    features...
+                <div className="p-8 text-center space-y-3 bg-[#050805] border border-[#1A2E1E]">
+                  <div className="w-8 h-8 border-2 border-[#79C267] border-t-transparent animate-spin mx-auto" />
+                  <p className="text-xs font-mono text-[#A6ADA3]">
+                    Comparing arrival capture against booking biometric features...
                   </p>
                 </div>
               ) : verificationResult ? (
                 <div className="space-y-4">
                   {/* Status Banner */}
                   {verificationResult.status === "VERIFIED" && (
-                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-300 text-left space-y-1">
-                      <div className="flex items-center gap-2 text-[#1B4318] font-black text-sm">
-                        <CheckCircle2 className="w-5 h-5 text-[#2E7D32]" />
+                    <div className="p-4 bg-[#0A180D] border border-[#79C267]/40 text-left space-y-1">
+                      <div className="flex items-center gap-2 text-[#79C267] font-serif text-base">
+                        <CheckCircle2 className="w-5 h-5 text-[#79C267]" />
                         <span>IDENTITY VERIFIED (1:1 MATCH)</span>
                       </div>
-                      <p className="text-xs text-emerald-800 font-semibold">
-                        Match Confidence:{" "}
-                        <strong className="font-bold">High</strong> • Biometric
-                        Score: {verificationResult.score}
+                      <p className="text-xs text-[#A6ADA3] font-mono">
+                        Match Confidence: <strong className="text-[#F2F0E8]">High</strong> • Biometric Score: {verificationResult.score}
                       </p>
                     </div>
                   )}
 
                   {verificationResult.status === "REVIEW_REQUIRED" && (
-                    <div className="p-4 bg-amber-50 rounded-2xl border border-amber-300 text-left space-y-1">
-                      <div className="flex items-center gap-2 text-amber-900 font-black text-sm">
-                        <AlertTriangle className="w-5 h-5 text-amber-600" />
+                    <div className="p-4 bg-[#1C1608] border border-amber-500/40 text-left space-y-1">
+                      <div className="flex items-center gap-2 text-amber-300 font-serif text-base">
+                        <AlertTriangle className="w-5 h-5 text-amber-400" />
                         <span>BORDERLINE MATCH — STAFF REVIEW REQUIRED</span>
                       </div>
-                      <p className="text-xs text-amber-800 font-semibold">
-                        Match Confidence:{" "}
-                        <strong className="font-bold">
-                          Medium (Borderline)
-                        </strong>{" "}
-                        • Biometric Score: {verificationResult.score}
+                      <p className="text-xs text-amber-200/80 font-mono">
+                        Match Confidence: <strong className="text-[#F2F0E8]">Medium (Borderline)</strong> • Biometric Score: {verificationResult.score}
                       </p>
                     </div>
                   )}
 
                   {verificationResult.status === "FAILED" && (
-                    <div className="p-4 bg-red-50 rounded-2xl border border-red-300 text-left space-y-1">
-                      <div className="flex items-center gap-2 text-red-900 font-black text-sm">
-                        <XCircle className="w-5 h-5 text-red-600" />
+                    <div className="p-4 bg-[#1C0A0A] border border-red-500/40 text-left space-y-1">
+                      <div className="flex items-center gap-2 text-red-400 font-serif text-base">
+                        <XCircle className="w-5 h-5 text-red-400" />
                         <span>IDENTITY VERIFICATION FAILED</span>
                       </div>
-                      <p className="text-xs text-red-800 font-semibold">
-                        Match Confidence:{" "}
-                        <strong className="font-bold">Low</strong> • Arrival
-                        face does not match booking capture.
+                      <p className="text-xs text-red-300/80 font-mono">
+                        Match Confidence: <strong className="text-red-200">Low</strong> • Arrival face does not match booking capture.
                       </p>
                     </div>
                   )}
 
                   {/* Staff Remarks */}
-                  <div>
-                    <label className="block text-left text-xs font-bold text-gray-700 mb-1">
+                  <div className="text-left space-y-1">
+                    <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider">
                       Staff Inspection Remarks (Optional)
                     </label>
                     <input
@@ -434,7 +423,7 @@ export default function ArrivalVerificationModal({
                       placeholder="e.g. Physical Aadhaar verified at gate"
                       value={staffRemarks}
                       onChange={(e) => setStaffRemarks(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                      className="w-full px-3 py-2 bg-[#050805] border border-[#1A2E1E] text-xs font-mono text-[#F2F0E8] focus:outline-none focus:border-[#79C267]"
                     />
                   </div>
 
@@ -443,29 +432,29 @@ export default function ArrivalVerificationModal({
                     <button
                       type="button"
                       onClick={handleRetake}
-                      className="px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 flex items-center gap-1 cursor-pointer"
+                      className="px-4 py-2.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-xs font-mono uppercase text-[#A6ADA3] hover:text-[#F2F0E8] flex items-center gap-1.5 cursor-pointer"
                     >
-                      <RefreshCw className="w-4 h-4" />
-                      <span>Retry Capture</span>
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Retry</span>
                     </button>
 
                     {verificationResult.status === "VERIFIED" ? (
                       <button
                         type="button"
                         onClick={() => onClose()}
-                        className="flex-1 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-black shadow-md cursor-pointer flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2.5 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] text-xs font-mono uppercase tracking-wider cursor-pointer flex items-center justify-center gap-1.5"
                       >
-                        <CheckCircle2 className="w-4 h-4 text-[#F9A825]" />
+                        <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                         <span>Proceed to Quality Check →</span>
                       </button>
                     ) : (
                       <button
                         type="button"
                         onClick={() => handleStaffManualConfirm("VERIFIED")}
-                        className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md cursor-pointer flex items-center justify-center gap-1.5"
+                        className="flex-1 py-2.5 bg-amber-950 hover:bg-amber-900 border border-amber-700/60 text-amber-200 text-xs font-mono uppercase tracking-wider cursor-pointer flex items-center justify-center gap-1.5"
                       >
                         <ShieldCheck className="w-4 h-4" />
-                        <span>Staff Manual Override & Confirm →</span>
+                        <span>Staff Manual Override →</span>
                       </button>
                     )}
                   </div>
@@ -474,9 +463,8 @@ export default function ArrivalVerificationModal({
             </div>
           )}
 
-          <p className="text-[10px] text-gray-400 font-medium">
-            1:1 Live Biometric Verification • Recorded in SHA-256 Tamper-Evident
-            Mandi Audit Trail.
+          <p className="text-[10px] text-[#A6ADA3]/60 font-mono">
+            1:1 Live Biometric Verification • Recorded in SHA-256 Tamper-Evident Mandi Audit Trail.
           </p>
         </div>
       </div>

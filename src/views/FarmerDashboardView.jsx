@@ -110,120 +110,120 @@ export default function FarmerDashboardView() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 selection:bg-[#164A29] selection:text-[#79C267]">
       {/* Top Header & Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1A2E1E] pb-6">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigateTo("home")}
-              className="p-2 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-[#2E7D32] transition-colors cursor-pointer"
+              className="p-2 rounded bg-[#071008] border border-[#1A2E1E] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            <h1 className="text-3xl font-serif text-[#F2F0E8] tracking-tight">
               {t("farmerPortal")}
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
+            <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30">
               {farmerProfile.farmerId}
             </span>
           </div>
-          <p className="text-xs text-gray-500 font-semibold mt-0.5">
+          <p className="text-xs text-[#A6ADA3] font-mono mt-1">
             {t("welcomeBack")}, {farmerProfile.name} • {farmerProfile.village},{" "}
             {farmerProfile.district} ({farmerProfile.state})
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {currentBooking?.stage === "COMPLETED" && (
             <button
               onClick={() => setReceiptModalOpen(true)}
-              className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white text-xs font-extrabold shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+              className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
             >
-              <FileText className="w-4 h-4 text-[#F9A825]" />
+              <FileText className="w-4 h-4 text-[#79C267]" />
               <span>{t("viewReceiptBtn")}</span>
             </button>
           )}
 
           <button
             onClick={() => setEditProfileOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 border border-gray-300 text-gray-800 text-xs font-extrabold shadow-2xs flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+            className="px-4 py-2.5 rounded-sm bg-[#071008] hover:bg-[#0A120C] border border-[#1A2E1E] text-[#E8E7DE] text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
           >
-            <Edit2 className="w-4 h-4 text-[#2E7D32]" />
+            <Edit2 className="w-4 h-4 text-[#79C267]" />
             <span>{t("editProfile")}</span>
           </button>
 
           <button
             onClick={() => navigateTo("book-slot")}
-            className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+            className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
           >
-            <Calendar className="w-4 h-4 text-[#F9A825]" />
+            <Calendar className="w-4 h-4 text-[#79C267]" />
             <span>{t("bookSlot")}</span>
           </button>
         </div>
       </div>
 
       {/* Profile Overview Strip */}
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center font-bold shrink-0">
-            <User className="w-6 h-6" />
+      <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <User className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("permanentFarmerId")}
             </span>
-            <span className="text-sm font-mono font-black text-[#1B4318]">
+            <span className="text-sm font-mono text-[#F2F0E8] font-bold">
               {farmerProfile.farmerId}
             </span>
-            <p className="text-[11px] text-gray-500">{farmerProfile.aadhaar}</p>
+            <p className="text-[11px] text-[#A6ADA3] font-mono">{farmerProfile.aadhaar}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold shrink-0">
-            <Sprout className="w-6 h-6" />
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <Sprout className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("registeredCrops")}
             </span>
-            <span className="text-sm font-black text-gray-900">
+            <span className="text-sm font-serif text-[#F2F0E8]">
               {crops.length} MSP Eligible Crops
             </span>
-            <p className="text-[11px] text-gray-500">
-              Total ~{crops.reduce((acc, c) => acc + c.areaAcres, 0)} Acres
+            <p className="text-[11px] text-[#A6ADA3]">
+              Total ~{crops.reduce((acc, c) => acc + Number(c.areaAcres || 0), 0)} Acres
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
-            <ShieldCheck className="w-6 h-6" />
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("authenticationStatus")}
             </span>
-            <span className="text-sm font-black text-[#2E7D32]">
+            <span className="text-sm font-mono text-[#79C267]">
               OTP + JWT Active
             </span>
-            <p className="text-[11px] text-gray-500">100% Session Secured</p>
+            <p className="text-[11px] text-[#A6ADA3]">100% Session Secured</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center font-bold shrink-0">
-            <FileText className="w-6 h-6" />
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <FileText className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("dbtLinkedAccount")}
             </span>
-            <span className="text-xs font-bold text-gray-900 truncate block max-w-40">
+            <span className="text-xs font-mono text-[#F2F0E8] truncate block max-w-40">
               {farmerProfile.bankAccount}
             </span>
-            <p className="text-[10px] font-mono text-gray-400">
+            <p className="text-[10px] font-mono text-[#A6ADA3]">
               {farmerProfile.ifsc}
             </p>
           </div>
@@ -231,71 +231,71 @@ export default function FarmerDashboardView() {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex bg-white p-1 rounded-2xl border border-gray-200 w-fit overflow-x-auto">
+      <div className="flex bg-[#071008] p-1 rounded border border-[#1A2E1E] w-fit overflow-x-auto">
         <button
           onClick={() => setActiveTab("queue")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "queue"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <Clock className="w-3.5 h-3.5" />
+          <Clock className="w-3.5 h-3.5 text-[#79C267]" />
           <span>{t("liveQueueTokens")}</span>
         </button>
         <button
           onClick={() => setActiveTab("gate")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "gate"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <ShieldCheck className="w-3.5 h-3.5" />
+          <ShieldCheck className="w-3.5 h-3.5 text-[#79C267]" />
           <span>{t("mandiGateArrival")}</span>
         </button>
         <button
           onClick={() => setActiveTab("workflow")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "workflow"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5" />
+          <Sparkles className="w-3.5 h-3.5 text-[#79C267]" />
           <span>{t("workflow7Stage")}</span>
         </button>
         <button
           onClick={() => setActiveTab("crops")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "crops"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <Sprout className="w-3.5 h-3.5" />
+          <Sprout className="w-3.5 h-3.5 text-[#79C267]" />
           <span>{t("myCropsPortfolio")}</span>
         </button>
         <button
           onClick={() => setActiveTab("payment")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "payment"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <FileText className="w-3.5 h-3.5" />
+          <FileText className="w-3.5 h-3.5 text-[#79C267]" />
           <span>DBT Payment Status</span>
         </button>
         <button
           onClick={() => setActiveTab("profile")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "profile"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <User className="w-3.5 h-3.5" />
+          <User className="w-3.5 h-3.5 text-[#79C267]" />
           <span>{t("myProfile")}</span>
         </button>
       </div>
@@ -305,17 +305,17 @@ export default function FarmerDashboardView() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7 space-y-6">
             {/* Live Journey Progress Banner */}
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-5">
+              <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
                 <div>
-                  <h3 className="text-base font-black text-gray-900">
+                  <h3 className="text-lg font-serif text-[#F2F0E8]">
                     Today's Active Token Details
                   </h3>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs font-mono text-[#A6ADA3]">
                     Mandi: {currentBooking?.centreName}
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-xs">
+                <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] font-mono text-xs border border-[#79C267]/30">
                   {currentBooking?.stage}
                 </span>
               </div>
@@ -331,12 +331,12 @@ export default function FarmerDashboardView() {
                 );
                 if (activeVerification?.verificationStatus === "VERIFIED") {
                   return (
-                    <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-emerald-900 font-bold flex items-center justify-between">
+                    <div className="p-3.5 bg-[#12351F]/80 rounded-sm border border-[#79C267]/40 text-xs text-[#79C267] font-mono flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                         <span>Identity Verification Status</span>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black border border-emerald-300">
+                      <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/40">
                         Identity Verified ✓
                       </span>
                     </div>
@@ -345,25 +345,25 @@ export default function FarmerDashboardView() {
                   activeVerification?.verificationStatus === "REVIEW_REQUIRED"
                 ) {
                   return (
-                    <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 font-bold flex items-center justify-between">
+                    <div className="p-3.5 bg-amber-950/40 rounded-sm border border-amber-800/50 text-xs text-amber-300 font-mono flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-amber-600" />
+                        <ShieldCheck className="w-4 h-4 text-amber-400" />
                         <span>Identity Verification Status</span>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black border border-amber-300">
+                      <span className="px-2.5 py-0.5 rounded bg-amber-900/60 text-amber-300 text-[10px] font-mono border border-amber-700/50">
                         Staff Review Required
                       </span>
                     </div>
                   );
                 } else {
                   return (
-                    <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-blue-900 font-bold flex items-center justify-between">
+                    <div className="p-3.5 bg-[#050805] rounded-sm border border-[#1A2E1E] text-xs text-[#A6ADA3] font-mono flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-blue-600" />
+                        <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                         <span>Identity Verification Status</span>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black border border-blue-300">
-                        Identity Photo Captured ✓ (Pending Arrival Verification)
+                      <span className="px-2.5 py-0.5 rounded bg-[#164A29]/60 text-[#79C267] text-[10px] font-mono border border-[#79C267]/30">
+                        Photo Captured ✓ (Pending Arrival Verification)
                       </span>
                     </div>
                   );
@@ -372,18 +372,18 @@ export default function FarmerDashboardView() {
 
               {/* Action Banner for GATE ARRIVAL */}
               {currentBooking?.stage === "BOOKED" && (
-                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="bg-[#050805] p-5 rounded-sm border border-[#1A2E1E] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs font-bold text-amber-900 block">
+                    <span className="text-xs font-mono text-[#F2F0E8] uppercase block">
                       Have you arrived at Karnal Mandi Gate?
                     </span>
-                    <span className="text-[11px] text-amber-700">
+                    <span className="text-xs text-[#A6ADA3]">
                       Click below to update your status live for Mandi Staff.
                     </span>
                   </div>
                   <button
                     onClick={handleIveArrived}
-                    className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-sm shrink-0 transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 shrink-0 transition-colors cursor-pointer"
                   >
                     {t("iveArrivedBtn")}
                   </button>
@@ -391,80 +391,80 @@ export default function FarmerDashboardView() {
               )}
 
               {currentBooking?.stage === "ARRIVED" && (
-                <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200 flex items-center justify-between text-xs">
+                <div className="bg-[#050805] p-4 rounded-sm border border-[#1A2E1E] flex items-center justify-between text-xs">
                   <div className="space-y-0.5">
-                    <span className="font-extrabold text-blue-900 block">
+                    <span className="font-mono text-[#79C267] block">
                       {t("arrivalVerifiedMsg")}
                     </span>
-                    <span className="text-blue-700">{t("staffNotified")}</span>
+                    <span className="text-[#A6ADA3] text-[11px]">{t("staffNotified")}</span>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[10px]">
+                  <span className="px-2.5 py-1 rounded bg-[#164A29] text-[#79C267] font-mono text-[10px]">
                     Quality Check Pending
                   </span>
                 </div>
               )}
 
               {currentBooking?.stage === "COMPLETED" && (
-                <div className="bg-[#E8F5E9] p-4 rounded-2xl border border-[#A5D6A7] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="bg-[#12351F]/60 p-5 rounded-sm border border-[#79C267]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs font-black text-[#1B4318] block">
+                    <span className="text-xs font-mono text-[#79C267] block">
                       {t("transactionCompletedBadge")}
                     </span>
-                    <span className="text-[11px] text-[#2E7D32]">
+                    <span className="text-xs text-[#A6ADA3]">
                       Your official digital procurement receipt is ready to
                       download or print.
                     </span>
                   </div>
                   <button
                     onClick={() => setReceiptModalOpen(true)}
-                    className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs flex items-center gap-2 shrink-0 cursor-pointer"
+                    className="px-5 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/40 flex items-center gap-2 shrink-0 cursor-pointer"
                   >
-                    <FileText className="w-4 h-4 text-[#F9A825]" />
+                    <FileText className="w-4 h-4 text-[#79C267]" />
                     <span>{t("viewReceiptBtn")}</span>
                   </button>
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-gray-200">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+                  <span className="text-[10px] font-mono text-[#A6ADA3] uppercase">
                     Now Serving at Gate
                   </span>
-                  <p className="text-3xl font-black text-[#2E7D32] mt-1">
+                  <p className="text-3xl font-serif text-[#79C267] mt-1">
                     K00{servingToken}
                   </p>
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[10px] font-mono text-[#A6ADA3]">
                     Daily Queue (Started 9:00 AM)
                   </span>
                 </div>
 
-                <div className="p-4 bg-[#E8F5E9]/60 rounded-2xl border border-[#A5D6A7]">
-                  <span className="text-[10px] font-bold text-[#2E7D32] uppercase">
+                <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+                  <span className="text-[10px] font-mono text-[#79C267] uppercase">
                     Your Assigned Token
                   </span>
-                  <p className="text-3xl font-black text-[#1B4318] mt-1">
+                  <p className="text-3xl font-serif text-[#F2F0E8] mt-1">
                     {currentBooking?.tokenDisplay || "P-147"}
                   </p>
-                  <span className="text-[10px] text-[#2E7D32] font-bold">
+                  <span className="text-[10px] font-mono text-[#79C267]">
                     {currentBooking?.crop}
                   </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-xs">
-                <div className="p-3.5 bg-white rounded-xl border border-gray-200">
-                  <span className="text-gray-500 font-medium">
+                <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+                  <span className="text-[#A6ADA3] font-mono">
                     Vehicles Ahead:
                   </span>
-                  <p className="text-xl font-black text-amber-600 mt-0.5">
+                  <p className="text-2xl font-serif text-amber-400 mt-1">
                     {peopleAhead} in lane
                   </p>
                 </div>
-                <div className="p-3.5 bg-white rounded-xl border border-gray-200">
-                  <span className="text-gray-500 font-medium">
+                <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+                  <span className="text-[#A6ADA3] font-mono">
                     Estimated Waiting Time:
                   </span>
-                  <p className="text-xl font-black text-gray-900 mt-0.5">
+                  <p className="text-2xl font-serif text-[#F2F0E8] mt-1">
                     ~{estimatedWaitMins} mins
                   </p>
                 </div>
@@ -473,17 +473,17 @@ export default function FarmerDashboardView() {
 
             {/* Post-Procurement Anonymous Feedback Card */}
             {currentBooking?.stage === "COMPLETED" && (
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4 font-sans">
-                <div className="flex items-center gap-2 text-[#1B4318] border-b border-gray-100 pb-3">
-                  <MessageSquare className="w-5 h-5 text-[#2E7D32]" />
-                  <h3 className="text-base font-extrabold">
+              <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-4 font-sans">
+                <div className="flex items-center gap-2 text-[#F2F0E8] border-b border-[#1A2E1E] pb-3">
+                  <MessageSquare className="w-5 h-5 text-[#79C267]" />
+                  <h3 className="text-base font-serif">
                     {t("howWasExperience")}
                   </h3>
                 </div>
 
                 {feedbackSubmitted ? (
-                  <div className="p-4 bg-[#E8F5E9] rounded-2xl border border-[#A5D6A7] text-xs text-[#1B4318] font-bold text-center space-y-1">
-                    <CheckCircle2 className="w-6 h-6 text-[#2E7D32] mx-auto" />
+                  <div className="p-4 bg-[#12351F]/60 rounded-sm border border-[#79C267]/30 text-xs text-[#79C267] font-mono text-center space-y-1">
+                    <CheckCircle2 className="w-6 h-6 text-[#79C267] mx-auto" />
                     <p>{t("feedbackSubmittedSuccess")}</p>
                   </div>
                 ) : (
@@ -493,7 +493,7 @@ export default function FarmerDashboardView() {
                   >
                     {/* Star Rating */}
                     <div className="space-y-1.5">
-                      <label className="text-gray-600 font-bold block">
+                      <label className="text-[#A6ADA3] font-mono uppercase tracking-wider text-[11px] block">
                         Rating:
                       </label>
                       <div className="flex items-center gap-2">
@@ -505,15 +505,15 @@ export default function FarmerDashboardView() {
                             className="p-1 cursor-pointer transition-transform hover:scale-110"
                           >
                             <Star
-                              className={`w-6 h-6 ${
+                              className={`w-5 h-5 ${
                                 star <= rating
-                                  ? "text-[#F9A825] fill-[#F9A825]"
-                                  : "text-gray-300"
+                                  ? "text-amber-400 fill-amber-400"
+                                  : "text-[#1A2E1E]"
                               }`}
                             />
                           </button>
                         ))}
-                        <span className="text-xs font-bold text-gray-700 ml-2">
+                        <span className="text-xs font-mono text-[#F2F0E8] ml-2">
                           {rating === 1 && t("ratingVeryPoor")}
                           {rating === 2 && t("ratingPoor")}
                           {rating === 3 && t("ratingAverage")}
@@ -525,13 +525,13 @@ export default function FarmerDashboardView() {
 
                     {/* Category Selection */}
                     <div className="space-y-1">
-                      <label className="text-gray-600 font-bold block">
+                      <label className="text-[#A6ADA3] font-mono uppercase tracking-wider text-[11px] block">
                         Stage / Issue Category:
                       </label>
                       <select
                         value={feedbackCategory}
                         onChange={(e) => setFeedbackCategory(e.target.value)}
-                        className="w-full p-2.5 rounded-xl border border-gray-300 bg-white font-bold text-xs"
+                        className="w-full p-2.5 rounded-sm border border-[#1A2E1E] bg-[#050805] text-[#F2F0E8] font-mono text-xs focus:border-[#79C267]"
                       >
                         <option value="WEIGHING DELAY">WEIGHING DELAY</option>
                         <option value="MOISTURE TESTING">
@@ -545,7 +545,7 @@ export default function FarmerDashboardView() {
 
                     {/* Feedback Text */}
                     <div className="space-y-1">
-                      <label className="text-gray-600 font-bold block">
+                      <label className="text-[#A6ADA3] font-mono uppercase tracking-wider text-[11px] block">
                         {t("whatCouldBeImproved")}
                       </label>
                       <textarea
@@ -553,15 +553,15 @@ export default function FarmerDashboardView() {
                         value={feedbackText}
                         onChange={(e) => setFeedbackText(e.target.value)}
                         placeholder="Write your feedback..."
-                        className="w-full p-3 rounded-xl border border-gray-300 bg-white text-xs font-medium focus:ring-2 focus:ring-[#2E7D32]"
+                        className="w-full p-3 rounded-sm border border-[#1A2E1E] bg-[#050805] text-[#F2F0E8] text-xs font-sans focus:border-[#79C267]"
                       />
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                      className="w-full py-3 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
                     >
-                      <Send className="w-4 h-4" />
+                      <Send className="w-4 h-4 text-[#79C267]" />
                       <span>{t("submitFeedbackBtn")}</span>
                     </button>
                   </form>
@@ -571,17 +571,17 @@ export default function FarmerDashboardView() {
           </div>
 
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] text-center space-y-4">
-              <h3 className="text-sm font-bold text-gray-900">
+            <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] text-center space-y-4">
+              <h3 className="text-sm font-mono text-[#A6ADA3] uppercase tracking-wider">
                 Digital QR Gate Pass
               </h3>
-              <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-gray-200 inline-block mx-auto">
-                <QrCode className="w-32 h-32 text-[#1B4318] mx-auto" />
-                <p className="text-[10px] font-mono text-gray-500 mt-2 font-bold">
+              <div className="p-5 bg-[#050805] rounded border border-[#1A2E1E] inline-block mx-auto">
+                <QrCode className="w-32 h-32 text-[#79C267] mx-auto" />
+                <p className="text-[11px] font-mono text-[#F2F0E8] mt-3 font-bold">
                   {currentBooking?.tokenDisplay}
                 </p>
               </div>
-              <p className="text-xs text-gray-600 font-medium">
+              <p className="text-xs text-[#A6ADA3] font-sans max-w-xs mx-auto">
                 Present this QR code or Token ID at Mandi Gate scanner upon
                 physical arrival
               </p>
@@ -592,61 +592,61 @@ export default function FarmerDashboardView() {
 
       {/* TAB 2: MANDI GATE ARRIVAL CHECK-IN */}
       {activeTab === "gate" && (
-        <div className="bg-white rounded-3xl p-8 shadow-md border border-[#E0ECE0] max-w-2xl mx-auto text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center mx-auto shadow-xs">
+        <div className="bg-[#071008] rounded-md p-8 border border-[#1A2E1E] max-w-2xl mx-auto text-center space-y-6">
+          <div className="w-16 h-16 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center mx-auto">
             <ShieldCheck className="w-8 h-8" />
           </div>
 
           <div>
-            <h3 className="text-xl font-black text-gray-900">
+            <h3 className="text-2xl font-serif text-[#F2F0E8]">
               Mandi Gate Arrival Check-in
             </h3>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#A6ADA3] font-mono mt-1">
               Confirm your physical arrival at Karnal Mandi Gate for Token #
               {currentBooking?.tokenDisplay}
             </p>
           </div>
 
           {/* Gate Token Status */}
-          <div className="p-6 bg-[#FAF8F2] rounded-3xl border border-[#A5D6A7] space-y-3 max-w-sm mx-auto font-sans">
-            <div className="text-xs font-bold text-[#1B4318] uppercase">
+          <div className="p-6 bg-[#050805] rounded-md border border-[#1A2E1E] space-y-3 max-w-sm mx-auto font-mono">
+            <div className="text-[11px] text-[#79C267] uppercase tracking-wider">
               ARRIVAL GATE SCANNER
             </div>
-            <div className="text-3xl font-black text-[#1B4318]">
+            <div className="text-4xl font-serif text-[#F2F0E8]">
               {currentBooking?.tokenDisplay || "P-147"}
             </div>
-            <div className="text-xs text-gray-600 font-semibold">
+            <div className="text-xs text-[#A6ADA3]">
               {currentBooking?.farmerName} • {currentBooking?.crop} (
               {currentBooking?.quantity} Qtl)
             </div>
           </div>
 
           {currentBooking?.stage !== "BOOKED" ? (
-            <div className="p-4 bg-green-50 rounded-2xl border border-green-200 text-xs text-green-900 space-y-1">
-              <div className="flex items-center justify-center gap-2 font-bold text-sm text-[#2E7D32]">
+            <div className="p-4 bg-[#12351F]/60 rounded-sm border border-[#79C267]/30 text-xs text-[#79C267] space-y-1">
+              <div className="flex items-center justify-center gap-2 font-mono text-sm text-[#79C267]">
                 <CheckCircle2 className="w-5 h-5" />
                 <span>Gate Check-in Confirmed ✓</span>
               </div>
-              <p className="text-[11px] text-gray-700">
+              <p className="text-[11px] text-[#A6ADA3]">
                 Arrival recorded. Your Token #{currentBooking?.tokenDisplay}{" "}
-                stage is <strong>{currentBooking?.stage}</strong>. Staff has
+                stage is <strong className="text-[#F2F0E8]">{currentBooking?.stage}</strong>. Staff has
                 been notified.
               </p>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <button
                 onClick={handleIveArrived}
-                className="flex-1 py-3.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-3 bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider rounded-sm border border-[#79C267]/30 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <ShieldCheck className="w-4 h-4" />
+                <ShieldCheck className="w-4 h-4 text-[#79C267]" />
                 <span>{t("iveArrivedBtn")}</span>
               </button>
               <button
                 onClick={() => setCameraModalOpen(true)}
-                className="flex-1 py-3.5 bg-white border border-[#2E7D32] text-[#2E7D32] hover:bg-[#E8F5E9] font-extrabold text-xs rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-3 bg-[#050805] hover:bg-[#0A120C] border border-[#1A2E1E] text-[#E8E7DE] font-mono text-xs uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Camera className="w-4 h-4" />
+                <Camera className="w-4 h-4 text-[#79C267]" />
                 <span>Verify Photo Identity</span>
               </button>
             </div>
@@ -656,33 +656,33 @@ export default function FarmerDashboardView() {
 
       {/* TAB 3: 7-STAGE WORKFLOW */}
       {activeTab === "workflow" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
+          <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
             <div>
-              <h3 className="text-base font-bold text-gray-900">
+              <h3 className="text-lg font-serif text-[#F2F0E8]">
                 7-Stage Procurement Workflow Tracking
               </h3>
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-gray-500">
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs font-mono text-[#A6ADA3]">
                   Token #{currentBooking?.tokenDisplay}
                 </p>
-                <span>•</span>
+                <span className="text-[#1A2E1E]">•</span>
                 <button
                   type="button"
                   onClick={() => setAuditInfoOpen(true)}
-                  className="text-xs text-[#2E7D32] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                  className="text-xs text-[#79C267] hover:underline font-mono flex items-center gap-1 cursor-pointer"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Cryptographically Tracked ⓘ</span>
                 </button>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black">
+            <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] text-xs font-mono border border-[#79C267]/30">
               Status: {currentBooking?.stage || "BOOKED"}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {WORKFLOW_STAGES.map((stage, idx) => {
               const currentIdx = WORKFLOW_STAGES.findIndex(
                 (s) => s.key === currentBooking?.stage,
@@ -693,30 +693,30 @@ export default function FarmerDashboardView() {
               return (
                 <div
                   key={stage.key}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+                  className={`p-5 rounded-sm border transition-all flex flex-col justify-between ${
                     isCurrent
-                      ? "bg-[#E8F5E9] border-[#2E7D32] ring-2 ring-[#2E7D32]/20 shadow-xs"
+                      ? "bg-[#164A29]/30 border-[#79C267]"
                       : isPassed
-                        ? "bg-[#FAF8F2] border-green-200"
-                        : "bg-white border-gray-200 opacity-50"
+                        ? "bg-[#050805] border-[#1A2E1E]"
+                        : "bg-[#050805]/40 border-[#1A2E1E]/40 opacity-40"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] font-mono text-[#A6ADA3] uppercase">
                       Stage 0{idx + 1}
                     </span>
                     {isPassed ? (
-                      <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
+                      <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                     ) : isCurrent ? (
-                      <span className="w-2 h-2 rounded-full bg-[#2E7D32] animate-ping" />
+                      <span className="w-2 h-2 rounded-full bg-[#79C267] animate-ping" />
                     ) : null}
                   </div>
                   <h4
-                    className={`text-xs font-bold ${isCurrent ? "text-[#1B4318]" : "text-gray-900"}`}
+                    className={`text-sm font-serif ${isCurrent ? "text-[#79C267]" : "text-[#F2F0E8]"}`}
                   >
                     {stage.label}
                   </h4>
-                  <p className="text-[11px] text-gray-500 mt-1 leading-snug">
+                  <p className="text-[11px] text-[#A6ADA3] mt-1 leading-snug">
                     {stage.desc}
                   </p>
                 </div>
@@ -728,21 +728,21 @@ export default function FarmerDashboardView() {
 
       {/* TAB 4: CROPS PORTFOLIO */}
       {activeTab === "crops" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
+          <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
             <div>
-              <h3 className="text-base font-bold text-gray-900">
+              <h3 className="text-lg font-serif text-[#F2F0E8]">
                 Your Registered Multi-Crop Portfolio
               </h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs font-mono text-[#A6ADA3]">
                 Only registered crops can be selected during slot reservation
               </p>
             </div>
             <button
               onClick={() => setIsAddingCrop(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2E7D32] text-white text-xs font-bold hover:bg-[#1B4318] cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-sm bg-[#164A29] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 hover:bg-[#12351F] cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 text-[#79C267]" />
               <span>Add Crop</span>
             </button>
           </div>
@@ -754,17 +754,17 @@ export default function FarmerDashboardView() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 onSubmit={handleAddCropSubmit}
-                className="bg-[#FAF8F2] p-4 rounded-2xl border border-[#C8E6C9] space-y-3"
+                className="bg-[#050805] p-5 rounded-sm border border-[#1A2E1E] space-y-4"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                    <label className="block text-[10px] font-mono text-[#A6ADA3] uppercase mb-1">
                       Crop Variety
                     </label>
                     <select
                       value={newCropName}
                       onChange={(e) => setNewCropName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-bold bg-white"
+                      className="w-full px-3 py-2 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#071008] text-[#F2F0E8]"
                     >
                       <option value="Paddy (Basmati 1121)">
                         Paddy (Basmati 1121)
@@ -779,7 +779,7 @@ export default function FarmerDashboardView() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                    <label className="block text-[10px] font-mono text-[#A6ADA3] uppercase mb-1">
                       Area (Acres)
                     </label>
                     <input
@@ -789,11 +789,11 @@ export default function FarmerDashboardView() {
                       value={newArea}
                       onChange={(e) => setNewArea(e.target.value)}
                       required
-                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-bold bg-white"
+                      className="w-full px-3 py-2 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#071008] text-[#F2F0E8]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                    <label className="block text-[10px] font-mono text-[#A6ADA3] uppercase mb-1">
                       Expected Yield (Qtl)
                     </label>
                     <input
@@ -802,21 +802,21 @@ export default function FarmerDashboardView() {
                       value={newYield}
                       onChange={(e) => setNewYield(e.target.value)}
                       required
-                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-bold bg-white"
+                      className="w-full px-3 py-2 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#071008] text-[#F2F0E8]"
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setIsAddingCrop(false)}
-                    className="px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-bold cursor-pointer"
+                    className="px-4 py-1.5 rounded-sm border border-[#1A2E1E] text-xs font-mono text-[#A6ADA3] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-[#2E7D32] text-white text-xs font-bold cursor-pointer"
+                    className="px-4 py-1.5 rounded-sm bg-[#164A29] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 cursor-pointer"
                   >
                     Save to Portfolio
                   </button>
@@ -829,31 +829,31 @@ export default function FarmerDashboardView() {
             {crops.map((c) => (
               <div
                 key={c.id}
-                className="p-4 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] space-y-2"
+                className="p-5 rounded-sm bg-[#050805] border border-[#1A2E1E] space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-900">
+                  <span className="text-sm font-serif text-[#F2F0E8]">
                     {c.name}
                   </span>
                   <button
                     onClick={() => deleteCrop(c.id)}
-                    className="text-gray-400 hover:text-red-600 cursor-pointer"
+                    className="text-[#A6ADA3] hover:text-red-400 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs font-mono text-[#A6ADA3] space-y-1">
                   <p>
-                    Acreage: <strong>{c.areaAcres} Acres</strong>
+                    Acreage: <strong className="text-[#F2F0E8]">{c.areaAcres} Acres</strong>
                   </p>
                   <p>
                     Yield:{" "}
-                    <strong className="text-[#2E7D32]">
+                    <strong className="text-[#79C267]">
                       {c.expectedYieldQuintals} Qtl
                     </strong>
                   </p>
                   <p>
-                    MSP Rate: <strong>₹{c.mspPerQtl}/Qtl</strong>
+                    MSP Rate: <strong className="text-[#F2F0E8]">₹{c.mspPerQtl}/Qtl</strong>
                   </p>
                 </div>
               </div>
@@ -864,41 +864,41 @@ export default function FarmerDashboardView() {
 
       {/* TAB 5: DBT PAYMENT STATUS */}
       {activeTab === "payment" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
           <div>
-            <h3 className="text-base font-bold text-gray-900">
+            <h3 className="text-lg font-serif text-[#F2F0E8]">
               Direct Benefit Transfer (DBT) MSP Disbursement
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-mono text-[#A6ADA3]">
               Government MSP payments directly credited to Aadhaar-linked bank
               account
             </p>
           </div>
 
-          <div className="bg-[#FAF8F2] p-6 rounded-2xl border border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-[#050805] p-6 rounded-sm border border-[#1A2E1E] grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase">
                 Crop & Weight
               </span>
-              <p className="text-base font-bold text-gray-900">
+              <p className="text-base font-serif text-[#F2F0E8] mt-1">
                 {currentBooking?.crop} (
                 {currentBooking?.weighedQuantity || currentBooking?.quantity}{" "}
                 Qtl)
               </p>
             </div>
             <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase">
                 Applicable MSP Rate
               </span>
-              <p className="text-base font-bold text-[#2E7D32]">
+              <p className="text-base font-serif text-[#79C267] mt-1">
                 ₹{currentBooking?.paymentDetails?.mspPerQtl || 2320} / Quintal
               </p>
             </div>
             <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase">
                 Total Payable Amount
               </span>
-              <p className="text-2xl font-black text-[#1B4318]">
+              <p className="text-2xl font-serif text-[#79C267] mt-1">
                 ₹
                 {(
                   currentBooking?.paymentDetails?.grossAmount || 58417
@@ -907,17 +907,17 @@ export default function FarmerDashboardView() {
             </div>
           </div>
 
-          <div className="p-4 bg-white rounded-2xl border border-gray-200 flex items-center justify-between text-xs">
+          <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] flex items-center justify-between text-xs font-mono">
             <div>
-              <span className="text-gray-500 block">
+              <span className="text-[#A6ADA3] block">
                 DBT Transaction Reference
               </span>
-              <span className="font-mono font-bold text-gray-900">
+              <span className="text-[#F2F0E8] font-bold">
                 {currentBooking?.paymentDetails?.dbtTxnId ||
                   "DBT-SBI-2026-98124"}
               </span>
             </div>
-            <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
+            <span className="px-3 py-1 rounded bg-[#164A29] text-[#79C267] text-xs border border-[#79C267]/30">
               {currentBooking?.paymentDetails?.disbursed
                 ? "DISBURSED"
                 : "AUTHORIZED BY OFFICER"}
@@ -928,24 +928,24 @@ export default function FarmerDashboardView() {
 
       {/* TAB 6: FARMER PROFILE VIEW & EDIT */}
       {activeTab === "profile" && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#E0ECE0] space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
+        <div className="bg-[#071008] rounded-md p-6 sm:p-8 border border-[#1A2E1E] space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1A2E1E] pb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2E7D32] to-[#1B4318] flex items-center justify-center text-white font-black shadow-md shrink-0">
-                <User className="w-8 h-8 text-[#F9A825]" />
+              <div className="w-14 h-14 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+                <User className="w-7 h-7" />
               </div>
               <div>
-                <div className="flex items-center gap-2.5">
-                  <h2 className="text-xl font-extrabold text-gray-900">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-serif text-[#F2F0E8]">
                     {farmerProfile.name}
                   </h2>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
+                  <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30">
                     VERIFIED KISAN
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 font-bold mt-0.5">
+                <p className="text-xs font-mono text-[#A6ADA3] mt-1">
                   Farmer ID:{" "}
-                  <span className="text-[#1B4318] font-mono">
+                  <span className="text-[#79C267]">
                     {farmerProfile.farmerId}
                   </span>
                 </p>
@@ -954,84 +954,84 @@ export default function FarmerDashboardView() {
 
             <button
               onClick={() => setEditProfileOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer w-fit"
+              className="px-5 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer w-fit"
             >
-              <Edit2 className="w-4 h-4 text-[#F9A825]" />
+              <Edit2 className="w-4 h-4 text-[#79C267]" />
               <span>{t("editProfile")}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase tracking-wider block">
                 {t("readOnlyFarmerId")}
               </span>
-              <span className="text-sm font-mono font-black text-[#1B4318] block mt-1">
+              <span className="text-sm font-mono text-[#79C267] block mt-1">
                 {farmerProfile.farmerId}
               </span>
-              <span className="text-[10px] text-gray-500 block mt-1">
+              <span className="text-[10px] text-[#A6ADA3] block mt-1">
                 Permanent Identifier (Read Only)
               </span>
             </div>
 
-            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase tracking-wider block">
                 {t("fullName")}
               </span>
-              <span className="text-sm font-bold text-gray-900 block mt-1">
+              <span className="text-sm font-serif text-[#F2F0E8] block mt-1">
                 {farmerProfile.name}
               </span>
-              <span className="text-[10px] text-gray-500 block mt-1">
+              <span className="text-[10px] text-[#A6ADA3] block mt-1">
                 Canonical Profile Name
               </span>
             </div>
 
-            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase tracking-wider block">
                 {t("mobile10")}
               </span>
-              <span className="text-sm font-bold text-gray-900 block mt-1">
+              <span className="text-sm font-mono text-[#F2F0E8] block mt-1">
                 +91 {farmerProfile.mobile}
               </span>
-              <span className="text-[10px] text-gray-500 block mt-1">
+              <span className="text-[10px] text-[#A6ADA3] block mt-1">
                 Primary Auth & OTP Mobile
               </span>
             </div>
 
-            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E]">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase tracking-wider block">
                 {t("emailLabel")}
               </span>
-              <span className="text-sm font-bold text-gray-900 block mt-1 truncate">
+              <span className="text-sm font-mono text-[#F2F0E8] block mt-1 truncate">
                 {farmerProfile.email || "rameshwar.singh@email.com"}
               </span>
-              <span className="text-[10px] text-gray-500 block mt-1">
+              <span className="text-[10px] text-[#A6ADA3] block mt-1">
                 Official Contact Email
               </span>
             </div>
 
-            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9] md:col-span-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] md:col-span-2">
+              <span className="text-[10px] font-mono text-[#A6ADA3] uppercase tracking-wider block">
                 {t("addressLabel")}
               </span>
-              <span className="text-sm font-bold text-gray-900 block mt-1">
+              <span className="text-sm font-serif text-[#F2F0E8] block mt-1">
                 {farmerProfile.address ||
                   `${farmerProfile.village}, ${farmerProfile.district}, ${farmerProfile.state}`}
               </span>
-              <span className="text-[10px] text-gray-500 block mt-1">
+              <span className="text-[10px] text-[#A6ADA3] block mt-1">
                 Registered Farmland Address
               </span>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-gray-500 font-semibold">
-              <Sprout className="w-4 h-4 text-[#2E7D32]" />
+          <div className="pt-4 border-t border-[#1A2E1E] flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#A6ADA3] font-mono">
+              <Sprout className="w-4 h-4 text-[#79C267]" />
               <span>{crops.length} MSP Eligible Crops Registered</span>
             </div>
             <button
               onClick={() => setEditProfileOpen(true)}
-              className="text-xs font-bold text-[#2E7D32] hover:underline cursor-pointer"
+              className="text-xs font-mono text-[#79C267] hover:underline cursor-pointer"
             >
               Update Profile Information →
             </button>
@@ -1061,45 +1061,45 @@ export default function FarmerDashboardView() {
 
       {/* Informational Audit Trail Modal for Farmers */}
       {auditInfoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gray-200 shadow-2xl space-y-4 font-sans text-left">
-            <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center font-bold">
-                <ShieldCheck className="w-6 h-6" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+          <div className="bg-[#071008] rounded-md p-6 sm:p-8 max-w-md w-full border border-[#1A2E1E] space-y-5 font-sans text-left">
+            <div className="flex items-center gap-3 border-b border-[#1A2E1E] pb-4">
+              <div className="w-10 h-10 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono">
+                <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-extrabold text-[#111827]">
+                <h3 className="text-base font-serif text-[#F2F0E8]">
                   Tamper-Evident Audit Trail
                 </h3>
-                <p className="text-xs text-[#2E7D32] font-semibold">
+                <p className="text-xs text-[#79C267] font-mono">
                   Informational Integrity Overview
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-gray-600 font-medium leading-relaxed">
+            <p className="text-xs text-[#A6ADA3] font-sans leading-relaxed">
               Your procurement milestones (Booking, Mandi Arrival, Quality
               Check, Digital Weighing, MSP Procurement, and DBT Payment) are
               recorded in a tamper-evident audit trail using SHA-256
               cryptographic hashes.
             </p>
 
-            <div className="p-3 bg-[#FAF8F2] rounded-xl border border-gray-200 text-[11px] font-mono text-gray-700 space-y-1">
-              <div className="font-bold text-gray-900">Hash Seal Status:</div>
-              <div className="text-[#2E7D32] font-bold">VALID & VERIFIED ✓</div>
-              <div className="text-gray-400 break-all text-[9px]">
+            <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] text-[11px] font-mono text-[#A6ADA3] space-y-1">
+              <div className="text-[#F2F0E8]">Hash Seal Status:</div>
+              <div className="text-[#79C267] font-bold">VALID & VERIFIED ✓</div>
+              <div className="text-[#A6ADA3]/60 break-all text-[9px]">
                 0x3c9e1d7b0e885e4f2c118f2a4b127f8a9b2c3d4e5f6a
               </div>
             </div>
 
-            <p className="text-[11px] text-gray-500 italic">
+            <p className="text-[11px] text-[#A6ADA3] italic">
               Detailed audit log records are accessible exclusively to
               authorized Mandi Command Officers and System Auditors.
             </p>
 
             <button
               onClick={() => setAuditInfoOpen(false)}
-              className="w-full py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer transition-colors"
+              className="w-full py-3 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 cursor-pointer transition-colors"
             >
               Got it
             </button>
@@ -1109,3 +1109,4 @@ export default function FarmerDashboardView() {
     </div>
   );
 }
+

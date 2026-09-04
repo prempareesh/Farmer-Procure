@@ -103,28 +103,28 @@ export default function AuthView() {
   };
 
   return (
-    <div className="min-h-[85vh] bg-[#FAFBF8] flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-[85vh] bg-[#050805] flex flex-col justify-center items-center py-16 px-4 sm:px-6 lg:px-8 selection:bg-[#164A29] selection:text-[#79C267]">
       <div className="w-full max-w-[440px] space-y-8">
         {/* Branding Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2.5 justify-center">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7CB342] via-[#2E7D32] to-[#1B4318] flex items-center justify-center shadow-2xs">
-              <Sprout className="w-4 h-4 text-white" />
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center gap-3 justify-center">
+            <div className="w-8 h-8 rounded bg-[#164A29] border border-[#79C267]/30 flex items-center justify-center">
+              <Sprout className="w-4 h-4 text-[#79C267]" />
             </div>
-            <span className="text-2xl font-extrabold text-[#111827] tracking-tight">
+            <span className="text-2xl font-serif text-[#F2F0E8] tracking-wide">
               {t("brandName")}
             </span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 tracking-tight">
+          <p className="text-xs font-mono uppercase tracking-widest text-[#A6ADA3]">
             {t("brandTagline")}
           </p>
         </div>
 
         {/* Main Card Container */}
-        <div className="bg-white rounded-3xl p-7 shadow-xs border border-[#E8EFE6] space-y-6">
+        <div className="bg-[#071008] rounded-md p-8 border border-[#1A2E1E] space-y-6">
           {/* Main Heading & Subtitle */}
-          <div className="space-y-1 text-left">
-            <h2 className="text-xl font-black text-[#111827] tracking-tight">
+          <div className="space-y-1.5 text-left">
+            <h2 className="text-2xl font-serif text-[#F2F0E8] tracking-tight">
               {isRegistering
                 ? t("registerTitle")
                 : selectedRole === "worker"
@@ -133,7 +133,7 @@ export default function AuthView() {
                     ? "Sign In as Command Officer"
                     : t("welcomeBackFarmer")}
             </h2>
-            <p className="text-xs text-gray-600 font-medium">
+            <p className="text-xs text-[#A6ADA3] font-sans">
               {isRegistering
                 ? t("registerSub")
                 : selectedRole === "worker"
@@ -146,24 +146,24 @@ export default function AuthView() {
 
           {/* Success Banner */}
           {authSuccessMessage && (
-            <div className="p-3.5 bg-[#E8F5E9] rounded-2xl border border-[#C8E6C9] text-xs text-[#1B4318] font-bold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#2E7D32] shrink-0" />
+            <div className="p-3.5 bg-[#12351F]/60 rounded-sm border border-[#79C267]/40 text-xs text-[#79C267] font-mono flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#79C267]" />
               <span>{authSuccessMessage}</span>
             </div>
           )}
 
           {/* Error Banner */}
           {error && (
-            <div className="p-3.5 bg-red-50 rounded-2xl border border-red-200 text-xs text-red-700 font-bold">
+            <div className="p-3.5 bg-red-950/40 rounded-sm border border-red-900/60 text-xs text-red-300 font-mono">
               {error}
             </div>
           )}
 
           {!isRegistering ? (
             /* SIGN IN FORM WITH ROLE SWITCHER */
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-5">
               {/* Role Selection Tabs */}
-              <div className="flex bg-[#FAFBF8] p-1 rounded-2xl border border-gray-200 text-xs font-bold">
+              <div className="flex bg-[#050805] p-1 rounded border border-[#1A2E1E] text-xs font-mono uppercase tracking-wider">
                 <button
                   type="button"
                   onClick={() => {
@@ -171,10 +171,10 @@ export default function AuthView() {
                     setLoginIdentifier("FRM-2026-000123");
                     setLoginPassword("1234");
                   }}
-                  className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
+                  className={`flex-1 py-2 rounded-sm transition-all cursor-pointer ${
                     selectedRole === "farmer"
-                      ? "bg-[#2E7D32] text-white shadow-2xs"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+                      : "text-[#A6ADA3] hover:text-[#F2F0E8]"
                   }`}
                 >
                   Farmer
@@ -186,10 +186,10 @@ export default function AuthView() {
                     setLoginIdentifier("staff");
                     setLoginPassword("staff1");
                   }}
-                  className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
+                  className={`flex-1 py-2 rounded-sm transition-all cursor-pointer ${
                     selectedRole === "worker"
-                      ? "bg-[#1B4318] text-white shadow-2xs"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+                      : "text-[#A6ADA3] hover:text-[#F2F0E8]"
                   }`}
                 >
                   Mandi Staff
@@ -201,10 +201,10 @@ export default function AuthView() {
                     setLoginIdentifier("officer");
                     setLoginPassword("officer1");
                   }}
-                  className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
+                  className={`flex-1 py-2 rounded-sm transition-all cursor-pointer ${
                     selectedRole === "officer"
-                      ? "bg-[#1B4318] text-white shadow-2xs"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+                      : "text-[#A6ADA3] hover:text-[#F2F0E8]"
                   }`}
                 >
                   Officer
@@ -212,7 +212,7 @@ export default function AuthView() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                   {selectedRole === "worker"
                     ? "Staff ID / User Identifier"
                     : selectedRole === "officer"
@@ -231,12 +231,12 @@ export default function AuthView() {
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-medium bg-white focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32] transition-colors"
+                  className="w-full px-4 py-3 rounded-sm border border-[#1A2E1E] text-sm bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1.5">
                   {t("passwordPin")}
                 </label>
                 <input
@@ -245,18 +245,18 @@ export default function AuthView() {
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm font-medium bg-white focus:outline-none focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32] transition-colors"
+                  className="w-full px-4 py-3 rounded-sm border border-[#1A2E1E] text-sm bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267] transition-colors"
                 />
               </div>
 
               {/* Sub Row: Remember Me & Forgot PIN */}
-              <div className="flex items-center justify-between text-xs font-semibold pt-1">
-                <label className="flex items-center gap-2 text-gray-600 cursor-pointer select-none">
+              <div className="flex items-center justify-between text-xs font-mono pt-1 text-[#A6ADA3]">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#2E7D32] focus:ring-[#2E7D32] border-gray-300 cursor-pointer"
+                    className="w-3.5 h-3.5 rounded bg-[#050805] border-[#1A2E1E] text-[#79C267] focus:ring-0 cursor-pointer"
                   />
                   <span>{t("rememberMe")}</span>
                 </label>
@@ -267,7 +267,7 @@ export default function AuthView() {
                       "Password reset instructions sent to registered contact.",
                     )
                   }
-                  className="text-[#2E7D32] hover:underline cursor-pointer"
+                  className="text-[#79C267] hover:underline cursor-pointer"
                 >
                   {t("forgotPin")}
                 </button>
@@ -277,7 +277,7 @@ export default function AuthView() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-2xs transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 pt-3.5 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-3.5 px-6 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-widest border border-[#79C267]/30 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>
                   {loading
@@ -292,9 +292,9 @@ export default function AuthView() {
             </form>
           ) : (
             /* FARMER REGISTER FORM */
-            <form onSubmit={handleRegister} className="space-y-3.5">
+            <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   {t("fullName")}
                 </label>
                 <input
@@ -305,13 +305,13 @@ export default function AuthView() {
                     setRegForm({ ...regForm, name: e.target.value })
                   }
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("mobile10")}
                   </label>
                   <input
@@ -323,11 +323,11 @@ export default function AuthView() {
                       setRegForm({ ...regForm, mobile: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("aadhaar12")}
                   </label>
                   <input
@@ -339,13 +339,13 @@ export default function AuthView() {
                       setRegForm({ ...regForm, aadhaar: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
+                <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                   {t("villageTehsil")}
                 </label>
                 <input
@@ -356,13 +356,13 @@ export default function AuthView() {
                     setRegForm({ ...regForm, village: e.target.value })
                   }
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                  className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("createPassword")}
                   </label>
                   <input
@@ -373,11 +373,11 @@ export default function AuthView() {
                       setRegForm({ ...regForm, password: e.target.value })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                  <label className="block text-[11px] font-mono text-[#A6ADA3] uppercase tracking-wider mb-1">
                     {t("confirmPassword")}
                   </label>
                   <input
@@ -391,7 +391,7 @@ export default function AuthView() {
                       })
                     }
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs font-medium bg-white focus:outline-none focus:border-[#2E7D32]"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-[#1A2E1E] text-xs bg-[#050805] text-[#F2F0E8] placeholder:text-[#A6ADA3]/40 focus:outline-none focus:border-[#79C267]"
                   />
                 </div>
               </div>
@@ -399,7 +399,7 @@ export default function AuthView() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs shadow-2xs transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3.5 px-6 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-widest border border-[#79C267]/30 transition-all cursor-pointer flex items-center justify-center gap-2 mt-2"
               >
                 <span>
                   {loading ? "Creating Identity..." : t("registerBtn")}
@@ -409,7 +409,7 @@ export default function AuthView() {
           )}
 
           {/* Registration Secondary Link */}
-          <div className="text-center pt-2 text-xs font-semibold text-gray-600">
+          <div className="text-center pt-2 text-xs font-mono text-[#A6ADA3]">
             {!isRegistering ? (
               <span>
                 {t("newFarmerText")}{" "}
@@ -419,7 +419,7 @@ export default function AuthView() {
                     setIsRegistering(true);
                     setError("");
                   }}
-                  className="text-[#2E7D32] hover:underline font-bold cursor-pointer"
+                  className="text-[#79C267] hover:underline cursor-pointer"
                 >
                   {t("createFarmerIdText")}
                 </button>
@@ -431,7 +431,7 @@ export default function AuthView() {
                   setIsRegistering(false);
                   setError("");
                 }}
-                className="text-[#2E7D32] hover:underline font-bold cursor-pointer"
+                className="text-[#79C267] hover:underline cursor-pointer"
               >
                 {t("backToSignIn")}
               </button>
@@ -442,3 +442,4 @@ export default function AuthView() {
     </div>
   );
 }
+

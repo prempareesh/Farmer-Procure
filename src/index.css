@@ -2,56 +2,70 @@
 
 @layer base {
   :root {
-    --primary-green: #2e7d32;
-    --secondary-green: #4caf50;
-    --harvest-gold: #f9a825;
-    --bg-sage: #f4f8f2;
-    --text-dark: #1b1b1b;
+    --bg-dark: #050805;
+    --surface-dark: #071008;
+    --surface-card: #0A120C;
+    --primary-forest: #12351F;
+    --primary-medium: #164A29;
+    --secondary-green: #315C38;
+    --accent-green: #79C267;
+    --text-main: #E8E7DE;
+    --text-muted: #A6ADA3;
+    --border-dark: #1A2E1E;
+    --border-muted: #142417;
   }
 
   body {
-    background-color: #f4f8f2;
-    color: var(--text-dark);
+    background-color: #050805;
+    color: #E8E7DE;
     font-family:
-      "Plus Jakarta Sans",
-      "Inter",
       system-ui,
       -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
       sans-serif;
     overflow-x: hidden;
   }
+
+  h1,
+  h2,
+  h3,
+  .font-serif {
+    font-family: "Times New Roman", Times, Georgia, serif;
+  }
 }
 
-/* Custom Utilities for Premium SaaS look */
-.bg-sage {
-  background-color: #f4f8f2;
+/* Custom Times New Roman Editorial Utility */
+.font-serif {
+  font-family: "Times New Roman", Times, Georgia, serif !important;
 }
 
-.text-primary-green {
-  color: #2e7d32;
+.font-sans {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif !important;
 }
 
-.bg-primary-green {
-  background-color: #2e7d32;
+/* Subtle Dark Surface Utilities */
+.bg-dark-base {
+  background-color: #050805;
 }
 
-.border-primary-green {
-  border-color: #2e7d32;
+.bg-dark-surface {
+  background-color: #071008;
 }
 
-.bg-harvest-gold {
-  background-color: #f9a825;
+.bg-dark-card {
+  background-color: #0A120C;
 }
 
-.text-harvest-gold {
-  color: #f9a825;
-}
-
-/* Soft card shadow */
-.shadow-soft {
-  box-shadow:
-    0 10px 30px -5px rgba(0, 0, 0, 0.04),
-    0 4px 12px -2px rgba(0, 0, 0, 0.02);
+.border-dark-subtle {
+  border-color: #1A2E1E;
 }
 
 /* Custom Scrollbar */
@@ -59,12 +73,12 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f4f8f2;
+  background: #050805;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c8e6c9;
+  background: #1a2e1e;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e7d32;
+  background: #315c38;
 }

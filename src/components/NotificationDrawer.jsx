@@ -26,7 +26,7 @@ export default function NotificationDrawer() {
       {/* Backdrop */}
       <div
         onClick={() => setNotificationDrawerOpen(false)}
-        className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+        className="absolute inset-0 bg-[#050805]/80 backdrop-blur-md transition-opacity"
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
@@ -35,96 +35,98 @@ export default function NotificationDrawer() {
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="w-screen max-w-md bg-white shadow-2xl border-l border-gray-100 flex flex-col"
+          className="w-screen max-w-md bg-[#071008] text-[#E8E7DE] border-l border-[#1A2E1E] shadow-2xl flex flex-col font-mono"
         >
           {/* Header */}
-          <div className="p-5 bg-[#1B4318] text-white flex items-center justify-between">
+          <div className="p-5 bg-[#0A180D] border-b border-[#1A2E1E] flex items-center justify-between text-[#F2F0E8]">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-                <Bell className="w-5 h-5" />
+              <div className="w-8 h-8 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+                <Bell className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-base font-bold">Live Procurement Alerts</h3>
-                <p className="text-xs text-[#A5D6A7]">
-                  Real-time Mandi & Slot Updates
+                <h3 className="text-lg font-serif font-normal text-[#F2F0E8] tracking-wide">
+                  Live Procurement Telemetry
+                </h3>
+                <p className="text-[11px] font-mono text-[#A6ADA3]">
+                  Real-time Mandi & Queue Stream
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setNotificationDrawerOpen(false)}
-              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+              className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Action Bar */}
-          <div className="px-5 py-2.5 bg-[#FAF8F2] border-b border-[#E8E4D9] flex items-center justify-between text-xs">
-            <span className="font-bold text-gray-700">
-              {notifications.filter((n) => !n.read).length} Unread Notifications
+          <div className="px-5 py-2.5 bg-[#050805] border-b border-[#1A2E1E] flex items-center justify-between text-xs font-mono">
+            <span className="text-[#A6ADA3]">
+              {notifications.filter((n) => !n.read).length} UNREAD ALERTS
             </span>
             <button
               onClick={markAllNotificationsRead}
-              className="font-bold text-[#2E7D32] hover:underline flex items-center gap-1"
+              className="text-[#79C267] hover:underline flex items-center gap-1 uppercase tracking-wider text-[10px]"
             >
               <CheckCheck className="w-3.5 h-3.5" />
-              <span>Mark all as read</span>
+              <span>Mark read</span>
             </button>
           </div>
 
           {/* Notifications List */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#FAF8F2]/40">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#071008]">
             {notifications.length === 0 ? (
-              <div className="text-center py-16 text-gray-500">
-                <Bell className="w-10 h-10 mx-auto text-gray-300 mb-2" />
-                <p className="text-sm font-semibold">No notifications yet</p>
+              <div className="text-center py-16 text-[#A6ADA3]">
+                <Bell className="w-8 h-8 mx-auto text-[#1A2E1E] mb-2" />
+                <p className="text-xs font-mono">No alerts recorded</p>
               </div>
             ) : (
               notifications.map((notif) => {
                 return (
                   <div
                     key={notif.id}
-                    className={`p-4 rounded-2xl border transition-all ${
+                    className={`p-4 border transition-all ${
                       notif.read
-                        ? "bg-white/80 border-gray-200"
-                        : "bg-white border-[#A5D6A7] shadow-sm ring-1 ring-[#2E7D32]/10"
+                        ? "bg-[#050805] border-[#1A2E1E] text-[#A6ADA3]"
+                        : "bg-[#0A180D] border-[#79C267]/40 text-[#F2F0E8]"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                        className={`w-7 h-7 border flex items-center justify-center shrink-0 mt-0.5 ${
                           notif.type === "success"
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-[#164A29]/40 border-[#79C267]/40 text-[#79C267]"
                             : notif.type === "warning"
-                              ? "bg-amber-100 text-amber-700"
+                              ? "bg-amber-950/40 border-amber-500/40 text-amber-300"
                               : notif.type === "recommendation"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-gray-100 text-gray-700"
+                                ? "bg-[#164A29]/40 border-[#79C267]/40 text-[#79C267]"
+                                : "bg-[#050805] border-[#1A2E1E] text-[#A6ADA3]"
                         }`}
                       >
                         {notif.type === "success" && (
-                          <CheckCircle2 className="w-4 h-4" />
+                          <CheckCircle2 className="w-3.5 h-3.5" />
                         )}
                         {notif.type === "warning" && (
-                          <AlertTriangle className="w-4 h-4" />
+                          <AlertTriangle className="w-3.5 h-3.5" />
                         )}
                         {notif.type === "recommendation" && (
-                          <Sparkles className="w-4 h-4" />
+                          <Sparkles className="w-3.5 h-3.5" />
                         )}
-                        {notif.type === "info" && <Info className="w-4 h-4" />}
+                        {notif.type === "info" && <Info className="w-3.5 h-3.5" />}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-xs font-bold text-gray-900 truncate">
+                          <h4 className="text-xs font-mono font-bold text-[#F2F0E8] truncate">
                             {notif.title}
                           </h4>
-                          <span className="text-[10px] text-gray-400 font-semibold whitespace-nowrap">
+                          <span className="text-[10px] font-mono text-[#A6ADA3]">
                             {notif.timestamp}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                        <p className="text-[11px] font-mono text-[#A6ADA3] mt-1 leading-relaxed">
                           {notif.message}
                         </p>
                       </div>
@@ -136,10 +138,9 @@ export default function NotificationDrawer() {
           </div>
 
           {/* Footer Info */}
-          <div className="p-4 bg-white border-t border-gray-100 text-center">
-            <p className="text-[11px] font-semibold text-gray-500">
-              Procure Intelligence • Multi-channel SMS & WhatsApp Webhooks
-              Active
+          <div className="p-4 bg-[#0A180D] border-t border-[#1A2E1E] text-center font-mono">
+            <p className="text-[11px] text-[#A6ADA3]">
+              Procure Intelligence • Multi-channel Telemetry Active
             </p>
           </div>
         </motion.div>

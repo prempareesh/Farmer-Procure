@@ -24,12 +24,12 @@ export default function AuditChainView() {
   });
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6 font-mono">
       {/* Top Navigation Bar */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigateTo("home")}
-          className="flex items-center gap-1.5 text-xs font-bold text-gray-600 hover:text-[#2E7D32] transition-colors"
+          className="flex items-center gap-1.5 text-xs font-mono text-[#A6ADA3] hover:text-[#79C267] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Homepage</span>
@@ -38,7 +38,7 @@ export default function AuditChainView() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigateTo("dashboard")}
-            className="px-3.5 py-1.5 rounded-xl bg-white border border-gray-300 text-xs font-bold text-gray-800 hover:bg-gray-50"
+            className="px-3.5 py-1.5 border border-[#1A2E1E] bg-[#071008] text-xs font-mono uppercase text-[#A6ADA3] hover:text-[#F2F0E8] cursor-pointer"
           >
             Admin Dashboard
           </button>
@@ -46,23 +46,22 @@ export default function AuditChainView() {
       </div>
 
       {/* Header Banner */}
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-[#071008] p-6 border border-[#1A2E1E] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#1B4318] text-white flex items-center justify-center font-black shadow-md shrink-0">
-            <Lock className="w-7 h-7 text-[#F9A825]" />
+          <div className="w-12 h-12 border border-[#79C267]/40 bg-[#164A29]/40 text-[#79C267] flex items-center justify-center shrink-0">
+            <Lock className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-xl font-extrabold text-gray-900">
+              <h2 className="text-2xl font-serif text-[#F2F0E8]">
                 Cryptographic SHA-256 Audit Ledger
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
+              <span className="px-2.5 py-0.5 border border-[#79C267]/40 bg-[#0A180D] text-[#79C267] text-[10px] font-mono uppercase">
                 IMMUTABLE CHAIN
               </span>
             </div>
-            <p className="text-xs text-gray-500 font-semibold mt-0.5">
-              Tamper-evident blockchain-grade verification of all Mandi
-              procurement transactions
+            <p className="text-xs text-[#A6ADA3] font-mono mt-0.5">
+              Tamper-evident verification of all Mandi procurement transactions
             </p>
           </div>
         </div>
@@ -70,28 +69,28 @@ export default function AuditChainView() {
         {/* Live Integrity Badge & Tamper Simulator Controls */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div
-            className={`px-4 py-2.5 rounded-2xl border flex items-center gap-2 text-xs font-black shadow-xs ${
+            className={`px-4 py-2 border flex items-center gap-2 text-xs font-mono ${
               isIntegrityValid
-                ? "bg-green-50 border-green-300 text-green-800"
-                : "bg-red-50 border-red-300 text-red-800 animate-pulse"
+                ? "bg-[#0A180D] border-[#79C267]/40 text-[#79C267]"
+                : "bg-[#1C0A0A] border-red-500/40 text-red-400 animate-pulse"
             }`}
           >
             {isIntegrityValid ? (
               <>
-                <CheckCircle2 className="w-5 h-5 text-[#2E7D32]" />
+                <CheckCircle2 className="w-4 h-4 text-[#79C267]" />
                 <div>
-                  <span className="block leading-none">Hash Valid</span>
-                  <span className="text-[10px] text-[#2E7D32] font-semibold">
+                  <span className="block leading-none font-bold">Hash Valid</span>
+                  <span className="text-[10px] text-[#A6ADA3]">
                     100% Integrity Verified
                   </span>
                 </div>
               </>
             ) : (
               <>
-                <AlertTriangle className="w-5 h-5 text-red-600" />
+                <AlertTriangle className="w-4 h-4 text-red-400" />
                 <div>
-                  <span className="block leading-none">Integrity Failure!</span>
-                  <span className="text-[10px] text-red-700 font-semibold">
+                  <span className="block leading-none font-bold">Integrity Failure!</span>
+                  <span className="text-[10px] text-red-300">
                     Block Hash Mismatch Detected
                   </span>
                 </div>
@@ -103,15 +102,15 @@ export default function AuditChainView() {
             {isIntegrityValid ? (
               <button
                 onClick={simulateTamper}
-                className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold transition-all shadow-xs"
+                className="px-3.5 py-2 bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs font-mono uppercase tracking-wider cursor-pointer"
                 title="Test malicious block modification"
               >
-                Simulate Tamper Test
+                Simulate Tamper
               </button>
             ) : (
               <button
                 onClick={repairAuditChain}
-                className="px-3.5 py-2 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                className="px-3.5 py-2 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Repair Consensus</span>
@@ -123,8 +122,8 @@ export default function AuditChainView() {
 
       {/* Ledger Block List */}
       <div className="space-y-4">
-        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-[#2E7D32]" />
+        <h3 className="text-xs font-mono text-[#A6ADA3] uppercase tracking-wider flex items-center gap-2">
+          <Layers className="w-4 h-4 text-[#79C267]" />
           <span>
             Sequential Block Ledger ({auditChain.length} Verified Blocks)
           </span>
@@ -139,40 +138,39 @@ export default function AuditChainView() {
                 key={block.blockIndex}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`bg-white rounded-3xl p-6 border transition-all shadow-xs ${
+                className={`p-6 border transition-all ${
                   isTampered
-                    ? "border-red-400 bg-red-50/40 ring-2 ring-red-500/20"
-                    : "border-[#E0ECE0] hover:border-[#A5D6A7]"
+                    ? "border-red-500/60 bg-[#1C0A0A]"
+                    : "border-[#1A2E1E] bg-[#071008]"
                 }`}
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-3">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1A2E1E] pb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#1B4318] text-white flex items-center justify-center font-mono font-black text-xs">
+                    <div className="w-8 h-8 border border-[#79C267]/40 bg-[#0A180D] text-[#79C267] flex items-center justify-center font-mono text-xs">
                       #{block.blockIndex}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-[#1B4318] uppercase">
+                        <span className="text-xs font-mono text-[#79C267] uppercase">
                           Stage: {block.stage.replace("_", " ")}
                         </span>
-                        <span className="font-mono text-[11px] font-bold text-gray-500">
+                        <span className="font-mono text-[11px] text-[#A6ADA3]">
                           [{block.bookingId}]
                         </span>
                       </div>
-                      <p className="text-[11px] text-gray-500 font-medium">
-                        Farmer: <strong>{block.farmerName}</strong> •{" "}
-                        {block.timestamp}
+                      <p className="text-[11px] font-mono text-[#A6ADA3]">
+                        Farmer: <strong className="text-[#F2F0E8]">{block.farmerName}</strong> • {block.timestamp}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     {isTampered ? (
-                      <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-black border border-red-300">
+                      <span className="px-3 py-1 bg-red-950 border border-red-700 text-red-300 text-xs font-mono uppercase">
                         ⚠️ TAMPERED SIGNATURE
                       </span>
                     ) : (
-                      <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-bold border border-[#A5D6A7] flex items-center gap-1">
+                      <span className="px-3 py-1 bg-[#0A180D] border border-[#79C267]/40 text-[#79C267] text-xs font-mono uppercase flex items-center gap-1">
                         <ShieldCheck className="w-3.5 h-3.5" /> Block Valid
                       </span>
                     )}
@@ -180,23 +178,23 @@ export default function AuditChainView() {
                 </div>
 
                 {/* Payload Summary */}
-                <div className="py-3">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                <div className="py-3 font-mono">
+                  <span className="text-[10px] text-[#A6ADA3] uppercase tracking-wider block">
                     Transaction Payload Summary
                   </span>
-                  <p className="text-xs font-bold text-gray-800 mt-0.5">
+                  <p className="text-xs text-[#F2F0E8] mt-0.5 font-serif">
                     {block.dataSummary}
                   </p>
                 </div>
 
                 {/* Cryptographic Hash Pair */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-gray-100 text-xs font-mono">
-                  <div className="p-3 bg-[#FAF8F2] rounded-xl border border-gray-200">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase block">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-[#1A2E1E] text-xs font-mono">
+                  <div className="p-3 bg-[#050805] border border-[#1A2E1E]">
+                    <span className="text-[10px] text-[#A6ADA3] uppercase block">
                       Previous Block Hash (PrevHash)
                     </span>
                     <p
-                      className="text-[11px] text-gray-600 truncate mt-0.5"
+                      className="text-[11px] text-[#A6ADA3] truncate mt-0.5"
                       title={block.prevHash}
                     >
                       {block.prevHash}
@@ -204,13 +202,13 @@ export default function AuditChainView() {
                   </div>
 
                   <div
-                    className={`p-3 rounded-xl border ${isTampered ? "bg-red-100 border-red-300" : "bg-[#E8F5E9]/60 border-[#C8E6C9]"}`}
+                    className={`p-3 border ${isTampered ? "bg-red-950/40 border-red-700 text-red-300" : "bg-[#0A180D] border-[#79C267]/40 text-[#79C267]"}`}
                   >
-                    <span className="text-[10px] font-bold text-gray-500 uppercase block">
+                    <span className="text-[10px] uppercase block opacity-80">
                       Current Block SHA-256 Hash
                     </span>
                     <p
-                      className={`text-[11px] font-bold truncate mt-0.5 ${isTampered ? "text-red-700" : "text-[#1B4318]"}`}
+                      className="text-[11px] font-bold truncate mt-0.5"
                       title={block.currentHash}
                     >
                       {block.currentHash}

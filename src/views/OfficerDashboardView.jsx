@@ -23,8 +23,6 @@ export default function OfficerDashboardView() {
     xaiFactors,
     bottlenecks,
     resolveBottleneck,
-    fraudAlerts,
-    resolveFraudAlert,
     approveFinalPayment,
     searchFarmerById,
     feedbackList,
@@ -32,7 +30,7 @@ export default function OfficerDashboardView() {
     t,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState("overview"); // 'overview' | 'farmers' | 'payments' | 'feedback' | 'bottlenecks' | 'fraud'
+  const [activeTab, setActiveTab] = useState("overview"); // 'overview' | 'farmers' | 'payments' | 'feedback' | 'bottlenecks'
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFarmerHistory, setSelectedFarmerHistory] = useState(null);
 
@@ -64,25 +62,25 @@ export default function OfficerDashboardView() {
   };
 
   return (
-    <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 selection:bg-[#2E7D32] selection:text-white">
+    <div className="min-h-[88vh] bg-[#050805] text-[#E8E7DE] py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 selection:bg-[#164A29] selection:text-[#79C267]">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1A2E1E] pb-6">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigateTo("home")}
-              className="p-2 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-[#2E7D32] transition-colors cursor-pointer"
+              className="p-2 rounded bg-[#071008] border border-[#1A2E1E] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+            <h1 className="text-3xl font-serif text-[#F2F0E8] tracking-tight">
               {t("officerPortal")} & Command Tower
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#1B4318] text-white text-[10px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30 uppercase">
               NORTH ZONE
             </span>
           </div>
-          <p className="text-xs text-gray-500 font-semibold mt-1">
+          <p className="text-xs text-[#A6ADA3] font-mono mt-1">
             Supervisory procurement control, live workflow telemetry, anonymous
             feedback signals & cryptographic oversight
           </p>
@@ -90,78 +88,78 @@ export default function OfficerDashboardView() {
 
         <button
           onClick={() => navigateTo("audit")}
-          className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-md flex items-center gap-2 transition-all cursor-pointer"
+          className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] text-xs font-mono uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
         >
-          <ShieldCheck className="w-4 h-4 text-[#F9A825]" />
+          <ShieldCheck className="w-4 h-4 text-[#79C267]" />
           <span>SHA-256 Cryptographic Ledger</span>
         </button>
       </div>
 
       {/* 4 KPI Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#E8F5E9] text-[#2E7D32] flex items-center justify-center font-bold shrink-0">
-            <Users className="w-6 h-6" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("registeredCrops")}
             </span>
-            <h3 className="text-2xl font-black text-gray-900">
+            <h3 className="text-2xl font-serif text-[#F2F0E8]">
               {farmersList.length + 12480}
             </h3>
-            <span className="text-[10px] text-[#2E7D32] font-semibold">
+            <span className="text-[10px] text-[#79C267] font-mono">
               100% Aadhaar Verified
             </span>
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold shrink-0">
-            <DollarSign className="w-6 h-6" />
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-[#050805] text-amber-400 border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <DollarSign className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("dbtPaymentStatus")}
             </span>
-            <h3 className="text-2xl font-black text-amber-600">
+            <h3 className="text-2xl font-serif text-amber-400">
               {pendingPayments.length} Authorizations
             </h3>
-            <span className="text-[10px] text-gray-500 font-semibold">
+            <span className="text-[10px] text-[#A6ADA3] font-mono">
               Direct DBT Queue
             </span>
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
-            <Clock className="w-6 h-6" />
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <Clock className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("avgWaitTime")}
             </span>
-            <h3 className="text-2xl font-black text-gray-900">
+            <h3 className="text-2xl font-serif text-[#F2F0E8]">
               ~{estimatedWaitMins} mins
             </h3>
-            <span className="text-[10px] text-[#2E7D32] font-semibold">
+            <span className="text-[10px] text-[#79C267] font-mono">
               {peopleAhead} Trucks in Lane
             </span>
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 shadow-md border border-[#E0ECE0] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#E8F5E9] text-[#1B4318] flex items-center justify-center font-bold shrink-0">
-            <MessageSquare className="w-6 h-6 text-[#2E7D32]" />
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] flex items-center gap-4">
+          <div className="w-11 h-11 rounded bg-[#050805] text-[#79C267] border border-[#1A2E1E] flex items-center justify-center font-mono shrink-0">
+            <MessageSquare className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase">
+            <span className="text-[10px] font-mono text-[#A6ADA3] uppercase block">
               {t("feedbackAvgRating")}
             </span>
-            <h3 className="text-2xl font-black text-[#1B4318]">
+            <h3 className="text-2xl font-serif text-[#F2F0E8]">
               {avgRating} / 5
             </h3>
-            <span className="text-[10px] text-gray-500 font-semibold">
+            <span className="text-[10px] text-[#A6ADA3] font-mono">
               {feedbackList?.length || 12} {t("feedbackResponses")}
             </span>
           </div>
@@ -169,61 +167,61 @@ export default function OfficerDashboardView() {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex bg-white p-1 rounded-2xl border border-gray-200 w-fit overflow-x-auto">
+      <div className="flex bg-[#071008] p-1 rounded border border-[#1A2E1E] w-fit overflow-x-auto">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
             activeTab === "overview"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
           Overview & Telemetry
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "feedback"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <MessageSquare className="w-3.5 h-3.5" />
+          <MessageSquare className="w-3.5 h-3.5 text-[#79C267]" />
           <span>
             {t("anonymousFarmerFeedbackTitle")} ({feedbackList?.length || 2})
           </span>
         </button>
         <button
           onClick={() => setActiveTab("farmers")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "farmers"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <Search className="w-3.5 h-3.5" />
+          <Search className="w-3.5 h-3.5 text-[#79C267]" />
           <span>Farmer Search & History</span>
         </button>
         <button
           onClick={() => setActiveTab("payments")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "payments"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <DollarSign className="w-3.5 h-3.5" />
+          <DollarSign className="w-3.5 h-3.5 text-[#79C267]" />
           <span>DBT Payment Approvals ({pendingPayments.length})</span>
         </button>
         <button
           onClick={() => setActiveTab("bottlenecks")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === "bottlenecks"
-              ? "bg-[#2E7D32] text-white shadow-xs"
-              : "text-gray-700 hover:text-[#2E7D32]"
+              ? "bg-[#164A29] text-[#F2F0E8] border border-[#79C267]/30"
+              : "text-[#A6ADA3] hover:text-[#F2F0E8]"
           }`}
         >
-          <Wrench className="w-3.5 h-3.5" />
+          <Wrench className="w-3.5 h-3.5 text-[#79C267]" />
           <span>
             AI Bottleneck Intelligence (
             {bottlenecks.filter((b) => !b.resolved).length})
@@ -235,22 +233,22 @@ export default function OfficerDashboardView() {
       {activeTab === "overview" && (
         <div className="space-y-6">
           {/* Live Active Workflow Telemetry Bar */}
-          <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-5">
+            <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
               <div>
-                <h3 className="text-base font-extrabold text-gray-900">
+                <h3 className="text-lg font-serif text-[#F2F0E8]">
                   Centre Operations & Real-Time Workflow Telemetry
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs font-mono text-[#A6ADA3]">
                   Live active tokens across Karnal Central Grain Mandi
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-xs">
+              <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] font-mono text-xs border border-[#79C267]/30">
                 72 Active Bookings • 80% Capacity
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               {bookings.slice(0, 5).map((b) => {
                 const verificationRec = identityVerifications.find(
                   (v) =>
@@ -263,34 +261,34 @@ export default function OfficerDashboardView() {
                 return (
                   <div
                     key={b.id}
-                    className="p-4 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2"
+                    className="p-4 rounded-sm bg-[#050805] border border-[#1A2E1E] space-y-2 font-mono"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-black text-sm text-[#1B4318]">
+                      <span className="text-sm font-serif text-[#79C267]">
                         {b.tokenDisplay}
                       </span>
-                      <span className="text-[10px] font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] text-[#79C267] bg-[#164A29] px-2 py-0.5 rounded-sm border border-[#79C267]/30">
                         {b.stage}
                       </span>
                     </div>
-                    <div className="text-xs font-bold text-gray-900 truncate">
+                    <div className="text-xs font-serif text-[#F2F0E8] truncate">
                       {b.farmerName}
                     </div>
-                    <div className="text-[10px] text-gray-500">
+                    <div className="text-[10px] text-[#A6ADA3]">
                       {b.crop} • {b.quantity} Qtl
                     </div>
                     <div className="pt-1">
                       {verificationRec?.verificationStatus === "VERIFIED" ? (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[9px] border border-emerald-300">
+                        <span className="px-2 py-0.5 rounded bg-[#12351F] text-[#79C267] text-[9px] border border-[#79C267]/30">
                           Identity Verified ✓
                         </span>
                       ) : verificationRec?.verificationStatus ===
                         "REVIEW_REQUIRED" ? (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[9px] border border-amber-300">
+                        <span className="px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 text-[9px] border border-amber-800/50">
                           Review Required
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[9px] border border-blue-200">
+                        <span className="px-2 py-0.5 rounded bg-[#071008] text-[#A6ADA3] text-[9px] border border-[#1A2E1E]">
                           Photo Captured
                         </span>
                       )}
@@ -303,25 +301,25 @@ export default function OfficerDashboardView() {
 
           {/* Operational Signal Connecting Feedback to AI Bottlenecks */}
           {weighingFeedbackCount > 0 && (
-            <div className="bg-amber-50 p-5 rounded-3xl border border-amber-200 space-y-2 font-sans shadow-xs">
+            <div className="bg-[#071008] p-5 rounded-md border border-amber-800/50 space-y-2 font-sans">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-amber-900 flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-amber-600" />
+                <span className="text-xs font-mono uppercase tracking-wider text-amber-300 flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-amber-400" />
                   {t("operationalSignalTitle")}
                 </span>
-                <span className="text-[10px] font-bold text-red-600 bg-red-100 px-2.5 py-0.5 rounded-full uppercase">
+                <span className="text-[10px] font-mono text-red-300 bg-red-950/60 border border-red-800/50 px-2.5 py-0.5 rounded-sm uppercase">
                   HIGH CONGESTION SIGNAL
                 </span>
               </div>
-              <p className="text-xs font-semibold text-gray-800">
+              <p className="text-xs font-sans text-[#A6ADA3]">
                 {t("operationalSignalDesc")}{" "}
-                <strong className="text-amber-900">WEIGHING BRIDGE #2</strong>{" "}
+                <strong className="text-[#F2F0E8]">WEIGHING BRIDGE #2</strong>{" "}
                 (Current: 8.2 min vs 5.1 min baseline).
               </p>
               <div className="pt-2">
                 <button
                   onClick={() => setActiveTab("bottlenecks")}
-                  className="px-4 py-2 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 cursor-pointer"
                 >
                   {t("reviewCapacityBtn")}
                 </button>
@@ -330,31 +328,31 @@ export default function OfficerDashboardView() {
           )}
 
           {/* XAI Factors Breakdown */}
-          <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-4">
-            <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#2E7D32]" />
+          <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-4">
+            <h3 className="text-base font-serif text-[#F2F0E8] flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#79C267]" />
               <span>Explainable AI (XAI) Congestion Telemetry</span>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {xaiFactors.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] flex items-center justify-between"
+                  className="p-4 rounded-sm bg-[#050805] border border-[#1A2E1E] flex items-center justify-between"
                 >
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900">
+                    <h4 className="text-xs font-serif text-[#F2F0E8]">
                       {item.factor}
                     </h4>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
+                    <p className="text-[11px] text-[#A6ADA3] font-sans mt-0.5">
                       {item.desc}
                     </p>
                   </div>
                   <span
-                    className={`text-xs font-black px-2.5 py-1 rounded-full ${
+                    className={`text-xs font-mono px-2.5 py-1 rounded-sm border ${
                       item.positive
-                        ? "bg-green-100 text-[#2E7D32]"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-[#164A29] text-[#79C267] border-[#79C267]/30"
+                        : "bg-red-950/60 text-red-300 border-red-800/50"
                     }`}
                   >
                     {item.impact}
@@ -368,53 +366,53 @@ export default function OfficerDashboardView() {
 
       {/* TAB 2: ANONYMOUS FARMER FEEDBACK QUEUE */}
       {activeTab === "feedback" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
+          <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-4">
             <div>
-              <h3 className="text-base font-extrabold text-gray-900">
+              <h3 className="text-lg font-serif text-[#F2F0E8]">
                 {t("anonymousFarmerFeedbackTitle")}
               </h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs font-mono text-[#A6ADA3]">
                 Farmer identity is strictly protected and hidden to preserve
                 objective operational insights.
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-xs font-black">
+            <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] text-xs font-mono border border-[#79C267]/30">
               {feedbackList?.length || 0} Total Responses
             </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {(feedbackList || []).map((fb) => (
               <div
                 key={fb.id}
-                className="p-5 rounded-2xl bg-[#FAFBF8] border border-gray-200 space-y-2 font-sans"
+                className="p-5 rounded-sm bg-[#050805] border border-[#1A2E1E] space-y-3 font-sans"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-black text-[#1B4318]">
+                    <span className="text-xs font-mono text-[#79C267]">
                       {t("anonymousFeedbackLabel")}
                     </span>
-                    <span className="text-[10px] font-mono text-gray-400 font-bold">
+                    <span className="text-[10px] font-mono text-[#A6ADA3]">
                       [{fb.anonymousRef}]
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[#F9A825] font-black text-xs">
+                  <div className="flex items-center gap-1 text-amber-400 font-mono text-xs">
                     <span>★ {fb.rating} / 5</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-800 font-semibold italic">
+                <p className="text-xs text-[#F2F0E8] font-sans italic">
                   "{fb.feedbackText || "No comment provided."}"
                 </p>
 
-                <div className="flex items-center justify-between pt-1 text-[11px] text-gray-500 border-t border-gray-100">
+                <div className="flex items-center justify-between pt-2 text-[11px] text-[#A6ADA3] font-mono border-t border-[#1A2E1E]">
                   <span>
-                    Centre: <strong>{fb.centreName}</strong>
+                    Centre: <strong className="text-[#F2F0E8]">{fb.centreName}</strong>
                   </span>
                   <span>
                     Category:{" "}
-                    <strong className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
+                    <strong className="text-[#79C267] bg-[#164A29] px-2 py-0.5 rounded-sm border border-[#79C267]/30">
                       {fb.category}
                     </strong>
                   </span>
@@ -428,45 +426,45 @@ export default function OfficerDashboardView() {
 
       {/* TAB 3: FARMER SEARCH & HISTORY */}
       {activeTab === "farmers" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
           <div>
-            <h3 className="text-base font-bold text-gray-900">
+            <h3 className="text-lg font-serif text-[#F2F0E8]">
               Farmer Verification & Profile Lookup
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-mono text-[#A6ADA3]">
               Search by permanent ID (FRM-2026-XXXXXX) or mobile number
             </p>
           </div>
 
-          <form onSubmit={handleSearchFarmer} className="flex gap-2">
+          <form onSubmit={handleSearchFarmer} className="flex gap-3">
             <input
               type="text"
               placeholder="Enter FRM ID or Mobile..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-[#FAF8F2]"
+              className="flex-1 px-4 py-2.5 rounded-sm border border-[#1A2E1E] text-xs font-mono bg-[#050805] text-[#F2F0E8] focus:border-[#79C267]"
             />
             <button
               type="submit"
-              className="px-5 py-2.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs rounded-xl cursor-pointer"
+              className="px-5 py-2.5 bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider rounded-sm border border-[#79C267]/30 cursor-pointer"
             >
               Search
             </button>
           </form>
 
           {selectedFarmerHistory && selectedFarmerHistory !== "NOT_FOUND" && (
-            <div className="p-5 rounded-2xl bg-[#E8F5E9]/60 border border-[#A5D6A7] space-y-3 text-xs">
+            <div className="p-5 rounded-sm bg-[#050805] border border-[#1A2E1E] space-y-3 text-xs font-mono">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-extrabold text-gray-900 text-sm">
+                  <h4 className="font-serif text-[#F2F0E8] text-base">
                     {selectedFarmerHistory.name}
                   </h4>
-                  <p className="text-gray-600 font-mono">
+                  <p className="text-[#A6ADA3]">
                     ID: {selectedFarmerHistory.farmerId} • Mobile: +91{" "}
                     {selectedFarmerHistory.mobile}
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-white text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
+                <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] text-xs border border-[#79C267]/30">
                   {selectedFarmerHistory.crops?.length || 4} Registered Crops
                 </span>
               </div>
@@ -474,7 +472,7 @@ export default function OfficerDashboardView() {
           )}
 
           {selectedFarmerHistory === "NOT_FOUND" && (
-            <div className="p-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-200">
+            <div className="p-3 bg-red-950/40 text-red-300 text-xs font-mono rounded-sm border border-red-900/60">
               No farmer profile found.
             </div>
           )}
@@ -483,35 +481,35 @@ export default function OfficerDashboardView() {
 
       {/* TAB 4: DBT PAYMENT APPROVALS */}
       {activeTab === "payments" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
           <div>
-            <h3 className="text-base font-bold text-gray-900">
+            <h3 className="text-lg font-serif text-[#F2F0E8]">
               Direct Benefit Transfer (DBT) Payout Approvals
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-mono text-[#A6ADA3]">
               Supervisory authorization required for direct bank disbursement
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {pendingPayments.length === 0 ? (
-              <div className="text-center py-12 text-gray-500 text-xs font-bold">
+              <div className="text-center py-12 text-[#A6ADA3] text-xs font-mono">
                 No pending payment authorizations.
               </div>
             ) : (
               pendingPayments.map((b) => (
                 <div
                   key={b.id}
-                  className="p-4 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] flex items-center justify-between text-xs"
+                  className="p-5 rounded-sm bg-[#050805] border border-[#1A2E1E] flex items-center justify-between text-xs font-mono"
                 >
-                  <div>
-                    <span className="font-mono font-black text-[#1B4318]">
+                  <div className="space-y-1">
+                    <span className="text-sm font-serif text-[#79C267]">
                       Token #{b.tokenDisplay}
                     </span>
-                    <h4 className="font-bold text-gray-900">{b.farmerName}</h4>
-                    <p className="text-gray-600">
+                    <h4 className="font-serif text-[#F2F0E8] text-sm">{b.farmerName}</h4>
+                    <p className="text-[#A6ADA3]">
                       {b.crop} • {b.weighedQuantity || b.quantity} Qtl • Amount:{" "}
-                      <strong className="text-[#2E7D32]">
+                      <strong className="text-[#79C267]">
                         ₹
                         {(
                           b.paymentDetails?.grossAmount || 58417
@@ -522,7 +520,7 @@ export default function OfficerDashboardView() {
 
                   <button
                     onClick={() => approveFinalPayment(b.id)}
-                    className="px-4 py-2 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs cursor-pointer"
+                    className="px-5 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 cursor-pointer"
                   >
                     Authorize DBT Payout
                   </button>
@@ -535,26 +533,26 @@ export default function OfficerDashboardView() {
 
       {/* TAB 5: AI BOTTLENECKS */}
       {activeTab === "bottlenecks" && (
-        <div className="bg-white rounded-3xl p-6 shadow-md border border-[#E0ECE0] space-y-6">
+        <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-6">
           <div>
-            <h3 className="text-base font-bold text-gray-900">
+            <h3 className="text-lg font-serif text-[#F2F0E8]">
               Real-Time AI Bottleneck Detection & Operational Signals
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-mono text-[#A6ADA3]">
               Automated sensor monitoring across Mandi operational counters
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {bottlenecks.map((b) => (
               <div
                 key={b.id}
-                className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between text-xs"
+                className="p-5 rounded-sm bg-[#050805] border border-amber-800/40 flex items-center justify-between text-xs font-mono"
               >
                 <div>
-                  <h4 className="font-black text-amber-900">{b.counterName}</h4>
-                  <p className="text-gray-700">{b.issue}</p>
-                  <span className="text-[10px] text-gray-500 font-bold">
+                  <h4 className="font-serif text-amber-400 text-sm">{b.counterName}</h4>
+                  <p className="text-[#A6ADA3] font-sans mt-0.5">{b.issue}</p>
+                  <span className="text-[10px] text-[#A6ADA3]/70">
                     Current: {b.currentMins} mins vs Expected: {b.expectedMins}{" "}
                     mins
                   </span>
@@ -563,12 +561,12 @@ export default function OfficerDashboardView() {
                 {!b.resolved ? (
                   <button
                     onClick={() => resolveBottleneck(b.id)}
-                    className="px-4 py-2 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-xs cursor-pointer"
+                    className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 cursor-pointer"
                   >
                     Deploy Intervention
                   </button>
                 ) : (
-                  <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
+                  <span className="px-3 py-1 rounded-sm bg-[#164A29] text-[#79C267] text-xs border border-[#79C267]/30">
                     Resolved ✓
                   </span>
                 )}
@@ -580,3 +578,4 @@ export default function OfficerDashboardView() {
     </div>
   );
 }
+

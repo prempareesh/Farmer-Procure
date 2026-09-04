@@ -48,7 +48,7 @@ export default function Header() {
     }
   };
 
-  // Dynamic Nav Items based on user role
+  // Nav Items
   let navItems = [];
 
   if (!user) {
@@ -109,44 +109,41 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 w-full bg-[#FAFBF8]/95 backdrop-blur-md px-6 lg:px-12 py-3.5 flex items-center justify-between z-40 shrink-0 border-b border-[#E8EFE6] transition-all">
+    <header className="sticky top-0 w-full bg-[#050805]/95 backdrop-blur-md px-6 lg:px-12 py-4 flex items-center justify-between z-40 shrink-0 border-b border-[#1A2E1E] transition-all">
       {/* LEFT: Logo & Brand */}
       <div className="flex items-center gap-3">
         <div
           onClick={() => navigateTo("home")}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7CB342] via-[#2E7D32] to-[#1B4318] flex items-center justify-center shadow-xs">
-            <Sprout className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-[#12351F] border border-[#1A2E1E] flex items-center justify-center text-[#79C267]">
+            <Sprout className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#1B1B1B] tracking-tight leading-none">
-              {t("brandName")}
+            <h1 className="font-serif text-xl font-normal text-[#F2F0E8] tracking-wider leading-none">
+              AGRIPROCURE
             </h1>
-            <p className="text-[11px] font-medium text-gray-500 tracking-tight mt-1 leading-none">
-              {t("brandTagline")}
-            </p>
           </div>
         </div>
       </div>
 
       {/* CENTER: Navigation Links */}
-      <nav className="hidden md:flex items-center gap-6 lg:gap-7">
+      <nav className="hidden md:flex items-center gap-7">
         {navItems.map((item) => {
           const isActive = currentView === item.view;
           return (
             <button
               key={item.name}
               onClick={item.action}
-              className={`relative py-1 text-sm font-semibold transition-colors duration-200 ${
+              className={`relative py-1 text-xs font-bold uppercase tracking-wider transition-colors duration-200 cursor-pointer ${
                 isActive
-                  ? "text-[#2E7D32]"
-                  : "text-gray-700 hover:text-[#2E7D32]"
+                  ? "text-[#79C267]"
+                  : "text-[#A6ADA3] hover:text-[#F2F0E8]"
               }`}
             >
               {item.name}
               {isActive && (
-                <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[#2E7D32] rounded-full" />
+                <span className="absolute -bottom-2 left-0 right-0 h-0.5 bg-[#79C267]" />
               )}
             </button>
           );
@@ -159,9 +156,9 @@ export default function Header() {
         <div className="relative">
           <button
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-gray-700 bg-white hover:bg-gray-50 rounded-xl transition-all border border-gray-200 shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#E8E7DE] bg-[#071008] hover:bg-[#0A120C] rounded-lg transition-all border border-[#1A2E1E] cursor-pointer"
           >
-            <Globe className="w-3.5 h-3.5 text-[#2E7D32]" />
+            <Globe className="w-3.5 h-3.5 text-[#79C267]" />
             <span>
               {
                 languages
@@ -169,11 +166,11 @@ export default function Header() {
                   ?.name.split(" ")[0]
               }
             </span>
-            <ChevronDown className="w-3 h-3 text-gray-400" />
+            <ChevronDown className="w-3 h-3 text-[#A6ADA3]" />
           </button>
 
           {langDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 animate-in fade-in">
+            <div className="absolute right-0 mt-2 w-40 bg-[#071008] rounded-xl shadow-2xl border border-[#1A2E1E] py-1.5 z-50">
               {languages.map((lang) => (
                 <button
                   key={lang.code}
@@ -182,10 +179,10 @@ export default function Header() {
                     localStorage.setItem("agri_lang", lang.code);
                     setLangDropdownOpen(false);
                   }}
-                  className={`w-full text-left px-3.5 py-2 text-xs font-bold transition-colors ${
+                  className={`w-full text-left px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer ${
                     currentLang === lang.code
-                      ? "bg-[#E8F5E9] text-[#2E7D32]"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-[#12351F] text-[#79C267]"
+                      : "text-[#E8E7DE] hover:bg-[#0A120C]"
                   }`}
                 >
                   {lang.name}
@@ -200,12 +197,12 @@ export default function Header() {
             {/* Notification Bell */}
             <button
               onClick={() => setNotificationDrawerOpen(true)}
-              className="relative p-2.5 rounded-xl bg-white border border-[#D5E2D3] hover:bg-[#E8F5E9] text-gray-700 hover:text-[#2E7D32] transition-colors shadow-2xs"
+              className="relative p-2.5 rounded-lg bg-[#071008] border border-[#1A2E1E] hover:bg-[#0A120C] text-[#E8E7DE] hover:text-[#79C267] transition-colors cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center animate-pulse">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#79C267] text-[#050805] text-[9px] font-black flex items-center justify-center">
                   {unreadCount}
                 </span>
               )}
@@ -222,9 +219,9 @@ export default function Header() {
                       : "officer-dash",
                 )
               }
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-gray-800 bg-white border border-[#D5E2D3] hover:bg-[#FAF8F2] shadow-2xs"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold text-[#F2F0E8] bg-[#12351F] border border-[#1A2E1E] hover:bg-[#164A29] cursor-pointer"
             >
-              <div className="w-5 h-5 rounded-full bg-[#2E7D32] text-white flex items-center justify-center text-[10px]">
+              <div className="w-5 h-5 rounded-md bg-[#79C267] text-[#050805] font-black flex items-center justify-center text-[10px]">
                 {user.role === "farmer"
                   ? "F"
                   : user.role === "worker"
@@ -239,7 +236,7 @@ export default function Header() {
             {/* Logout */}
             <button
               onClick={logoutUser}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+              className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-red-400 bg-red-950/40 hover:bg-red-900/40 border border-red-900/50 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>{t("logout")}</span>
@@ -248,9 +245,9 @@ export default function Header() {
         ) : (
           <button
             onClick={() => navigateTo("auth")}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1B4318] hover:bg-[#2E7D32] shadow-xs transition-all duration-200 active:scale-95"
+            className="flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold tracking-wider text-[#F2F0E8] bg-[#12351F] hover:bg-[#164A29] border border-[#1A2E1E] transition-all cursor-pointer"
           >
-            <User className="w-4 h-4 text-[#F9A825]" />
+            <User className="w-3.5 h-3.5 text-[#79C267]" />
             <span>{t("login")}</span>
           </button>
         )}
@@ -260,7 +257,7 @@ export default function Header() {
       <div className="flex md:hidden items-center gap-2">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 text-gray-700 hover:text-[#2E7D32]"
+          className="p-2 text-[#E8E7DE] hover:text-[#79C267] cursor-pointer"
         >
           {mobileMenuOpen ? (
             <X className="w-6 h-6" />
@@ -272,7 +269,7 @@ export default function Header() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-[#F4F8F2] border-b border-[#E2EBE0] p-4 space-y-3 shadow-xl z-50 md:hidden animate-in fade-in">
+        <div className="absolute top-16 left-0 right-0 bg-[#071008] border-b border-[#1A2E1E] p-4 space-y-3 shadow-2xl z-50 md:hidden">
           {navItems.map((item) => (
             <button
               key={item.name}
@@ -280,19 +277,19 @@ export default function Header() {
                 item.action();
                 setMobileMenuOpen(false);
               }}
-              className="block w-full text-left py-2 font-bold text-gray-800 hover:text-[#2E7D32]"
+              className="block w-full text-left py-2 font-bold text-[#E8E7DE] hover:text-[#79C267] cursor-pointer"
             >
               {item.name}
             </button>
           ))}
-          <div className="pt-3 flex flex-col gap-2 border-t border-[#E2EBE0]">
+          <div className="pt-3 flex flex-col gap-2 border-t border-[#1A2E1E]">
             {user ? (
               <button
                 onClick={() => {
                   logoutUser();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 bg-red-100 text-red-800 font-bold rounded-xl text-xs"
+                className="w-full py-2.5 bg-red-950/40 border border-red-900/50 text-red-400 font-bold rounded-lg text-xs cursor-pointer"
               >
                 Logout ({user.name})
               </button>
@@ -302,7 +299,7 @@ export default function Header() {
                   navigateTo("auth");
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 bg-[#1B4318] text-white font-bold rounded-xl text-sm"
+                className="w-full py-2.5 bg-[#12351F] border border-[#1A2E1E] text-[#F2F0E8] font-bold rounded-lg text-xs cursor-pointer"
               >
                 Login Portal
               </button>

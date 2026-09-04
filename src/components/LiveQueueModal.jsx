@@ -81,22 +81,22 @@ export default function LiveQueueModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050805]/90 backdrop-blur-md animate-in fade-in">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative w-full max-w-2xl bg-[#071008] text-[#E8E7DE] border border-[#1A2E1E] shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-[#1B4318] text-white p-6 flex items-center justify-between">
+        <div className="bg-[#0A180D] text-[#F2F0E8] p-6 border-b border-[#1A2E1E] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#F9A825]">
-              <BarChart3 className="w-6 h-6" />
+            <div className="w-9 h-9 border border-[#79C267]/30 bg-[#164A29]/40 flex items-center justify-center text-[#79C267]">
+              <BarChart3 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold">Live Mandi Queue Telemetry</h3>
-              <p className="text-xs text-[#A5D6A7]">
+              <h3 className="text-xl font-serif font-normal text-[#F2F0E8] tracking-wide">Live Mandi Queue Telemetry</h3>
+              <p className="text-[11px] font-mono text-[#A6ADA3]">
                 Real-Time Bottleneck & SLA Tracker
               </p>
             </div>
@@ -104,31 +104,31 @@ export default function LiveQueueModal({ isOpen, onClose }) {
           <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
-              className={`p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all ${isRefreshing ? "animate-spin" : ""}`}
+              className={`p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer ${isRefreshing ? "animate-spin" : ""}`}
             >
               <RefreshCw className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
+              className="p-1.5 border border-[#1A2E1E] bg-[#050805] hover:bg-[#164A29] text-[#A6ADA3] hover:text-[#F2F0E8] transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Modal Content */}
-        <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto bg-[#FAF8F2]">
+        <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto bg-[#071008] font-mono">
           {/* Mandi Selector Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {Object.keys(mandiData).map((key) => (
               <button
                 key={key}
                 onClick={() => setSelectedMandi(key)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                className={`px-4 py-2 border text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
                   selectedMandi === key
-                    ? "bg-[#2E7D32] text-white border-[#2E7D32] shadow-sm"
-                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
+                    ? "bg-[#164A29] text-[#F2F0E8] border-[#79C267]/50"
+                    : "bg-[#050805] text-[#A6ADA3] border-[#1A2E1E] hover:border-[#79C267]/30 hover:text-[#F2F0E8]"
                 }`}
               >
                 {mandiData[key].name.split(" ")[0]} Mandi
@@ -137,18 +137,18 @@ export default function LiveQueueModal({ isOpen, onClose }) {
           </div>
 
           {/* Mandi Info Card */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="bg-[#050805] p-5 border border-[#1A2E1E] space-y-4">
+            <div className="flex items-center justify-between border-b border-[#1A2E1E] pb-3">
               <div>
-                <h4 className="text-base font-extrabold text-gray-900">
+                <h4 className="text-lg font-serif text-[#F2F0E8]">
                   {current.name}
                 </h4>
-                <p className="text-xs text-gray-500 font-medium">
+                <p className="text-[11px] font-mono text-[#A6ADA3]">
                   GPS Telemetry Stream • Live Updates Every 30s
                 </p>
               </div>
               <span
-                className={`text-xs font-extrabold px-3 py-1 rounded-full border ${current.statusColor}`}
+                className="text-xs font-mono uppercase tracking-wider px-3 py-1 bg-[#0A180D] border border-[#79C267]/40 text-[#79C267]"
               >
                 {current.status}
               </span>
@@ -156,55 +156,55 @@ export default function LiveQueueModal({ isOpen, onClose }) {
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#E8E4D9]">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-bold mb-1">
-                  <Truck className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <div className="bg-[#071008] p-3 border border-[#1A2E1E]">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#A6ADA3] uppercase tracking-wider mb-1">
+                  <Truck className="w-3.5 h-3.5 text-[#79C267]" />
                   Queue Length
                 </div>
-                <p className="text-sm font-black text-gray-900">
+                <p className="text-sm font-mono text-[#F2F0E8]">
                   {current.queueLength}
                 </p>
               </div>
 
-              <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#E8E4D9]">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-bold mb-1">
-                  <Clock className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <div className="bg-[#071008] p-3 border border-[#1A2E1E]">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#A6ADA3] uppercase tracking-wider mb-1">
+                  <Clock className="w-3.5 h-3.5 text-[#79C267]" />
                   Est. Wait Time
                 </div>
-                <p className="text-sm font-black text-[#2E7D32]">
+                <p className="text-sm font-mono text-[#79C267]">
                   {current.estWaitTime}
                 </p>
               </div>
 
-              <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#E8E4D9]">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-bold mb-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <div className="bg-[#071008] p-3 border border-[#1A2E1E]">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#A6ADA3] uppercase tracking-wider mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#79C267]" />
                   Weighing Bridge
                 </div>
-                <p className="text-xs font-bold text-gray-800">
+                <p className="text-xs font-mono text-[#E8E7DE]">
                   {current.weighingBridge}
                 </p>
               </div>
 
-              <div className="bg-[#FAF8F2] p-3 rounded-xl border border-[#E8E4D9]">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-bold mb-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#2E7D32]" />
+              <div className="bg-[#071008] p-3 border border-[#1A2E1E]">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#A6ADA3] uppercase tracking-wider mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#79C267]" />
                   Moisture Lab
                 </div>
-                <p className="text-xs font-bold text-gray-800">
+                <p className="text-xs font-mono text-[#E8E7DE]">
                   {current.moistureLab}
                 </p>
               </div>
             </div>
 
             {/* AI Recommendation Banner */}
-            <div className="bg-[#E8F5E9] p-3.5 rounded-xl border border-[#A5D6A7] flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-[#2E7D32] shrink-0 mt-0.5" />
+            <div className="bg-[#0A180D] p-3.5 border border-[#79C267]/40 flex items-start gap-3">
+              <AlertCircle className="w-4 h-4 text-[#79C267] shrink-0 mt-0.5" />
               <div>
-                <span className="text-xs font-extrabold text-[#2E7D32] uppercase tracking-wider block">
+                <span className="text-[10px] font-mono text-[#79C267] uppercase tracking-wider block">
                   AI Prescriptive Intervention
                 </span>
-                <p className="text-xs text-gray-800 font-semibold mt-0.5">
+                <p className="text-xs font-serif text-[#F2F0E8] mt-0.5">
                   {current.aiAdvice}
                 </p>
               </div>
@@ -212,23 +212,23 @@ export default function LiveQueueModal({ isOpen, onClose }) {
 
             {/* Peak Hours Forecast Bar Chart */}
             <div>
-              <span className="text-xs font-bold text-gray-600 mb-2 block">
+              <span className="text-xs font-mono text-[#A6ADA3] uppercase tracking-wider mb-2 block">
                 Today's Congestion Peak Profile
               </span>
-              <div className="flex items-end justify-between h-24 pt-4 px-2 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="flex items-end justify-between h-24 pt-4 px-2 bg-[#071008] border border-[#1A2E1E]">
                 {current.peakHours.map((p, idx) => (
                   <div key={idx} className="flex flex-col items-center flex-1">
                     <div
                       style={{ height: `${p.load}%` }}
-                      className={`w-6 rounded-t-md transition-all duration-500 ${
+                      className={`w-6 transition-all duration-500 ${
                         p.load > 70
-                          ? "bg-red-500"
+                          ? "bg-red-700 border border-red-500"
                           : p.load > 40
-                            ? "bg-amber-500"
-                            : "bg-[#2E7D32]"
+                            ? "bg-amber-700 border border-amber-500"
+                            : "bg-[#164A29] border border-[#79C267]"
                       }`}
                     />
-                    <span className="text-[10px] text-gray-500 font-bold mt-1">
+                    <span className="text-[10px] font-mono text-[#A6ADA3] mt-1">
                       {p.time}
                     </span>
                   </div>
@@ -240,7 +240,7 @@ export default function LiveQueueModal({ isOpen, onClose }) {
           <div className="flex items-center justify-end">
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-sm shadow-md"
+              className="px-5 py-2 bg-[#164A29] hover:bg-[#12351F] border border-[#79C267]/40 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider cursor-pointer"
             >
               Close Live Tracker
             </button>
