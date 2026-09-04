@@ -26,6 +26,7 @@ import EditProfileModal from "../components/EditProfileModal";
 
 export default function FarmerDashboardView() {
   const {
+    user,
     farmerProfile,
     crops,
     addCrop,
