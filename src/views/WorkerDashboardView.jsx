@@ -21,6 +21,7 @@ export default function WorkerDashboardView() {
     setWorkerAssignedStage,
     advanceBookingStage,
     rejectStage,
+    rejectBooking,
     searchFarmerById,
     navigateTo,
     t,
@@ -36,9 +37,10 @@ export default function WorkerDashboardView() {
   // Rejection Modal State
   const [rejectingBookingId, setRejectingBookingId] = useState(null);
   const [rejectReason, setRejectReason] = useState(
-    "Moisture content exceeds 17% threshold",
+    "Required documents could not be verified.",
   );
   const [rejectRemarks, setRejectRemarks] = useState("");
+  const [modalError, setModalError] = useState("");
   const [proofFileName] = useState("lab_moisture_sensor_report.pdf");
 
   // Receipt Upload Modal State (Required before COMPLETED)
@@ -152,16 +154,31 @@ export default function WorkerDashboardView() {
 
   const handleRejectSubmit = async (e) => {
     e.preventDefault();
-    if (!rejectingBookingId || !rejectReason) return;
-    await rejectStage(rejectingBookingId, workerAssignedStage, {
-      reason: rejectReason,
-      remarks:
-        rejectRemarks ||
-        "Stage rejected based on physical inspection standards.",
-      proofImage: proofFileName,
-    });
-    setRejectingBookingId(null);
-    setRejectRemarks("");
+    setModalError("");
+
+    if (!rejectingBookingId) return;
+
+    const finalReason =
+      rejectReason === "Other" || !rejectReason
+        ? rejectRemarks
+        : rejectRemarks
+          ? `${rejectReason} — ${rejectRemarks}`
+          : rejectReason;
+
+    if (!finalReason || !finalReason.trim()) {
+      setModalError("Please provide a reason for rejection.");
+      return;
+    }
+
+    try {
+      await rejectBooking(rejectingBookingId, finalReason.trim(), rejectRemarks);
+      setRejectingBookingId(null);
+      setRejectRemarks("");
+      setModalError("");
+      setRejectReason("Required documents could not be verified.");
+    } catch (err) {
+      setModalError(err.message || "Unable to reject this booking. Please try again.");
+    }
   };
 
   return (
@@ -315,6 +332,7 @@ export default function WorkerDashboardView() {
               <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
                 {sortedBookings.map((b) => {
                   const isCompletedStage = b.stage === "COMPLETED" || b.status === "COMPLETED";
+                  const isRejectedStage = b.stage === "REJECTED" || b.status === "REJECTED";
                   return (
                     <tr key={b.id || b.booking_id} className="hover:bg-green-50/50 transition-colors">
                       <td className="p-3.5 font-mono font-black text-amber-800 text-sm">
@@ -341,19 +359,32 @@ export default function WorkerDashboardView() {
                       </td>
                       <td className="p-3.5">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-black border uppercase ${
-                          isCompletedStage ? "bg-green-100 text-green-800 border-green-300" : "bg-amber-50 text-amber-800 border-amber-300"
+                          isCompletedStage
+                            ? "bg-green-100 text-green-800 border-green-300"
+                            : isRejectedStage
+                              ? "bg-red-100 text-red-800 border-red-300"
+                              : "bg-amber-50 text-amber-800 border-amber-300"
                         }`}>
                           {b.status || "ACTIVE"}
                         </span>
                       </td>
                       <td className="p-3.5">
-                        <span className="px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
+                        <span className={`px-2.5 py-1 rounded-full font-black text-[10px] border ${
+                          isRejectedStage
+                            ? "bg-red-100 text-red-800 border-red-300"
+                            : "bg-[#E8F5E9] text-[#2E7D32] border-[#A5D6A7]"
+                        }`}>
                           {b.stage}
                         </span>
+                        {isRejectedStage && (b.rejection_reason || b.rejectionDetails?.reason) && (
+                          <div className="text-[10px] text-red-600 font-semibold mt-0.5 truncate max-w-[180px]">
+                            {b.rejection_reason || b.rejectionDetails?.reason}
+                          </div>
+                        )}
                       </td>
                       <td className="p-3.5 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
-                          {b.stage === "BOOKED" && (
+                          {!isRejectedStage && b.stage === "BOOKED" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "BOOKED")}
                               className="px-3 py-1.5 rounded-lg bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -362,7 +393,7 @@ export default function WorkerDashboardView() {
                               <span>VERIFY ARRIVAL</span>
                             </button>
                           )}
-                          {b.stage === "ARRIVED" && (
+                          {!isRejectedStage && b.stage === "ARRIVED" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "ARRIVED")}
                               className="px-3 py-1.5 rounded-lg bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -371,7 +402,7 @@ export default function WorkerDashboardView() {
                               <span>QUALITY CHECK</span>
                             </button>
                           )}
-                          {b.stage === "QUALITY_CHECK" && (
+                          {!isRejectedStage && b.stage === "QUALITY_CHECK" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "QUALITY_CHECK")}
                               className="px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -380,7 +411,7 @@ export default function WorkerDashboardView() {
                               <span>WEIGHBRIDGE</span>
                             </button>
                           )}
-                          {b.stage === "WEIGHING" && (
+                          {!isRejectedStage && b.stage === "WEIGHING" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "WEIGHING")}
                               className="px-3 py-1.5 rounded-lg bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -389,7 +420,7 @@ export default function WorkerDashboardView() {
                               <span>VOUCHER</span>
                             </button>
                           )}
-                          {b.stage === "PROCUREMENT" && (
+                          {!isRejectedStage && b.stage === "PROCUREMENT" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
                               className="px-3 py-1.5 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -398,7 +429,7 @@ export default function WorkerDashboardView() {
                               <span>DBT PAYMENT</span>
                             </button>
                           )}
-                          {b.stage === "PAYMENT" && (
+                          {!isRejectedStage && b.stage === "PAYMENT" && (
                             <button
                               onClick={() => handleStageAdvance(b.id, "PAYMENT")}
                               className="px-3 py-1.5 rounded-lg bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
@@ -412,9 +443,17 @@ export default function WorkerDashboardView() {
                               COMPLETED ✓
                             </span>
                           )}
-                          {!isCompletedStage && (
+                          {isRejectedStage && (
+                            <span className="px-2.5 py-1 rounded-lg bg-red-100 text-red-800 font-extrabold text-[11px] border border-red-300">
+                              REJECTED ✓
+                            </span>
+                          )}
+                          {!isCompletedStage && !isRejectedStage && (
                             <button
-                              onClick={() => setRejectingBookingId(b.id)}
+                              onClick={() => {
+                                setRejectingBookingId(b.id || b.booking_id);
+                                setModalError("");
+                              }}
                               className="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
                             >
                               <XCircle className="w-3.5 h-3.5" />
@@ -495,107 +534,141 @@ export default function WorkerDashboardView() {
 
       {/* Mandatory Rejection Reason & Proof Modal */}
       <AnimatePresence>
-        {rejectingBookingId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-red-200 overflow-hidden"
-            >
-              <div className="bg-red-600 text-white p-6 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle className="w-6 h-6 text-white" />
-                  <div>
-                    <h3 className="text-base font-bold">
-                      Mandatory Rejection Documentation
-                    </h3>
-                    <p className="text-xs text-red-100">
-                      Audit compliance requires reason & supporting proof
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <form
-                onSubmit={handleRejectSubmit}
-                className="p-6 space-y-4 bg-[#FAF8F2]"
+        {rejectingBookingId && (() => {
+          const activeRejBooking = bookings.find(
+            (b) => b.id === rejectingBookingId || b.booking_id === rejectingBookingId,
+          );
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in selection:bg-[#2E7D32] selection:text-white">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-red-200 overflow-hidden"
               >
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Standard Rejection Reason *
-                  </label>
-                  <select
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                    required
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-white focus:outline-none focus:border-red-500"
-                  >
-                    <option value="Moisture content exceeds 17% threshold">
-                      Moisture content exceeds 17% threshold
-                    </option>
-                    <option value="Foreign matter / husk exceeds 2% permissible limit">
-                      Foreign matter / husk exceeds 2% permissible limit
-                    </option>
-                    <option value="Gross vs tare weight discrepancy exceeds 50kg">
-                      Gross vs tare weight discrepancy exceeds 50kg
-                    </option>
-                    <option value="Grain discolored or insect damaged">
-                      Grain discolored or insect damaged
-                    </option>
-                    <option value="Aadhaar KYC mismatch with registered slot profile">
-                      Aadhaar KYC mismatch with registered slot profile
-                    </option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Detailed Inspection Remarks *
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Enter physical inspection notes and sensor readings..."
-                    value={rejectRemarks}
-                    onChange={(e) => setRejectRemarks(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-red-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Supporting Proof Document / Photo *
-                  </label>
-                  <div className="p-3 bg-white rounded-xl border border-dashed border-gray-300 flex items-center justify-between text-xs font-mono">
-                    <span className="truncate text-gray-600">
-                      {proofFileName}
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-green-100 text-[#2E7D32] font-bold text-[10px]">
-                      ATTACHED
-                    </span>
+                <div className="bg-red-600 text-white p-5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <AlertTriangle className="w-6 h-6 text-white" />
+                    <div>
+                      <h3 className="text-base font-bold">
+                        Reject Booking Confirmation
+                      </h3>
+                      <p className="text-xs text-red-100">
+                        Mandatory reason required for audit trail & farmer notification
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={() => setRejectingBookingId(null)}
-                    className="px-4 py-2 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs cursor-pointer"
-                  >
-                    Confirm Rejection & Log SHA-256
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
+                {activeRejBooking && (
+                  <div className="bg-red-50/80 px-6 py-3 border-b border-red-100 flex items-center justify-between text-xs font-mono">
+                    <div>
+                      <span className="text-gray-500 font-sans font-medium">Farmer: </span>
+                      <span className="font-bold text-gray-900 font-sans">{activeRejBooking.farmerName}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 font-sans font-medium">Token: </span>
+                      <span className="font-black text-amber-800">{activeRejBooking.tokenDisplay || "PS-001"}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 font-sans font-medium">Booking ID: </span>
+                      <span className="font-bold text-[#1B4318]">{activeRejBooking.booking_id || activeRejBooking.id}</span>
+                    </div>
+                  </div>
+                )}
+
+                <form
+                  onSubmit={handleRejectSubmit}
+                  className="p-6 space-y-4 bg-[#FAF8F2]"
+                >
+                  {modalError && (
+                    <div className="p-3 bg-red-100 border border-red-300 text-red-800 text-xs font-bold rounded-xl flex items-center gap-2 animate-bounce">
+                      <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                      <span>{modalError}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                      Reason for Rejection *
+                    </label>
+                    <select
+                      value={rejectReason}
+                      onChange={(e) => {
+                        setRejectReason(e.target.value);
+                        setModalError("");
+                      }}
+                      required
+                      className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-xs font-bold bg-white focus:outline-none focus:border-red-500"
+                    >
+                      <option value="Required documents could not be verified.">
+                        Required documents could not be verified.
+                      </option>
+                      <option value="Quantity exceeds the permitted limit.">
+                        Quantity exceeds the permitted limit.
+                      </option>
+                      <option value="Farmer did not arrive within the permitted slot window.">
+                        Farmer did not arrive within the permitted slot window.
+                      </option>
+                      <option value="Quality requirements were not met.">
+                        Quality requirements were not met.
+                      </option>
+                      <option value="Slot booking details could not be verified.">
+                        Slot booking details could not be verified.
+                      </option>
+                      <option value="Procurement centre capacity is currently unavailable.">
+                        Procurement centre capacity is currently unavailable.
+                      </option>
+                      <option value="Other">Other / Custom Explanation</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
+                      {rejectReason === "Other"
+                        ? "Required Custom Explanation *"
+                        : "Additional Remarks (Optional)"}
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder={
+                        rejectReason === "Other"
+                          ? "Enter explicit reason for rejecting this booking..."
+                          : "Enter additional inspection notes or remarks..."
+                      }
+                      value={rejectRemarks}
+                      onChange={(e) => {
+                        setRejectRemarks(e.target.value);
+                        setModalError("");
+                      }}
+                      required={rejectReason === "Other"}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-semibold bg-white focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2 border-t border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRejectingBookingId(null);
+                        setModalError("");
+                      }}
+                      className="px-4 py-2 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs cursor-pointer"
+                    >
+                      Reject Booking
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          );
+        })()}
       </AnimatePresence>
 
       {/* Receipt Upload Modal for Staff */}

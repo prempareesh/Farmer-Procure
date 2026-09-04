@@ -2058,15 +2058,6 @@ export function AppProvider({ children }) {
           proof_url: proofImage,
         },
       ]);
-
-      await supabase.from("audit_logs").insert([
-        {
-          booking_id: booking.booking_id || booking.id,
-          event_name: `${stageKey}_REJECTED`,
-          hash: newHash,
-          previous_hash: prevBlock.currentHash,
-        },
-      ]);
     } catch {
       // safe fallback
     }
@@ -2074,6 +2065,139 @@ export function AppProvider({ children }) {
     addNotification({
       title: `Stage ${stageKey} Rejected`,
       message: `Token #${booking.tokenDisplay} was rejected during ${stageKey}: ${reason}`,
+      type: "warning",
+    });
+  };
+
+  // 11. Authoritative Full Booking Rejection Workflow (Mandatory Reason)
+  const rejectBooking = async (bookingId, reason, remarks = "") => {
+    if (!reason || !reason.trim()) {
+      throw new Error("Please provide a reason for rejection.");
+    }
+
+    if (user && user.role === "farmer") {
+      addNotification({
+        title: "Permission Denied",
+        message: "Farmers are not permitted to reject bookings.",
+        type: "warning",
+      });
+      throw new Error("Unauthorized action.");
+    }
+
+    const booking = bookings.find(
+      (b) => b.id === bookingId || b.booking_id === bookingId || b.db_id === bookingId,
+    );
+    if (!booking) throw new Error("Booking not found.");
+
+    if (booking.status === "REJECTED" || booking.stage === "REJECTED") {
+      return; // Prevent double rejection
+    }
+
+    const prevBlock = auditChain[auditChain.length - 1] || {
+      blockIndex: 0,
+      currentHash: "0x3c9e1d7b0e885e4f2c118f2a4b127f8a9b2c3d4e5f6a1b2c3d4e5f6a7b8c9d0e",
+    };
+    const timeStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const dateStr = new Date().toLocaleDateString();
+    const timestampStr = `${dateStr} ${timeStr}`;
+
+    const rawData = `${bookingId}|REJECTED|reason:${reason.trim()}|by:${user?.name || "Staff"}|${Date.now()}`;
+    const newHash = await generateSHA256(prevBlock.currentHash + rawData);
+
+    // 1. Atomic Local State Update
+    setBookings((prev) =>
+      prev.map((b) => {
+        if (b.id === bookingId || b.booking_id === bookingId || b.db_id === booking.db_id) {
+          return {
+            ...b,
+            stage: "REJECTED",
+            status: "REJECTED",
+            stageStatus: "REJECTED",
+            rejection_reason: reason.trim(),
+            rejected_at: timestampStr,
+            rejected_by: user?.name || "Mandi Operations Staff",
+            rejectionDetails: {
+              reason: reason.trim(),
+              remarks: remarks || reason.trim(),
+              rejectedBy: user?.name || "Mandi Operations Staff",
+              rejectedAt: timestampStr,
+            },
+          };
+        }
+        return b;
+      }),
+    );
+
+    // 2. Capacity Release
+    setTimeSlots((prev) =>
+      prev.map((s) =>
+        s.time === booking.timeSlot || s.time === booking.slot_time
+          ? { ...s, booked: Math.max(0, s.booked - 1) }
+          : s,
+      ),
+    );
+
+    // 3. Audit Chain Entry
+    const newBlock = {
+      blockIndex: auditChain.length + 1,
+      timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
+      stage: "BOOKING_REJECTED",
+      bookingId: booking.id,
+      farmerId: booking.farmerId,
+      farmerName: booking.farmerName,
+      dataSummary: `Booking #${booking.tokenDisplay} REJECTED by Staff. Reason: ${reason.trim()}`,
+      prevHash: prevBlock.currentHash,
+      currentHash: newHash,
+      isTampered: false,
+    };
+    setAuditChain((prev) => [...prev, newBlock]);
+
+    // 4. Atomic Database Updates on Supabase
+    try {
+      const bIdMatch = booking.booking_id || booking.id;
+      const dbIdMatch = booking.db_id || booking.id;
+
+      await supabase
+        .from("bookings")
+        .update({ status: "REJECTED" })
+        .or(`booking_id.eq.${bIdMatch},id.eq.${dbIdMatch}`);
+
+      await supabase.from("audit_logs").insert([
+        {
+          booking_id: booking.db_id || booking.id,
+          event_name: "BOOKING_REJECTED",
+          hash: newHash,
+          previous_hash: prevBlock.currentHash,
+        },
+      ]);
+    } catch (err) {
+      console.warn("Supabase rejection DB insert fallback:", err);
+    }
+
+    // 5. Multi-Device Realtime Broadcast
+    try {
+      if (activeChannelRef.current) {
+        activeChannelRef.current.send({
+          type: "broadcast",
+          event: "booking-rejected",
+          payload: {
+            bookingId: booking.id || booking.booking_id,
+            reason: reason.trim(),
+            rejectedAt: timestampStr,
+            rejectedBy: user?.name || "Mandi Operations Staff",
+          },
+        });
+      }
+    } catch {
+      // Safe fallback
+    }
+
+    addNotification({
+      title: "Booking Rejected",
+      message: `Token #${booking.tokenDisplay} (${booking.farmerName}) rejected. Reason: ${reason.trim()}`,
       type: "warning",
     });
   };
@@ -2446,6 +2570,7 @@ export function AppProvider({ children }) {
         setWorkerAssignedStage,
         approveStage,
         rejectStage,
+        rejectBooking,
         approveFinalPayment,
         searchFarmerById,
 
