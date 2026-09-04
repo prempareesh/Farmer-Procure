@@ -13,6 +13,9 @@ import HowItWorksModal from "./components/HowItWorksModal";
 import ContactModal from "./components/ContactModal";
 import LanguageModal from "./components/LanguageModal";
 
+// Isolated Restored Pre-Redesign Home View
+import HomePageView from "./views/HomePageView";
+
 // Dedicated Role-Based Views (Authenticated App Views)
 import AuthView from "./views/AuthView";
 import FarmerDashboardView from "./views/FarmerDashboardView";
@@ -28,20 +31,36 @@ function MainApp() {
   const { user, currentView, languageModalOpen, setLanguageModalOpen } =
     useApp();
 
-  // Public Pre-Login SPA views redirect to home SPA
-  const isPublicSpaView =
-    currentView === "home" ||
+  // 1. If viewing HOME PAGE, render the restored original light Home page
+  if (currentView === "home") {
+    return (
+      <>
+        <HomePageView />
+        <NotificationDrawer />
+        <HowItWorksModal />
+        <ContactModal />
+        <LanguageModal
+          isOpen={languageModalOpen}
+          onClose={() => setLanguageModalOpen(false)}
+        />
+      </>
+    );
+  }
+
+  // 2. Public Pre-Login SPA secondary pages (/about, /features, /how-it-works) render NEW PREMIUM DARK DESIGN
+  const isRedesignedPublicSpaView =
     currentView === "about" ||
     currentView === "features" ||
-    currentView === "how-it-works";
+    currentView === "how-it-works" ||
+    currentView === "contact";
 
   return (
     <div className="min-h-screen w-screen bg-[#050805] text-[#E8E7DE] flex flex-col justify-between relative selection:bg-[#164A29] selection:text-[#79C267]">
-      {/* 1. Universal Header Navigation Bar */}
+      {/* Universal Header Navigation Bar */}
       <Header />
 
-      {/* 2. Single Pre-Login SPA Experience */}
-      {isPublicSpaView && (
+      {/* Redesigned Premium Dark Public Sections for /about, /features, /how-it-works */}
+      {isRedesignedPublicSpaView && (
         <main className="flex-1 flex flex-col justify-between overflow-x-hidden">
           <HeroSection />
           <ProblemSection />
@@ -53,7 +72,7 @@ function MainApp() {
         </main>
       )}
 
-      {/* 3. Authenticated Application Views with Strict Role Guards */}
+      {/* Authenticated Application Views with Strict Role Guards */}
       {currentView === "auth" && <AuthView />}
       {currentView === "farmer-dash" && <FarmerDashboardView />}
 
@@ -97,7 +116,7 @@ function MainApp() {
           <FarmerDashboardView />
         ))}
 
-      {/* 4. Global Modals & Notifications */}
+      {/* Global Modals & Notifications */}
       <NotificationDrawer />
       <HowItWorksModal />
       <ContactModal />
