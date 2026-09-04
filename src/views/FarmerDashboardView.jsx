@@ -61,18 +61,31 @@ export default function FarmerDashboardView() {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   // Farmer specific booking state resolution
-  const farmerProfileId = farmerProfile?.farmerId;
-  const farmerMobile = farmerProfile?.mobile;
+  const currentFarmer =
+    user && (user.role === "farmer" || user.farmerId) ? user : farmerProfile;
+  const currentFarmerId = currentFarmer?.farmerId;
+  const currentFarmerDbId = currentFarmer?.id;
+  const currentFarmerMobile = currentFarmer?.mobile;
 
   const farmerBookings = (bookings || []).filter((b) => {
-    return (
-      b.farmerId === farmerProfileId ||
-      b.farmerMobile === farmerMobile ||
-      (b.profiles &&
-        (b.profiles.farmer_id === farmerProfileId ||
-          b.profiles.mobile === farmerMobile))
-    );
+    if (!currentFarmer) return false;
+    const matchDbId =
+      currentFarmerDbId &&
+      (b.profileId === currentFarmerDbId ||
+        b.profile_id === currentFarmerDbId ||
+        (b.profiles && b.profiles.id === currentFarmerDbId));
+    const matchFarmerId =
+      currentFarmerId &&
+      (b.farmerId === currentFarmerId ||
+        (b.profiles && b.profiles.farmer_id === currentFarmerId));
+    const matchMobile =
+      currentFarmerMobile &&
+      (b.farmerMobile === currentFarmerMobile ||
+        (b.profiles && b.profiles.mobile === currentFarmerMobile));
+
+    return Boolean(matchDbId || matchFarmerId || matchMobile);
   });
+
 
   const activeBookingForFarmer = farmerBookings.find(
     (b) => b.stage !== "COMPLETED" && b.status !== "COMPLETED",
@@ -163,7 +176,7 @@ export default function FarmerDashboardView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {currentBooking?.stage === "COMPLETED" && (
             <button
               onClick={() => setReceiptModalOpen(true)}
@@ -260,10 +273,10 @@ export default function FarmerDashboardView() {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex bg-white p-1 rounded-2xl border border-gray-200 w-fit overflow-x-auto">
+      <div className="flex bg-white p-1.5 rounded-2xl border border-gray-200 w-full max-w-full overflow-x-auto scrollbar-none whitespace-nowrap">
         <button
           onClick={() => setActiveTab("queue")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "queue"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -274,7 +287,7 @@ export default function FarmerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("gate")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "gate"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -285,7 +298,7 @@ export default function FarmerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("workflow")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "workflow"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -296,7 +309,7 @@ export default function FarmerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("crops")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "crops"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -307,7 +320,7 @@ export default function FarmerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("payment")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "payment"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -317,8 +330,19 @@ export default function FarmerDashboardView() {
           <span>DBT Payment Status</span>
         </button>
         <button
+          onClick={() => setActiveTab("history")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+            activeTab === "history"
+              ? "bg-[#2E7D32] text-white shadow-xs"
+              : "text-gray-700 hover:text-[#2E7D32]"
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Booking History</span>
+        </button>
+        <button
           onClick={() => setActiveTab("profile")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "profile"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -571,7 +595,7 @@ export default function FarmerDashboardView() {
                   )}
 
                   {/* 4 Telemetry Metrics Grid */}
-                  <div className="grid grid-cols-2 gap-4 pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                     <div className="bg-white rounded-2xl p-4 border border-[#A5D6A7] ring-2 ring-[#2E7D32]/15">
                       <span className="text-[10px] font-bold text-[#2E7D32] uppercase tracking-wider block">
                         YOUR TOKEN
@@ -1037,6 +1061,96 @@ export default function FarmerDashboardView() {
                 </span>
               </div>
             </>
+          )}
+        </div>
+      )}
+
+      {/* TAB: BOOKING HISTORY */}
+      {activeTab === "history" && (
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#E0ECE0] space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
+            <div>
+              <h2 className="text-xl font-extrabold text-gray-900">
+                Booking History & Database Transactions
+              </h2>
+              <p className="text-xs text-gray-500 font-medium mt-0.5">
+                Authentic database records for {farmerProfile.name} ({farmerProfile.farmerId})
+              </p>
+            </div>
+            <button
+              onClick={() => navigateTo("book-slot")}
+              className="px-4 py-2 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-md flex items-center gap-2 cursor-pointer transition-all active:scale-95 w-fit"
+            >
+              <Plus className="w-4 h-4 text-[#F9A825]" />
+              <span>Book New Slot</span>
+            </button>
+          </div>
+
+          {farmerBookings.length === 0 ? (
+            <div className="p-8 text-center bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
+              <Calendar className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+              <p className="text-sm font-bold text-gray-700">No Booking History Found</p>
+              <p className="text-xs text-gray-500 mt-1">Book your first procurement slot to generate database records.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto border border-gray-200 rounded-2xl shadow-xs">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200 text-[11px] font-black text-gray-500 uppercase tracking-wider">
+                    <th className="p-3.5">Booking ID</th>
+                    <th className="p-3.5">Token</th>
+                    <th className="p-3.5">Procurement Centre</th>
+                    <th className="p-3.5">Date & Slot</th>
+                    <th className="p-3.5">Crop & Qty</th>
+                    <th className="p-3.5">Status</th>
+                    <th className="p-3.5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
+                  {farmerBookings.map((b) => {
+                    const isCompletedStage = b.stage === "COMPLETED" || b.status === "COMPLETED";
+                    return (
+                      <tr key={b.id || b.booking_id} className="hover:bg-green-50/50 transition-colors">
+                        <td className="p-3.5 font-mono font-bold text-[#1B4318]">{b.booking_id || b.id}</td>
+                        <td className="p-3.5 font-mono font-bold text-amber-700">{b.tokenDisplay || "PS-001"}</td>
+                        <td className="p-3.5 font-semibold text-gray-900">{b.centreName || "Karnal Central Grain Mandi"}</td>
+                        <td className="p-3.5 text-gray-600">
+                          <div>{b.date || b.slot_date}</div>
+                          <div className="text-[10px] text-gray-400 font-mono">{b.timeSlot || b.slot_time}</div>
+                        </td>
+                        <td className="p-3.5 font-bold text-gray-900">{b.crop || "Paddy"} ({b.quantity || 25} Qtl)</td>
+                        <td className="p-3.5">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${
+                            isCompletedStage
+                              ? "bg-green-100 text-green-800 border-green-300"
+                              : "bg-blue-100 text-blue-800 border-blue-300"
+                          }`}>
+                            {b.stage || b.status}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right">
+                          {isCompletedStage ? (
+                            <button
+                              onClick={() => setReceiptModalOpen(true)}
+                              className="px-3 py-1.5 rounded-lg bg-[#E8F5E9] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white font-bold text-[11px] transition-all cursor-pointer"
+                            >
+                              View Receipt
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setActiveTab("workflow")}
+                              className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold text-[11px] transition-all cursor-pointer"
+                            >
+                              Track Live
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}

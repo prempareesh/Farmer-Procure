@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from "../lib/supabase";
 import { generateSHA256 } from "../utils/crypto";
 import { translations } from "../i18n/translations";
 
@@ -266,8 +266,29 @@ export function AppProvider({ children }) {
     },
   ]);
 
-  const [farmerProfile, setFarmerProfile] = useState(farmersList[0]);
+  const [farmerProfile, setFarmerProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem("agri_user");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.role === "farmer" || parsed.farmerId)) return parsed;
+      }
+    } catch {}
+    return farmersList[0];
+  });
+
+  useEffect(() => {
+    if (user && (user.role === "farmer" || user.farmerId)) {
+      setFarmerProfile((prev) => ({
+        ...prev,
+        ...user,
+        farmerId: user.farmerId || user.farmer_id || prev.farmerId,
+      }));
+    }
+  }, [user]);
+
   const [crops, setCrops] = useState(INITIAL_CROPS);
+
   const [mandiCentres, setMandiCentres] = useState(INITIAL_CENTRES);
   const [selectedMandiId, setSelectedMandiId] = useState("mandi-1");
   const [timeSlots, setTimeSlots] = useState(INITIAL_TIME_SLOTS);
@@ -544,27 +565,34 @@ export function AppProvider({ children }) {
           });
         }
 
-        // Fetch bookings with profiles join
+        // Fetch bookings with profiles, procurement_centres, and tokens joins
         const { data: bookingsData } = await supabase.from("bookings").select(`
             *,
             profiles ( id, farmer_id, name, mobile, village, district, state ),
-            procurement_centres ( id, centre_code, centre_name )
+            procurement_centres ( id, centre_code, centre_name ),
+            tokens ( id, token_number, queue_position, centre_code )
           `);
 
         if (bookingsData && bookingsData.length > 0) {
           const mapped = bookingsData.map((b) => {
             const p = b.profiles || {};
             const c = b.procurement_centres || {};
-            const fId = p.farmer_id || "FRM-2026-000123";
-            const fName = p.name || "Rameshwar Singh";
+            const t = (b.tokens && b.tokens.length > 0) ? b.tokens[0] : null;
+
+            const fId = p.farmer_id || b.farmer_id || "FRM-2026-000123";
+            const fName = p.name || b.farmer_name || "Rameshwar Singh";
             const code = c.centre_code || "P";
             const cName = c.centre_name || "Karnal Central Grain Mandi";
-            const tSeq = 1;
-            const tDisp = `${code}${String(tSeq).padStart(3, "0")}`;
+            const tSeq = t?.queue_position || 1;
+            const prefix = code === "P" ? "PS" : `${code}S`;
+            const tDisp = t?.token_number || `${prefix}-${String(tSeq).padStart(3, "0")}`;
 
             return {
               id: b.booking_id || b.id,
               booking_id: b.booking_id || b.id,
+              db_id: b.id,
+              profileId: b.profile_id,
+              profiles: p,
               farmerId: fId,
               farmerName: fName,
               farmerMobile: p.mobile,
@@ -600,9 +628,13 @@ export function AppProvider({ children }) {
           });
 
           setBookings((prev) => {
-            const existingIds = new Set(prev.map((item) => item.id));
-            const newItems = mapped.filter((item) => !existingIds.has(item.id));
-            return [...newItems, ...prev];
+            const mapById = new Map();
+            prev.forEach((item) => mapById.set(item.id, item));
+            mapped.forEach((item) => {
+              const existing = mapById.get(item.id);
+              mapById.set(item.id, existing ? { ...existing, ...item } : item);
+            });
+            return Array.from(mapById.values());
           });
         }
 
@@ -631,7 +663,7 @@ export function AppProvider({ children }) {
     }
 
     function subscribeRealtime() {
-      return supabase
+      const channel = supabase
         .channel("procure-realtime")
         .on(
           "postgres_changes",
@@ -643,17 +675,19 @@ export function AppProvider({ children }) {
 
               let fId = "FRM-2026-000123";
               let fName = "Rameshwar Singh";
+              let pMobile = null;
 
               if (newDb.profile_id) {
                 try {
                   const { data: p } = await supabase
                     .from("profiles")
-                    .select("farmer_id, name")
+                    .select("id, farmer_id, name, mobile")
                     .eq("id", newDb.profile_id)
                     .maybeSingle();
                   if (p) {
                     fId = p.farmer_id || fId;
                     fName = p.name || fName;
+                    pMobile = p.mobile;
                   }
                 } catch {
                   // Safe fallback
@@ -679,15 +713,21 @@ export function AppProvider({ children }) {
                 }
               }
 
+              const prefix = cCode === "P" ? "PS" : `${cCode}S`;
+              const tokenDisp = newDb.tokenDisplay || `${prefix}-001`;
+
               const newBookingRecord = {
                 id: bId,
                 booking_id: bId,
+                db_id: newDb.id,
+                profileId: newDb.profile_id,
                 farmerId: fId,
                 farmerName: fName,
+                farmerMobile: pMobile,
                 centreId: newDb.centre_id,
                 centreCode: cCode,
                 centreName: cName,
-                tokenDisplay: `${cCode}001`,
+                tokenDisplay: tokenDisp,
                 tokenSeq: 1,
                 crop: "Paddy (Basmati 1121)",
                 quantity: Number(newDb.expected_quantity || 25),
@@ -705,7 +745,7 @@ export function AppProvider({ children }) {
                   dbtTxnId: "DBT-PENDING",
                   disbursed: false,
                 },
-                qrData: `AGRI-PROCURE-${bId}-${cCode}001`,
+                qrData: `AGRI-PROCURE-${bId}-${tokenDisp}`,
                 createdAt: new Date().toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -1051,6 +1091,7 @@ export function AppProvider({ children }) {
       cleanId === "STAFF1" ||
       rawId.toLowerCase() === "staff" ||
       rawId.toLowerCase() === "staff1" ||
+      rawId.toLowerCase() === "staff@agriprocure.in" ||
       cleanId.startsWith("WRK") ||
       cleanId.startsWith("STAFF")
     ) {

@@ -57,6 +57,7 @@
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #f4f8f2;
@@ -68,3 +69,18 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #2e7d32;
 }
+
+/* Responsive Helper Utilities */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.break-word-safe {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+

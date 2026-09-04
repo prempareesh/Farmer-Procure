@@ -24,19 +24,31 @@ export default function LiveQueueView() {
     t,
   } = useApp();
 
-  const farmerProfileId = farmerProfile?.farmerId;
-  const farmerMobile = farmerProfile?.mobile;
+  const currentFarmer =
+    user && (user.role === "farmer" || user.farmerId) ? user : farmerProfile;
+  const currentFarmerId = currentFarmer?.farmerId;
+  const currentFarmerDbId = currentFarmer?.id;
+  const currentFarmerMobile = currentFarmer?.mobile;
 
   const farmerBookings = (bookings || []).filter((b) => {
-    if (!farmerProfile) return true;
-    return (
-      b.farmerId === farmerProfileId ||
-      b.farmerMobile === farmerMobile ||
-      (b.profiles &&
-        (b.profiles.farmer_id === farmerProfileId ||
-          b.profiles.mobile === farmerMobile))
-    );
+    if (!currentFarmer) return true;
+    const matchDbId =
+      currentFarmerDbId &&
+      (b.profileId === currentFarmerDbId ||
+        b.profile_id === currentFarmerDbId ||
+        (b.profiles && b.profiles.id === currentFarmerDbId));
+    const matchFarmerId =
+      currentFarmerId &&
+      (b.farmerId === currentFarmerId ||
+        (b.profiles && b.profiles.farmer_id === currentFarmerId));
+    const matchMobile =
+      currentFarmerMobile &&
+      (b.farmerMobile === currentFarmerMobile ||
+        (b.profiles && b.profiles.mobile === currentFarmerMobile));
+
+    return Boolean(matchDbId || matchFarmerId || matchMobile);
   });
+
 
   const activeBookingForFarmer = farmerBookings.find(
     (b) => b.stage !== "COMPLETED" && b.status !== "COMPLETED",
@@ -214,7 +226,7 @@ export default function LiveQueueView() {
             </div>
 
             {/* 4 Telemetry Metrics Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Metric 1: Your Assigned Token */}
               <div className="bg-white rounded-3xl p-5 shadow-md border border-[#A5D6A7] flex flex-col justify-between ring-2 ring-[#2E7D32]/15">
                 <span className="text-[11px] font-bold text-[#2E7D32] uppercase tracking-wider">

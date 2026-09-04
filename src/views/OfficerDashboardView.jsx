@@ -168,10 +168,10 @@ export default function OfficerDashboardView() {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex bg-white p-1 rounded-2xl border border-gray-200 w-fit overflow-x-auto">
+      <div className="flex bg-white p-1 rounded-2xl border border-gray-200 w-full max-w-full overflow-x-auto scrollbar-none whitespace-nowrap">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
             activeTab === "overview"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -181,7 +181,7 @@ export default function OfficerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "feedback"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -194,7 +194,7 @@ export default function OfficerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("farmers")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "farmers"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -205,7 +205,7 @@ export default function OfficerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("payments")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "payments"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"
@@ -216,7 +216,7 @@ export default function OfficerDashboardView() {
         </button>
         <button
           onClick={() => setActiveTab("bottlenecks")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === "bottlenecks"
               ? "bg-[#2E7D32] text-white shadow-xs"
               : "text-gray-700 hover:text-[#2E7D32]"

@@ -47,11 +47,31 @@ export default function WorkerDashboardView() {
     "final_procurement_receipt_P147.pdf",
   );
 
-  // Filter tasks for worker's assigned stage or all
+  // Filter tasks for worker's assigned centre and assigned stage
+  const staffMandiId = user?.mandiId || "mandi-1";
+  const staffMandiCode = "P"; // Canonical staff assigned to Karnal Central Grain Mandi (code P)
+
   const filteredBookings = bookings.filter((b) => {
+    // Centre isolation filter: match centreId, centreCode, or Karnal Mandi name
+    const isSameCentre =
+      b.centreId === staffMandiId ||
+      b.centreCode === staffMandiCode ||
+      b.centreId === "186c9f3d-34bd-4413-9d95-77687b3fb49b" ||
+      b.centre_id === "186c9f3d-34bd-4413-9d95-77687b3fb49b" ||
+      (b.centreName && b.centreName.toLowerCase().includes("karnal"));
+
+    if (!isSameCentre) return false;
+
     if (workerAssignedStage === "ALL") return true;
-    return b.stage === workerAssignedStage;
+    return b.stage === workerAssignedStage || b.status === workerAssignedStage;
   });
+
+  const sortedBookings = [...filteredBookings].sort((a, b) => {
+    const seqA = a.tokenSeq || parseInt(String(a.tokenDisplay).replace(/\D/g, "") || "0", 10);
+    const seqB = b.tokenSeq || parseInt(String(b.tokenDisplay).replace(/\D/g, "") || "0", 10);
+    return seqA - seqB;
+  });
+
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -198,7 +218,7 @@ export default function WorkerDashboardView() {
           <span>Search Farmer by Permanent ID (FRM-2026-XXXXXX) or Mobile</span>
         </h3>
 
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="e.g. FRM-2026-000123 or 9876543210"
@@ -208,7 +228,7 @@ export default function WorkerDashboardView() {
           />
           <button
             type="submit"
-            className="px-5 py-2.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
+            className="px-5 py-2.5 bg-[#2E7D32] hover:bg-[#1B4318] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer w-full sm:w-auto"
           >
             Search Profile
           </button>
@@ -268,128 +288,145 @@ export default function WorkerDashboardView() {
           </div>
         </div>
 
-        <div className="space-y-3">
-          {filteredBookings.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+        <div className="overflow-x-auto border border-gray-200 rounded-2xl shadow-xs">
+          {sortedBookings.length === 0 ? (
+            <div className="text-center py-12 text-gray-500 bg-white">
               <CheckCircle2 className="w-10 h-10 mx-auto text-[#2E7D32] mb-2" />
               <p className="text-xs font-bold text-gray-700">
                 No pending actions in this queue.
               </p>
             </div>
           ) : (
-            filteredBookings.map((b) => (
-              <div
-                key={b.id}
-                className="p-5 rounded-2xl bg-[#F8FAF7] border border-[#E0ECE0] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-base font-black text-[#1B4318]">
-                      Token #{b.tokenDisplay}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
-                      {b.stage}
-                    </span>
-                    <span className="text-xs text-gray-400 font-mono">
-                      [{b.farmerId}]
-                    </span>
-                  </div>
-
-                  <h4 className="text-sm font-bold text-gray-900">
-                    {b.farmerName}
-                  </h4>
-                  <p className="text-xs text-gray-600 font-medium">
-                    Crop: <strong>{b.crop}</strong> • Booked:{" "}
-                    <strong className="text-[#2E7D32]">{b.quantity} Qtl</strong>{" "}
-                    {b.weighedQuantity && `• Weighed: ${b.weighedQuantity} Qtl`}{" "}
-                    • Center: {b.centreName}
-                  </p>
-                </div>
-
-                {/* Worker Sequential Action Controls */}
-                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase block sm:inline">
-                    {t("nextActionLabel")}:
-                  </span>
-
-                  {b.stage === "BOOKED" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "BOOKED")}
-                      className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>VERIFY ARRIVAL</span>
-                    </button>
-                  )}
-
-                  {b.stage === "ARRIVED" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "ARRIVED")}
-                      className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckSquare className="w-4 h-4" />
-                      <span>{t("startQualityCheckBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "QUALITY_CHECK" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "QUALITY_CHECK")}
-                      className="px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <Scale className="w-4 h-4" />
-                      <span>{t("recordWeightBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "WEIGHING" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "WEIGHING")}
-                      className="px-4 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>{t("completeProcurementBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "PROCUREMENT" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
-                      className="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <DollarSign className="w-4 h-4" />
-                      <span>{t("recordPaymentBtn")}</span>
-                    </button>
-                  )}
-
-                  {b.stage === "PAYMENT" && (
-                    <button
-                      onClick={() => handleStageAdvance(b.id, "PAYMENT")}
-                      className="px-4 py-2.5 rounded-xl bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-xs shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>UPLOAD RECEIPT & COMPLETE</span>
-                    </button>
-                  )}
-
-                  {b.stage === "COMPLETED" && (
-                    <span className="px-3 py-1.5 rounded-xl bg-[#E8F5E9] text-[#2E7D32] font-black text-xs border border-[#A5D6A7]">
-                      {t("transactionCompletedBadge")}
-                    </span>
-                  )}
-
-                  {b.stage !== "COMPLETED" && (
-                    <button
-                      onClick={() => setRejectingBookingId(b.id)}
-                      className="px-3 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <XCircle className="w-4 h-4" />
-                      <span>Reject</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
+            <table className="w-full text-left border-collapse bg-white">
+              <thead>
+                <tr className="bg-[#FAF8F2] border-b border-gray-200 text-[11px] font-black text-gray-500 uppercase tracking-wider">
+                  <th className="p-3.5">Token</th>
+                  <th className="p-3.5">Booking ID</th>
+                  <th className="p-3.5">Farmer ID</th>
+                  <th className="p-3.5">Farmer Name</th>
+                  <th className="p-3.5">Crop & Quantity</th>
+                  <th className="p-3.5">Slot & Time</th>
+                  <th className="p-3.5">Status</th>
+                  <th className="p-3.5">Workflow Stage</th>
+                  <th className="p-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-xs font-medium text-gray-700">
+                {sortedBookings.map((b) => {
+                  const isCompletedStage = b.stage === "COMPLETED" || b.status === "COMPLETED";
+                  return (
+                    <tr key={b.id || b.booking_id} className="hover:bg-green-50/50 transition-colors">
+                      <td className="p-3.5 font-mono font-black text-amber-800 text-sm">
+                        {b.tokenDisplay || "PS-001"}
+                      </td>
+                      <td className="p-3.5 font-mono font-bold text-[#1B4318]">
+                        {b.booking_id || b.id}
+                      </td>
+                      <td className="p-3.5 font-mono text-gray-600 font-bold">
+                        {b.farmerId || "FRM-2026-000123"}
+                      </td>
+                      <td className="p-3.5 font-extrabold text-gray-900">
+                        {b.farmerName}
+                      </td>
+                      <td className="p-3.5 font-bold text-gray-900">
+                        <div>{b.crop || "Paddy"}</div>
+                        <div className="text-[11px] text-[#2E7D32] font-black">
+                          {b.quantity} Qtl {b.weighedQuantity && `(Actual: ${b.weighedQuantity} Qtl)`}
+                        </div>
+                      </td>
+                      <td className="p-3.5 text-gray-600">
+                        <div>{b.date || b.slot_date}</div>
+                        <div className="text-[10px] text-gray-400 font-mono">{b.timeSlot || b.slot_time}</div>
+                      </td>
+                      <td className="p-3.5">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black border uppercase ${
+                          isCompletedStage ? "bg-green-100 text-green-800 border-green-300" : "bg-amber-50 text-amber-800 border-amber-300"
+                        }`}>
+                          {b.status || "ACTIVE"}
+                        </span>
+                      </td>
+                      <td className="p-3.5">
+                        <span className="px-2.5 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-black text-[10px] border border-[#A5D6A7]">
+                          {b.stage}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {b.stage === "BOOKED" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "BOOKED")}
+                              className="px-3 py-1.5 rounded-lg bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>VERIFY ARRIVAL</span>
+                            </button>
+                          )}
+                          {b.stage === "ARRIVED" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "ARRIVED")}
+                              className="px-3 py-1.5 rounded-lg bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <CheckSquare className="w-3.5 h-3.5" />
+                              <span>QUALITY CHECK</span>
+                            </button>
+                          )}
+                          {b.stage === "QUALITY_CHECK" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "QUALITY_CHECK")}
+                              className="px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <Scale className="w-3.5 h-3.5" />
+                              <span>WEIGHBRIDGE</span>
+                            </button>
+                          )}
+                          {b.stage === "WEIGHING" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "WEIGHING")}
+                              className="px-3 py-1.5 rounded-lg bg-[#1B4318] hover:bg-[#2E7D32] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>VOUCHER</span>
+                            </button>
+                          )}
+                          {b.stage === "PROCUREMENT" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "PROCUREMENT")}
+                              className="px-3 py-1.5 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <DollarSign className="w-3.5 h-3.5" />
+                              <span>DBT PAYMENT</span>
+                            </button>
+                          )}
+                          {b.stage === "PAYMENT" && (
+                            <button
+                              onClick={() => handleStageAdvance(b.id, "PAYMENT")}
+                              className="px-3 py-1.5 rounded-lg bg-[#2E7D32] hover:bg-[#1B4318] text-white font-extrabold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>RECEIPT & COMPLETE</span>
+                            </button>
+                          )}
+                          {isCompletedStage && (
+                            <span className="px-2.5 py-1 rounded-lg bg-[#E8F5E9] text-[#2E7D32] font-extrabold text-[11px] border border-[#A5D6A7]">
+                              COMPLETED ✓
+                            </span>
+                          )}
+                          {!isCompletedStage && (
+                            <button
+                              onClick={() => setRejectingBookingId(b.id)}
+                              className="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] border border-red-200 flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              <span>Reject</span>
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           )}
         </div>
       </div>

@@ -258,9 +258,24 @@ export default function Header() {
 
       {/* Mobile Toggle */}
       <div className="flex md:hidden items-center gap-2">
+        {user && (
+          <button
+            onClick={() => setNotificationDrawerOpen(true)}
+            className="relative p-2 rounded-xl bg-white border border-[#D5E2D3] text-gray-700 hover:text-[#2E7D32]"
+            title="Notifications"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-black flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+        )}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-2 text-gray-700 hover:text-[#2E7D32]"
+          aria-label="Toggle Navigation Menu"
         >
           {mobileMenuOpen ? (
             <X className="w-6 h-6" />
@@ -272,39 +287,92 @@ export default function Header() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-[#F4F8F2] border-b border-[#E2EBE0] p-4 space-y-3 shadow-xl z-50 md:hidden animate-in fade-in">
-          {navItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => {
-                item.action();
-                setMobileMenuOpen(false);
-              }}
-              className="block w-full text-left py-2 font-bold text-gray-800 hover:text-[#2E7D32]"
-            >
-              {item.name}
-            </button>
-          ))}
-          <div className="pt-3 flex flex-col gap-2 border-t border-[#E2EBE0]">
-            {user ? (
+        <div className="absolute top-full left-0 right-0 bg-[#FAFBF8] border-b border-[#E2EBE0] p-4 space-y-3 shadow-xl z-50 md:hidden animate-in fade-in max-h-[85vh] overflow-y-auto">
+          {/* Navigation Links */}
+          <div className="space-y-1">
+            {navItems.map((item) => (
               <button
+                key={item.name}
                 onClick={() => {
-                  logoutUser();
+                  item.action();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 bg-red-100 text-red-800 font-bold rounded-xl text-xs"
+                className="block w-full text-left py-2.5 px-3 font-bold text-gray-800 hover:text-[#2E7D32] hover:bg-[#E8F5E9] rounded-xl text-sm transition-colors"
               >
-                Logout ({user.name})
+                {item.name}
               </button>
+            ))}
+          </div>
+
+          {/* Language Selector inside Mobile Drawer */}
+          <div className="pt-3 border-t border-[#E2EBE0] space-y-2">
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block px-1">
+              Select Language / भाषा चुनें
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setCurrentLang(lang.code);
+                    localStorage.setItem("agri_lang", lang.code);
+                  }}
+                  className={`py-2 px-2 rounded-xl text-xs font-bold transition-all text-center ${
+                    currentLang === lang.code
+                      ? "bg-[#2E7D32] text-white shadow-2xs"
+                      : "bg-white border border-gray-200 text-gray-700"
+                  }`}
+                >
+                  {lang.name.split(" ")[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* User Auth / Logout Actions inside Mobile Drawer */}
+          <div className="pt-3 flex flex-col gap-2 border-t border-[#E2EBE0]">
+            {user ? (
+              <>
+                <button
+                  onClick={() => {
+                    navigateTo(
+                      user.role === "farmer"
+                        ? "farmer-dash"
+                        : user.role === "worker"
+                          ? "worker-dash"
+                          : "officer-dash",
+                    );
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 px-4 bg-white border border-[#D5E2D3] text-gray-800 font-bold rounded-xl text-xs flex items-center justify-between"
+                >
+                  <span>Signed in as: <strong>{user.name}</strong></span>
+                  <span className="px-2 py-0.5 rounded bg-[#E8F5E9] text-[#2E7D32] text-[10px] uppercase font-black">
+                    {user.role}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    logoutUser();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold rounded-xl text-xs border border-red-200 flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>{t("logout")}</span>
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => {
                   navigateTo("auth");
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 bg-[#1B4318] text-white font-bold rounded-xl text-sm"
+                className="w-full py-3 bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm"
               >
-                Login Portal
+                <User className="w-4 h-4 text-[#F9A825]" />
+                <span>{t("login")}</span>
               </button>
             )}
           </div>

@@ -57,14 +57,16 @@ export default function SlotBookingView() {
     mandiCentres.find((m) => m.id === selectedMandiId) || mandiCentres[0];
 
   // USP 2: Real Database-Driven Slot Occupancy & Smart Recommendation Engine
-  const activeBookingsForDateAndCentre = (bookings || []).filter(
-    (b) =>
-      (b.centreId === selectedMandiId ||
-        b.centreCode === selectedCentre.centre_code) &&
-      (b.date === bookingDate || b.slot_date === bookingDate) &&
-      b.stage !== "COMPLETED" &&
-      b.status !== "COMPLETED",
-  );
+  const activeBookingsForDateAndCentre = (bookings || []).filter((b) => {
+    const isSameCentre =
+      b.centreId === selectedMandiId ||
+      b.centreCode === selectedCentre.centre_code ||
+      b.centre_id === selectedMandiId ||
+      (selectedCentre.id && (b.centreId === selectedCentre.id || b.centre_id === selectedCentre.id));
+    const isSameDate = b.date === bookingDate || b.slot_date === bookingDate;
+    const isActive = b.stage !== "COMPLETED" && b.status !== "COMPLETED" && b.stage !== "CANCELLED" && b.status !== "CANCELLED";
+    return Boolean(isSameCentre && isSameDate && isActive);
+  });
 
   // Compute real booked count per slot
   const dynamicSlots = timeSlots.map((slot) => {
