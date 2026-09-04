@@ -152,6 +152,20 @@ export default function FarmerDashboardView() {
     setFeedbackSubmitted(true);
   };
 
+  const getFarmerLocationString = (f) => {
+    if (!f) return "";
+    if (f.address && f.address.trim()) return f.address.trim();
+    const parts = [f.village, f.district, f.state].filter(
+      (val) => val && String(val).trim() !== ""
+    );
+    const uniqueParts = parts.filter(
+      (item, index) => parts.indexOf(item) === index
+    );
+    return uniqueParts.join(", ");
+  };
+  const activeFarmerObj = currentFarmer || farmerProfile;
+  const farmerLocStr = getFarmerLocationString(activeFarmerObj);
+
   return (
     <div className="min-h-[88vh] bg-[#F4F8F2] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 selection:bg-[#2E7D32] selection:text-white">
       {/* Top Header & Navigation */}
@@ -168,12 +182,12 @@ export default function FarmerDashboardView() {
               {t("farmerPortal")}
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
-              {farmerProfile.farmerId}
+              {activeFarmerObj?.farmerId}
             </span>
           </div>
           <p className="text-xs text-gray-500 font-semibold mt-0.5">
-            {t("welcomeBack")}, {farmerProfile.name} • {farmerProfile.village},{" "}
-            {farmerProfile.district} ({farmerProfile.state})
+            {t("welcomeBack")}, {activeFarmerObj?.name || "Farmer"}
+            {farmerLocStr ? ` • ${farmerLocStr}` : ""}
           </p>
         </div>
 
@@ -1245,8 +1259,7 @@ export default function FarmerDashboardView() {
                 {t("addressLabel")}
               </span>
               <span className="text-sm font-bold text-gray-900 block mt-1">
-                {farmerProfile.address ||
-                  `${farmerProfile.village}, ${farmerProfile.district}, ${farmerProfile.state}`}
+                {farmerLocStr || "Registered Farmland Location"}
               </span>
               <span className="text-[10px] text-gray-500 block mt-1">
                 Registered Farmland Address

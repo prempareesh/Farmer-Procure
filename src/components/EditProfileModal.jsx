@@ -227,7 +227,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
             <div className="relative">
               <textarea
                 rows="2"
-                placeholder="e.g. Taraori, Karnal District, Haryana"
+                placeholder="e.g. Nellore, Andhra Pradesh"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 required

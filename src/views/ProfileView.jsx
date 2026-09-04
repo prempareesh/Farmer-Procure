@@ -139,7 +139,9 @@ export default function ProfileView() {
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-[#2E7D32]" />
                   {farmerProfile.address ||
-                    `${farmerProfile.village}, ${farmerProfile.district} (${farmerProfile.state})`}
+                    [farmerProfile.village, farmerProfile.district, farmerProfile.state]
+                      .filter((v) => v && String(v).trim() !== "")
+                      .join(", ")}
                 </span>
               </div>
             </div>
