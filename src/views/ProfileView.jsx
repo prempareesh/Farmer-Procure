@@ -14,13 +14,22 @@ import {
   X,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import EditProfileModal from "../components/EditProfileModal";
 
 export default function ProfileView() {
-  const { farmerProfile, crops, addCrop, updateCrop, deleteCrop, navigateTo } =
-    useApp();
+  const {
+    farmerProfile,
+    crops,
+    addCrop,
+    updateCrop,
+    deleteCrop,
+    navigateTo,
+    t,
+  } = useApp();
 
   const [isAddingCrop, setIsAddingCrop] = useState(false);
   const [editingCropId, setEditingCropId] = useState(null);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   // Form states for adding crop
   const [newCropName, setNewCropName] = useState("");
@@ -77,8 +86,15 @@ export default function ProfileView() {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setEditProfileOpen(true)}
+            className="px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-800 text-xs font-extrabold hover:bg-gray-50 transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <Edit2 className="w-3.5 h-3.5 text-[#2E7D32]" />
+            <span>{t("editProfile")}</span>
+          </button>
+          <button
             onClick={() => navigateTo("book-slot")}
-            className="px-4 py-2 rounded-xl bg-[#1B4318] text-white text-xs font-bold hover:bg-[#2E7D32] transition-all shadow-xs"
+            className="px-4 py-2 rounded-xl bg-[#1B4318] text-white text-xs font-bold hover:bg-[#2E7D32] transition-all shadow-xs cursor-pointer"
           >
             Book Slot with Crops
           </button>
@@ -122,23 +138,33 @@ export default function ProfileView() {
                 </span>
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-[#2E7D32]" />
-                  {farmerProfile.village}, {farmerProfile.district} (
-                  {farmerProfile.state})
+                  {farmerProfile.address ||
+                    `${farmerProfile.village}, ${farmerProfile.district} (${farmerProfile.state})`}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#FAF8F2] p-4 rounded-2xl border border-[#E8E4D9] text-xs space-y-1 shrink-0">
-            <span className="text-[10px] font-bold text-gray-400 uppercase">
-              DBT Linked Account
-            </span>
-            <p className="font-bold text-gray-800">
-              {farmerProfile.bankAccount}
-            </p>
-            <p className="text-[11px] text-gray-500 font-mono">
-              IFSC: {farmerProfile.ifsc}
-            </p>
+          <div className="flex flex-col items-end gap-3">
+            <button
+              onClick={() => setEditProfileOpen(true)}
+              className="px-4 py-2 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            >
+              <Edit2 className="w-3.5 h-3.5 text-[#F9A825]" />
+              <span>{t("editProfile")}</span>
+            </button>
+
+            <div className="bg-[#FAF8F2] p-3.5 rounded-2xl border border-[#E8E4D9] text-xs space-y-1 text-right">
+              <span className="text-[10px] font-bold text-gray-400 uppercase">
+                DBT Linked Account
+              </span>
+              <p className="font-bold text-gray-800">
+                {farmerProfile.bankAccount}
+              </p>
+              <p className="text-[11px] text-gray-500 font-mono">
+                IFSC: {farmerProfile.ifsc}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -389,6 +415,11 @@ export default function ProfileView() {
           })}
         </div>
       </div>
+
+      <EditProfileModal
+        isOpen={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+      />
     </div>
   );
 }

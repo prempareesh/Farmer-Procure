@@ -672,6 +672,8 @@ export function AppProvider({ children }) {
 
   // Navigation Guard Helper
   const navigateTo = (view, options = {}) => {
+    const activeUser =
+      options?.overrideUser !== undefined ? options.overrideUser : user;
     const protectedViews = [
       "farmer-dash",
       "worker-dash",
@@ -682,7 +684,7 @@ export function AppProvider({ children }) {
       "audit",
       "qr-scanner",
     ];
-    if (protectedViews.includes(view) && !user) {
+    if (protectedViews.includes(view) && !activeUser) {
       setAuthRedirectView(view);
       setCurrentView("auth");
       addNotification({
@@ -884,7 +886,7 @@ export function AppProvider({ children }) {
         message: "Signed in as Procurement Staff.",
         type: "success",
       });
-      navigateTo("worker-dash");
+      navigateTo("worker-dash", { overrideUser: workerUser });
       return { success: true, user: workerUser };
     }
 
@@ -922,7 +924,7 @@ export function AppProvider({ children }) {
         message: "Signed in to Mandi Higher Authority & Command Tower.",
         type: "success",
       });
-      navigateTo("officer-dash");
+      navigateTo("officer-dash", { overrideUser: officerUser });
       return { success: true, user: officerUser };
     }
 
@@ -1032,8 +1034,9 @@ export function AppProvider({ children }) {
       message: `Welcome back, ${farmerUser.name}! (ID: ${farmerUser.farmerId})`,
       type: "success",
     });
-    navigateTo(authRedirectView || "farmer-dash");
+    const targetDash = authRedirectView || "farmer-dash";
     setAuthRedirectView(null);
+    navigateTo(targetDash, { overrideUser: farmerUser });
     return { success: true, user: farmerUser };
   };
 
@@ -1046,6 +1049,153 @@ export function AppProvider({ children }) {
       message: "You have been safely signed out.",
       type: "info",
     });
+  };
+
+  const updateFarmerProfile = async (updatedData) => {
+    if (!user) {
+      return { success: false, error: "Unauthorized." };
+    }
+
+    const cleanName = String(updatedData.name || "").trim();
+    const cleanMobile = String(updatedData.mobile || "").trim();
+    const cleanAddress = String(updatedData.address || "").trim();
+    const cleanEmail = String(updatedData.email || "").trim();
+
+    if (!cleanName) {
+      return { success: false, error: "Full Name is required." };
+    }
+    if (!cleanMobile || !/^\d{10}$/.test(cleanMobile)) {
+      return {
+        success: false,
+        error: "Please enter a valid 10-digit mobile number.",
+      };
+    }
+    if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return {
+        success: false,
+        error: "Please enter a valid email address.",
+      };
+    }
+
+    // 1. Mobile uniqueness pre-check in Supabase profiles (exclude current user)
+    try {
+      const { data: existingMobileOwner } = await supabase
+        .from("profiles")
+        .select("id, farmer_id")
+        .eq("mobile", cleanMobile)
+        .neq("id", user.id)
+        .maybeSingle();
+
+      if (existingMobileOwner) {
+        return {
+          success: false,
+          error:
+            "This mobile number is already associated with another Farmer account.",
+        };
+      }
+    } catch (err) {
+      console.warn("Mobile uniqueness check error:", err);
+    }
+
+    // 2. Mobile uniqueness pre-check in memory farmersList (exclude current user)
+    const inMemoryDuplicate = farmersList.find(
+      (f) =>
+        f.mobile === cleanMobile &&
+        f.farmerId !== farmerProfile.farmerId &&
+        f.id !== user.id,
+    );
+    if (inMemoryDuplicate) {
+      return {
+        success: false,
+        error:
+          "This mobile number is already associated with another Farmer account.",
+      };
+    }
+
+    // 3. Save updates directly to Supabase DB `profiles` table
+    try {
+      const { error: updateErr } = await supabase
+        .from("profiles")
+        .update({
+          name: cleanName,
+          mobile: cleanMobile,
+          address: cleanAddress,
+          email: cleanEmail,
+        })
+        .eq("id", user.id);
+
+      if (updateErr) {
+        if (
+          updateErr.code === "23505" ||
+          updateErr.status === 409 ||
+          updateErr.message?.toLowerCase().includes("unique") ||
+          updateErr.message?.toLowerCase().includes("duplicate")
+        ) {
+          return {
+            success: false,
+            error:
+              "This mobile number is already associated with another Farmer account.",
+          };
+        }
+        return {
+          success: false,
+          error: "Unable to update your profile. Please try again.",
+        };
+      }
+    } catch (err) {
+      console.warn("Database profile update error:", err);
+      return {
+        success: false,
+        error: "Unable to connect. Please try again.",
+      };
+    }
+
+    // 4. Update React Context State
+    const updatedFarmer = {
+      ...farmerProfile,
+      name: cleanName,
+      mobile: cleanMobile,
+      address: cleanAddress,
+      email: cleanEmail,
+    };
+
+    const updatedUser = {
+      ...user,
+      name: cleanName,
+      mobile: cleanMobile,
+      address: cleanAddress,
+      email: cleanEmail,
+    };
+
+    setFarmerProfile(updatedFarmer);
+    setUser(updatedUser);
+    localStorage.setItem("agri_user", JSON.stringify(updatedUser));
+
+    setFarmersList((prev) =>
+      prev.map((f) =>
+        f.farmerId === farmerProfile.farmerId || f.id === user.id
+          ? updatedFarmer
+          : f,
+      ),
+    );
+
+    // 5. Update active bookings state to reflect updated farmer name & mobile
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.farmerId === farmerProfile.farmerId ||
+        (b.profiles && b.profiles.id === user.id)
+          ? { ...b, farmerName: cleanName, farmerMobile: cleanMobile }
+          : b,
+      ),
+    );
+
+    addNotification({
+      title: "Profile Updated",
+      message: "Your profile information has been saved successfully.",
+      type: "success",
+    });
+
+    return { success: true, farmer: updatedFarmer };
   };
 
   // 7. Multi-Crop Profile Management (CRUD)
@@ -1877,6 +2027,7 @@ export function AppProvider({ children }) {
         registerFarmer,
         loginUser,
         logoutUser,
+        updateFarmerProfile,
 
         // Multi-Crops
         crops,

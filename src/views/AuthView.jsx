@@ -277,11 +277,11 @@ export default function AuthView() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-2xs transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 pt-3.5"
+                className="w-full py-3.5 px-6 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white font-bold text-sm shadow-2xs transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2 pt-3.5 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <span>
                   {loading
-                    ? "Signing in..."
+                    ? "SIGNING IN..."
                     : selectedRole === "worker"
                       ? "Sign In as Mandi Staff →"
                       : selectedRole === "officer"

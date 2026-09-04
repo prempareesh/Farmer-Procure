@@ -17,10 +17,12 @@ import {
   Star,
   MessageSquare,
   Send,
+  Edit2,
 } from "lucide-react";
 import { useApp, WORKFLOW_STAGES } from "../context/AppContext";
 import DigitalReceiptModal from "../components/DigitalReceiptModal";
 import IdentityCameraModal from "../components/IdentityCameraModal";
+import EditProfileModal from "../components/EditProfileModal";
 
 export default function FarmerDashboardView() {
   const {
@@ -39,12 +41,13 @@ export default function FarmerDashboardView() {
     t,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState("queue"); // 'queue' | 'gate' | 'workflow' | 'crops' | 'payment'
+  const [activeTab, setActiveTab] = useState("queue"); // 'queue' | 'gate' | 'workflow' | 'crops' | 'payment' | 'profile'
 
   // Modals state
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [cameraModalOpen, setCameraModalOpen] = useState(false);
   const [auditInfoOpen, setAuditInfoOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   // Crop modal state
   const [isAddingCrop, setIsAddingCrop] = useState(false);
@@ -69,7 +72,7 @@ export default function FarmerDashboardView() {
     );
   };
 
-  const handleCameraPhotoConfirmed = async (photoUrl) => {
+  const handleCameraPhotoConfirmed = async (_photoUrl) => {
     if (!currentBooking) return;
     await advanceBookingStage(
       currentBooking.id,
@@ -140,6 +143,14 @@ export default function FarmerDashboardView() {
               <span>{t("viewReceiptBtn")}</span>
             </button>
           )}
+
+          <button
+            onClick={() => setEditProfileOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 border border-gray-300 text-gray-800 text-xs font-extrabold shadow-2xs flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+          >
+            <Edit2 className="w-4 h-4 text-[#2E7D32]" />
+            <span>{t("editProfile")}</span>
+          </button>
 
           <button
             onClick={() => navigateTo("book-slot")}
@@ -274,6 +285,17 @@ export default function FarmerDashboardView() {
         >
           <FileText className="w-3.5 h-3.5" />
           <span>DBT Payment Status</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("profile")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeTab === "profile"
+              ? "bg-[#2E7D32] text-white shadow-xs"
+              : "text-gray-700 hover:text-[#2E7D32]"
+          }`}
+        >
+          <User className="w-3.5 h-3.5" />
+          <span>{t("myProfile")}</span>
         </button>
       </div>
 
@@ -852,6 +874,125 @@ export default function FarmerDashboardView() {
           </div>
         </div>
       )}
+
+      {/* TAB 6: FARMER PROFILE VIEW & EDIT */}
+      {activeTab === "profile" && (
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#E0ECE0] space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2E7D32] to-[#1B4318] flex items-center justify-center text-white font-black shadow-md shrink-0">
+                <User className="w-8 h-8 text-[#F9A825]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h2 className="text-xl font-extrabold text-gray-900">
+                    {farmerProfile.name}
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#E8F5E9] text-[#2E7D32] text-[10px] font-black border border-[#A5D6A7]">
+                    VERIFIED KISAN
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 font-bold mt-0.5">
+                  Farmer ID:{" "}
+                  <span className="text-[#1B4318] font-mono">
+                    {farmerProfile.farmerId}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setEditProfileOpen(true)}
+              className="px-5 py-2.5 rounded-xl bg-[#1B4318] hover:bg-[#2E7D32] text-white text-xs font-extrabold shadow-md flex items-center gap-2 transition-all active:scale-95 cursor-pointer w-fit"
+            >
+              <Edit2 className="w-4 h-4 text-[#F9A825]" />
+              <span>{t("editProfile")}</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                {t("readOnlyFarmerId")}
+              </span>
+              <span className="text-sm font-mono font-black text-[#1B4318] block mt-1">
+                {farmerProfile.farmerId}
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-1">
+                Permanent Identifier (Read Only)
+              </span>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                {t("fullName")}
+              </span>
+              <span className="text-sm font-bold text-gray-900 block mt-1">
+                {farmerProfile.name}
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-1">
+                Canonical Profile Name
+              </span>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                {t("mobile10")}
+              </span>
+              <span className="text-sm font-bold text-gray-900 block mt-1">
+                +91 {farmerProfile.mobile}
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-1">
+                Primary Auth & OTP Mobile
+              </span>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                {t("emailLabel")}
+              </span>
+              <span className="text-sm font-bold text-gray-900 block mt-1 truncate">
+                {farmerProfile.email || "rameshwar.singh@email.com"}
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-1">
+                Official Contact Email
+              </span>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F2] rounded-2xl border border-[#E8E4D9] md:col-span-2">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                {t("addressLabel")}
+              </span>
+              <span className="text-sm font-bold text-gray-900 block mt-1">
+                {farmerProfile.address ||
+                  `${farmerProfile.village}, ${farmerProfile.district}, ${farmerProfile.state}`}
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-1">
+                Registered Farmland Address
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-gray-500 font-semibold">
+              <Sprout className="w-4 h-4 text-[#2E7D32]" />
+              <span>{crops.length} MSP Eligible Crops Registered</span>
+            </div>
+            <button
+              onClick={() => setEditProfileOpen(true)}
+              className="text-xs font-bold text-[#2E7D32] hover:underline cursor-pointer"
+            >
+              Update Profile Information →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+      />
 
       {/* Digital Procurement Receipt Modal */}
       <DigitalReceiptModal

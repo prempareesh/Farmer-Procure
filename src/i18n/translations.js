@@ -491,6 +491,20 @@ export const translations = {
       "Maintain immutable, tamper-evident SHA-256 digital audit trails for every transaction to guarantee trust & MSP compliance.",
     modalMetricsVerify: "100% Cryptographic Audit",
 
+    // Profile & Edit Profile Keys
+    myProfile: "My Profile",
+    editProfile: "Edit Profile",
+    saveChanges: "Save Changes",
+    saving: "SAVING...",
+    profileUpdatedSuccess: "Profile updated successfully.",
+    mobileAlreadyRegistered:
+      "This mobile number is already associated with another Farmer account.",
+    readOnlyFarmerId: "Farmer ID (Read Only)",
+    addressLabel: "Address / Location *",
+    emailLabel: "Email Address",
+    editFarmerProfileTitle: "Edit Farmer Profile",
+    cancelBtn: "Cancel",
+
     // Contact
     contactTitle: "Contact AgriProcure Support",
     contactSub: "Our technical and Mandi support team is available 24/7.",
@@ -1001,6 +1015,20 @@ export const translations = {
       "విశ్వసనీయత మరియు MSP పాటింపు కోసం సురక్షితమైన SHA-256 ఆడిట్ రికార్డులను నిర్వహించండి.",
     modalMetricsVerify: "100% క్రిప్టోగ్రాఫిక్ ఆడిట్",
 
+    // Profile & Edit Profile Keys
+    myProfile: "నా ప్రొఫైల్",
+    editProfile: "ప్రొఫైల్ సవరించండి",
+    saveChanges: "మార్పులను సేవ్ చేయండి",
+    saving: "సేవ్ అవుతోంది...",
+    profileUpdatedSuccess: "ప్రొఫైల్ విజయవంతంగా నవీకరించబడింది.",
+    mobileAlreadyRegistered:
+      "ఈ మొబైల్ నంబర్ ఇప్పటికే మరొక రైతు ఖాతాతో లింక్ చేయబడింది.",
+    readOnlyFarmerId: "రైతు ID (మార్చలేరు)",
+    addressLabel: "చిరునామా / ప్రాంతం *",
+    emailLabel: "ఈమెయిల్ చిరునామా",
+    editFarmerProfileTitle: "రైతు ప్రొఫైల్ సవరణ",
+    cancelBtn: "రద్దు చేయండి",
+
     // Contact
     contactTitle: "అగ్రిప్రొక్యూర్ మద్దతు బృందాన్ని సంప్రదించండి",
     contactSub: "మా సాంకేతిక బృందం 24/7 అందుబాటులో ఉంటుంది.",
@@ -1500,6 +1528,20 @@ export const translations = {
     modalDescVerify:
       "विश्वास और MSP अनुपालन के लिए सुरक्षित SHA-256 ऑडिट रिकॉर्ड बनाए रखें।",
     modalMetricsVerify: "100% क्रिप्टोग्राफिक ऑडिट",
+
+    // Profile & Edit Profile Keys
+    myProfile: "मेरी प्रोफाइल",
+    editProfile: "प्रोफाइल संपादित करें",
+    saveChanges: "बदलाव सहेजें",
+    saving: "सहेजा जा रहा है...",
+    profileUpdatedSuccess: "प्रोफाइल सफलतापूर्वक अपडेट हो गई।",
+    mobileAlreadyRegistered:
+      "यह मोबाइल नंबर पहले से ही दूसरे किसान खाते से जुड़ा हुआ है।",
+    readOnlyFarmerId: "किसान ID (केवल पढ़ने योग्य)",
+    addressLabel: "पता / स्थान *",
+    emailLabel: "ईमेल पता",
+    editFarmerProfileTitle: "किसान प्रोफाइल संपादित करें",
+    cancelBtn: "रद्द करें",
 
     // Contact
     contactTitle: "सहायता टीम से संपर्क करें",
