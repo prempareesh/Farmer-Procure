@@ -4,7 +4,7 @@ import HomeHeroSection from "../components/home/HomeHeroSection";
 import HomeProblemSection from "../components/home/HomeProblemSection";
 import HomeSolutionFlowSection from "../components/home/HomeSolutionFlowSection";
 import HomeCentreFinderSection from "../components/home/HomeCentreFinderSection";
-import HomeIdentityVerificationSection from "../components/home/HomeIdentityVerificationSection";
+import HomeTransactionVerificationSection from "../components/home/HomeTransactionVerificationSection";
 import HomeFinalCtaBand from "../components/home/HomeFinalCtaBand";
 import HomeFooter from "../components/home/HomeFooter";
 
@@ -20,7 +20,7 @@ export default function HomePageView() {
         <HomeProblemSection />
         <HomeSolutionFlowSection />
         <HomeCentreFinderSection />
-        <HomeIdentityVerificationSection />
+        <HomeTransactionVerificationSection />
         <HomeFinalCtaBand />
       </main>
 

@@ -17,7 +17,6 @@ export default function OfficerDashboardView() {
   const {
     farmersList,
     bookings,
-    identityVerifications,
     peopleAhead,
     estimatedWaitMins,
     xaiFactors,

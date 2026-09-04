@@ -8,23 +8,23 @@ export default function TrustSection() {
   const verificationFlow = [
     {
       stage: "01. BOOKING",
-      label: "Live Photo Captured",
-      desc: "Captured during slot booking with real-time face alignment check.",
+      label: "Token Generated",
+      desc: "Instant digital token issued with crop details & designated time window.",
     },
     {
       stage: "02. ARRIVAL",
-      label: "Mandi Gate Capture",
-      desc: "Live camera capture taken by Mandi Staff upon tractor arrival.",
+      label: "Mandi Gate Check-In",
+      desc: "Token scanned and validated by staff against scheduled slot roster.",
     },
     {
       stage: "03. VERIFY",
-      label: "1:1 Face Verification",
-      desc: "Cosine similarity compares arrival face against booking reference.",
+      label: "Cryptographic Seal",
+      desc: "SHA-256 hash generated to seal stage progress and moisture readings.",
     },
     {
       stage: "04. PROCEED",
-      label: "Procurement Continued",
-      desc: "Token is verified and farmer proceeds to Quality Moisture Testing.",
+      label: "Procurement Complete",
+      desc: "Weight & MSP calculations recorded directly to immutable audit ledger.",
     },
   ];
 
@@ -37,15 +37,13 @@ export default function TrustSection() {
         {/* Section Header */}
         <div className="space-y-3">
           <span className="text-[11px] font-mono text-[#79C267] uppercase tracking-widest block">
-            BIOMETRIC INTEGRITY
+            TRANSACTION INTEGRITY
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-[#F2F0E8] font-normal tracking-tight">
-            1:1 Identity Verification
+            Cryptographic Audit Pipeline
           </h2>
           <p className="text-xs text-[#A6ADA3] font-normal max-w-xl">
-            Verifying the farmer at arrival against the booking capture for the
-            exact booking ID — preventing slot trading while strictly protecting
-            biometric data.
+            Verifying every procurement stage with immutable cryptographic hash signatures, ensuring transparent pricing, zero slot trading, and instant receipt verification.
           </p>
         </div>
 
@@ -77,10 +75,10 @@ export default function TrustSection() {
         <div className="p-4 bg-[#071008] rounded-xl border border-[#1A2E1E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-[#A6ADA3]">
           <div className="flex items-center gap-2 text-[#79C267]">
             <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span className="font-bold">PRIVACY & BIOMETRIC SECURITY:</span>
+            <span className="font-bold">AUDIT SECURITY:</span>
           </div>
           <span>
-            Encrypted 128-d feature descriptors stored in private DB reference • Zero public buckets or localStorage storage.
+            Every stage hash is linked in sequence. Tampering with any entry invalidates downstream records.
           </span>
         </div>
       </div>

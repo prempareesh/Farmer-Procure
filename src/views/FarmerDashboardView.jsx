@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { useApp, WORKFLOW_STAGES } from "../context/AppContext";
 import DigitalReceiptModal from "../components/DigitalReceiptModal";
-import IdentityCameraModal from "../components/IdentityCameraModal";
 import EditProfileModal from "../components/EditProfileModal";
 
 export default function FarmerDashboardView() {
@@ -32,7 +31,6 @@ export default function FarmerDashboardView() {
     deleteCrop,
     bookings,
     activeBooking,
-    identityVerifications,
     servingToken,
     peopleAhead,
     estimatedWaitMins,
@@ -42,11 +40,11 @@ export default function FarmerDashboardView() {
     t,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState("queue"); // 'queue' | 'gate' | 'workflow' | 'crops' | 'payment' | 'profile'
+  // Tab State
+  const [activeTab, setActiveTab] = useState("overview");
 
-  // Modals state
-  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
-  const [cameraModalOpen, setCameraModalOpen] = useState(false);
+  // Modal States
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [auditInfoOpen, setAuditInfoOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
 

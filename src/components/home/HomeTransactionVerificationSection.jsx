@@ -1,55 +1,55 @@
 import React from "react";
-import { Camera, ShieldCheck, UserCheck, ArrowRight } from "lucide-react";
+import { Calendar, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
 
-export default function HomeIdentityVerificationSection() {
+export default function HomeTransactionVerificationSection() {
   const steps = [
     {
       num: "01",
       title: "BOOKING",
-      desc: "Farmer identity captured live during slot booking.",
-      badge: "IDENTITY ENROLLED",
-      icon: Camera,
+      desc: "Slot reserved & unique Mandi QR token generated.",
+      badge: "TOKEN ISSUED",
+      icon: Calendar,
     },
     {
       num: "02",
-      title: "ARRIVAL",
-      desc: "Live gate arrival camera capture at Mandi entrance.",
+      title: "GATE CHECK-IN",
+      desc: "Staff verifies Farmer ID & booking token at gate entry.",
       badge: "GATE ARRIVAL",
-      icon: UserCheck,
+      icon: CheckCircle2,
     },
     {
       num: "03",
-      title: "VERIFY",
-      desc: "1:1 biometric face descriptor vector comparison.",
-      badge: "VERIFICATION PASSED",
-      icon: ShieldCheck,
+      title: "WEIGHBRIDGE",
+      desc: "Gross tare weight recorded & MSP voucher issued.",
+      badge: "WEIGHED & APPROVED",
+      icon: CheckCircle2,
     },
     {
       num: "04",
-      title: "PROCEED",
-      desc: "Authorized MSP weighing & direct payout authorization.",
-      badge: "MSP DISBURSED",
-      icon: ArrowRight,
+      title: "AUDIT SEAL",
+      desc: "Transaction sealed with SHA-256 tamper-evident hash.",
+      badge: "AUDIT IMMUTABLE",
+      icon: ShieldCheck,
     },
   ];
 
   return (
     <section
-      id="identity-verification"
+      id="transaction-verification"
       className="w-full py-20 bg-[#050705] border-b border-[#12351F]/40"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
         <div className="max-w-3xl space-y-3">
           <span className="font-mono text-xs font-bold text-[#79C267] tracking-widest uppercase block">
-            IDENTITY VERIFICATION
+            TRANSACTION VERIFICATION
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#F1EFE6] leading-tight">
-            Seamless 1:1 Identity Verification <br />
-            <span className="text-[#79C267]">at every procurement stage.</span>
+            Transparent operational workflow <br />
+            <span className="text-[#79C267]">with tamper-evident transaction seals.</span>
           </h2>
         </div>
 
-        {/* 4-Step Pipeline Flow */}
+        {/* 4-Step Operational Pipeline Flow */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step) => {
             const Icon = step.icon;

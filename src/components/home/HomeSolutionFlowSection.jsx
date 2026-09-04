@@ -36,7 +36,7 @@ export default function HomeSolutionFlowSection() {
     {
       code: "06",
       name: "VERIFY",
-      desc: "1:1 Face verification & SHA-256 audit ledger seal every transaction.",
+      desc: "Cryptographic SHA-256 audit ledger seals every transaction stage.",
       icon: ShieldCheck,
     },
   ];

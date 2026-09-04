@@ -13,13 +13,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import ArrivalVerificationModal from "../components/ArrivalVerificationModal";
 
 export default function WorkerDashboardView() {
   const {
     user,
     bookings,
-    identityVerifications,
     workerAssignedStage,
     setWorkerAssignedStage,
     advanceBookingStage,
@@ -31,7 +29,6 @@ export default function WorkerDashboardView() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedFarmer, setSearchedFarmer] = useState(null);
-  const [verifyingArrivalBooking, setVerifyingArrivalBooking] = useState(null);
 
   // Weight Entry Modal / Form
   const [weighingBookingId, setWeighingBookingId] = useState(null);
@@ -282,14 +279,6 @@ export default function WorkerDashboardView() {
             </div>
           ) : (
             filteredBookings.map((b) => {
-              const verificationRec = identityVerifications.find(
-                (v) =>
-                  v.bookingId === b.id ||
-                  v.bookingId === b.booking_id ||
-                  v.booking_id === b.id ||
-                  v.booking_id === b.booking_id,
-              );
-
               return (
                 <div
                   key={b.id}
@@ -303,22 +292,6 @@ export default function WorkerDashboardView() {
                       <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] border border-[#79C267]/30">
                         {b.stage}
                       </span>
-
-                      {/* 1:1 Identity Verification Status Chip */}
-                      {verificationRec?.verificationStatus === "VERIFIED" ? (
-                        <span className="px-2.5 py-0.5 rounded bg-[#12351F] text-[#79C267] text-[10px] border border-[#79C267]/40">
-                          Identity Verified ✓
-                        </span>
-                      ) : verificationRec?.verificationStatus ===
-                        "REVIEW_REQUIRED" ? (
-                        <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-300 text-[10px] border border-amber-800/50">
-                          Staff Review Required
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-0.5 rounded bg-[#071008] text-[#A6ADA3] text-[10px] border border-[#1A2E1E]">
-                          Pending Arrival Verification
-                        </span>
-                      )}
 
                       <span className="text-xs text-[#A6ADA3] font-mono">
                         [{b.farmerId}]
@@ -344,16 +317,6 @@ export default function WorkerDashboardView() {
                     <span className="text-[10px] text-[#A6ADA3] font-mono uppercase block sm:inline">
                       {t("nextActionLabel")}:
                     </span>
-
-                    {(b.stage === "BOOKED" || b.stage === "ARRIVED") && (
-                      <button
-                        onClick={() => setVerifyingArrivalBooking(b)}
-                        className="px-4 py-2.5 rounded-sm bg-[#164A29] hover:bg-[#12351F] text-[#F2F0E8] font-mono text-xs uppercase tracking-wider border border-[#79C267]/30 flex items-center gap-2 transition-all cursor-pointer"
-                      >
-                        <ShieldCheck className="w-4 h-4 text-[#79C267]" />
-                        <span>VERIFY FARMER IDENTITY</span>
-                      </button>
-                    )}
 
                     {b.stage === "BOOKED" && (
                       <button
@@ -690,12 +653,6 @@ export default function WorkerDashboardView() {
         )}
       </AnimatePresence>
 
-      {/* Mandi Arrival 1:1 Face Verification Modal */}
-      <ArrivalVerificationModal
-        isOpen={!!verifyingArrivalBooking}
-        onClose={() => setVerifyingArrivalBooking(null)}
-        booking={verifyingArrivalBooking}
-      />
     </div>
   );
 }

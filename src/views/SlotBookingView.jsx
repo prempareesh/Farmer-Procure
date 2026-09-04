@@ -12,13 +12,9 @@ import {
   ArrowLeft,
   Lock,
   Info,
-  Camera,
-  ShieldCheck,
-  RefreshCw,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useApp } from "../context/AppContext";
-import IdentityCaptureModal from "../components/IdentityCaptureModal";
 
 export default function SlotBookingView() {
   const {
@@ -48,8 +44,6 @@ export default function SlotBookingView() {
     new Date().toISOString().split("T")[0],
   );
   const [selectedSlot, setSelectedSlot] = useState("02:00 PM - 03:00 PM");
-  const [identityPhotoData, setIdentityPhotoData] = useState(null);
-  const [isCaptureModalOpen, setIsCaptureModalOpen] = useState(false);
   const [validationError, setValidationError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
@@ -74,14 +68,6 @@ export default function SlotBookingView() {
       return;
     }
 
-    if (!identityPhotoData) {
-      setValidationError(
-        "Identity photo capture is required. Please take a live identity photo before confirming your slot booking.",
-      );
-      setIsCaptureModalOpen(true);
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const newBooking = await bookSlot({
@@ -90,7 +76,6 @@ export default function SlotBookingView() {
         quantity: qtyNum,
         date: bookingDate,
         timeSlot: selectedSlot,
-        identityPhotoData,
       });
 
       confetti({
@@ -338,69 +323,6 @@ export default function SlotBookingView() {
                 </div>
               </div>
 
-              {/* STEP 7: IDENTITY VERIFICATION PHOTO CAPTURE */}
-              <div className="p-4 bg-[#050805] rounded-sm border border-[#1A2E1E] space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="w-5 h-5 text-[#79C267]" />
-                    <div>
-                      <h4 className="text-xs font-mono text-[#F2F0E8] uppercase tracking-wider">
-                        Identity Verification
-                      </h4>
-                      <p className="text-[11px] text-[#A6ADA3] font-sans">
-                        Take a clear photo to verify your identity when you
-                        arrive.
-                      </p>
-                    </div>
-                  </div>
-                  {identityPhotoData && (
-                    <span className="px-2.5 py-0.5 rounded bg-[#164A29] text-[#79C267] text-[10px] font-mono border border-[#79C267]/30">
-                      Identity Photo Captured ✓
-                    </span>
-                  )}
-                </div>
-
-                {!identityPhotoData ? (
-                  <button
-                    type="button"
-                    onClick={() => setIsCaptureModalOpen(true)}
-                    className="w-full py-3 rounded-sm bg-[#071008] border border-[#1A2E1E] hover:border-[#79C267]/50 text-[#F2F0E8] font-mono text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Camera className="w-4 h-4 text-[#79C267]" />
-                    <span>Take Identity Photo (Camera Required)</span>
-                  </button>
-                ) : (
-                  <div className="flex items-center gap-3 p-3 bg-[#071008] rounded-sm border border-[#1A2E1E]">
-                    <div className="w-14 h-14 rounded overflow-hidden border border-[#79C267]/40 shrink-0">
-                      <img
-                        src={identityPhotoData.photoUrl}
-                        alt="Identity Capture"
-                        className="w-full h-full object-cover scale-x-[-1]"
-                      />
-                    </div>
-                    <div className="flex-1 text-xs font-mono text-[#A6ADA3]">
-                      <p className="text-[#79C267]">
-                        Photo Encoded & Reference Saved
-                      </p>
-                      <p className="text-[10px] text-[#A6ADA3]/60">
-                        128-d Vector Encrypted •{" "}
-                        {new Date(
-                          identityPhotoData.capturedAt,
-                        ).toLocaleTimeString()}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setIsCaptureModalOpen(true)}
-                      className="px-3 py-1.5 rounded-sm border border-[#1A2E1E] text-[#A6ADA3] hover:text-[#F2F0E8] text-[11px] font-mono cursor-pointer flex items-center gap-1"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5 text-[#79C267]" />
-                      <span>Retake</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
               {validationError && (
                 <div className="p-3 bg-red-950/40 text-red-300 text-xs font-mono rounded-sm border border-red-900/60">
                   {validationError}
@@ -418,17 +340,7 @@ export default function SlotBookingView() {
             </form>
           </div>
 
-          <IdentityCaptureModal
-            isOpen={isCaptureModalOpen}
-            onClose={() => setIsCaptureModalOpen(false)}
-            onPhotoCaptured={(data) => {
-              setIdentityPhotoData(data);
-              setValidationError("");
-            }}
-            currentPhotoData={identityPhotoData}
-          />
-
-          {/* STEP 7 & 8: BOOKING SUMMARY & PREDICTION SIDEBAR */}
+          {/* BOOKING SUMMARY & PREDICTION SIDEBAR */}
           <div className="lg:col-span-5 space-y-6">
             {/* BOOKING SUMMARY CARD */}
             <div className="bg-[#071008] rounded-md p-6 border border-[#1A2E1E] space-y-4">
@@ -541,4 +453,3 @@ export default function SlotBookingView() {
     </div>
   );
 }
-

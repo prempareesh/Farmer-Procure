@@ -272,7 +272,6 @@ export function AppProvider({ children }) {
 
   const [bookings, setBookings] = useState([]);
   const [activeBookingId, setActiveBookingId] = useState(null);
-  const [identityVerifications, setIdentityVerifications] = useState([]);
   const [servingToken, setServingToken] = useState(1);
   const [autoQueueTicker, setAutoQueueTicker] = useState(true);
   const [workerAssignedStage, setWorkerAssignedStage] = useState("ALL");
@@ -495,7 +494,6 @@ export function AppProvider({ children }) {
               stage: b.status || "BOOKED",
               status: b.status || "BOOKED",
               stageStatus: "IN_PROGRESS",
-              faceVerified: false,
               paymentDetails: {
                 mspPerQtl: 2320,
                 grossAmount: Number(b.expected_quantity || 25) * 2320,
@@ -517,39 +515,6 @@ export function AppProvider({ children }) {
             const newItems = mapped.filter((item) => !existingIds.has(item.id));
             return [...newItems, ...prev];
           });
-        }
-
-        try {
-          const { data: verificationsData } = await supabase
-            .from("identity_verifications")
-            .select("*");
-          if (verificationsData && verificationsData.length > 0) {
-            setIdentityVerifications(
-              verificationsData.map((v) => ({
-                id: v.id,
-                bookingId: v.booking_id,
-                profileId: v.profile_id,
-                farmerId: v.farmer_id,
-                bookingPhotoReference: v.booking_photo_reference,
-                bookingFaceEmbedding: v.booking_face_embedding
-                  ? JSON.parse(v.booking_face_embedding)
-                  : null,
-                arrivalPhotoReference: v.arrival_photo_reference,
-                arrivalFaceEmbedding: v.arrival_face_embedding
-                  ? JSON.parse(v.arrival_face_embedding)
-                  : null,
-                verificationStatus: v.verification_status || "PENDING",
-                verificationScore: v.verification_score,
-                verificationThreshold: v.verification_threshold || 0.7,
-                reviewRequired: v.review_required || false,
-                bookingCapturedAt: v.booking_captured_at,
-                arrivalCapturedAt: v.arrival_captured_at,
-                verifiedAt: v.verified_at,
-              })),
-            );
-          }
-        } catch {
-          // safe fallback
         }
 
         const { data: auditData } = await supabase
@@ -625,7 +590,6 @@ export function AppProvider({ children }) {
                 stage: newDb.status || "BOOKED",
                 status: newDb.status || "BOOKED",
                 stageStatus: "IN_PROGRESS",
-                faceVerified: false,
                 paymentDetails: {
                   mspPerQtl: 2320,
                   grossAmount: Number(newDb.expected_quantity || 25) * 2320,
@@ -661,59 +625,6 @@ export function AppProvider({ children }) {
                     : b,
                 ),
               );
-            }
-          },
-        )
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "identity_verifications" },
-          (payload) => {
-            if (
-              payload.eventType === "INSERT" ||
-              payload.eventType === "UPDATE"
-            ) {
-              const rec = payload.new;
-              const mapped = {
-                id: rec.id,
-                bookingId: rec.booking_id,
-                profileId: rec.profile_id,
-                farmerId: rec.farmer_id,
-                bookingPhotoReference: rec.booking_photo_reference,
-                bookingFaceEmbedding: rec.booking_face_embedding
-                  ? JSON.parse(rec.booking_face_embedding)
-                  : null,
-                arrivalPhotoReference: rec.arrival_photo_reference,
-                arrivalFaceEmbedding: rec.arrival_face_embedding
-                  ? JSON.parse(rec.arrival_face_embedding)
-                  : null,
-                verificationStatus: rec.verification_status,
-                verificationScore: rec.verification_score,
-                reviewRequired: rec.review_required,
-                verifiedAt: rec.verified_at,
-              };
-
-              setIdentityVerifications((prev) => {
-                const idx = prev.findIndex(
-                  (v) =>
-                    v.bookingId === rec.booking_id ||
-                    v.id === rec.id ||
-                    v.bookingId === rec.id,
-                );
-                if (idx >= 0) {
-                  const copy = [...prev];
-                  copy[idx] = { ...copy[idx], ...mapped };
-                  return copy;
-                }
-                return [mapped, ...prev];
-              });
-
-              if (rec.verification_status === "VERIFIED") {
-                addNotification({
-                  title: "1:1 Identity Verified ✓",
-                  message: `Arrival identity verified for Token/Booking ${rec.booking_id}.`,
-                  type: "success",
-                });
-              }
             }
           },
         )
@@ -903,7 +814,7 @@ export function AppProvider({ children }) {
       bookingId: "REG-INIT",
       farmerId: newFarmerId,
       farmerName: newFarmer.name,
-      dataSummary: `New Farmer Registered • Permanent ID ${newFarmerId} • Biometric Face Enrolled`,
+      dataSummary: `New Farmer Registered • Permanent ID ${newFarmerId} • Profile Enrolled`,
       prevHash: prevBlock.currentHash,
       currentHash: newHash,
       isTampered: false,
@@ -1383,7 +1294,6 @@ export function AppProvider({ children }) {
       stage: "BOOKED",
       status: "BOOKED",
       stageStatus: "CONFIRMED",
-      faceVerified: false,
       rejectionDetails: null,
       paymentDetails: {
         mspPerQtl: mspRate,
@@ -1399,19 +1309,7 @@ export function AppProvider({ children }) {
       }),
     };
 
-    if (bookingData.identityPhotoData) {
-      const memoryIdentityRec = {
-        id: "v-" + Date.now(),
-        bookingId: newBookingId,
-        farmerId: farmerProfile.farmerId,
-        bookingPhotoReference: bookingData.identityPhotoData.photoUrl,
-        bookingFaceEmbedding: bookingData.identityPhotoData.embedding || null,
-        verificationStatus: "PENDING",
-        verificationThreshold: 0.7,
-        bookingCapturedAt: new Date().toISOString(),
-      };
-      setIdentityVerifications((prev) => [memoryIdentityRec, ...prev]);
-    }
+
 
     setBookings((prev) => [newBooking, ...prev]);
     setActiveBookingId(newBookingId);
@@ -1522,42 +1420,6 @@ export function AppProvider({ children }) {
               previous_hash: prevBlock.currentHash,
             },
           ]);
-
-          if (bookingData.identityPhotoData) {
-            try {
-              await supabase.from("identity_verifications").insert([
-                {
-                  booking_id: insertedDb.id,
-                  profile_id: profileUuid,
-                  farmer_id: farmerProfile.farmerId,
-                  booking_photo_reference:
-                    bookingData.identityPhotoData.photoUrl,
-                  booking_face_embedding: JSON.stringify(
-                    bookingData.identityPhotoData.embedding || [],
-                  ),
-                  verification_status: "PENDING",
-                  verification_threshold: 0.7,
-                  booking_captured_at:
-                    bookingData.identityPhotoData.capturedAt ||
-                    new Date().toISOString(),
-                },
-              ]);
-
-              await supabase.from("audit_logs").insert([
-                {
-                  booking_id: insertedDb.id,
-                  event_name: "IDENTITY_CAPTURED_AT_BOOKING",
-                  hash: newHash,
-                  previous_hash: prevBlock.currentHash,
-                },
-              ]);
-            } catch (ivErr) {
-              console.warn(
-                "Supabase identity_verifications insert notice:",
-                ivErr,
-              );
-            }
-          }
         } else if (bErr) {
           console.warn("Supabase booking insert notice:", bErr.message);
         }
@@ -1573,123 +1435,6 @@ export function AppProvider({ children }) {
     });
 
     return newBooking;
-  };
-
-  const verifyArrivalIdentity = async (
-    bookingId,
-    {
-      arrivalPhotoUrl,
-      arrivalEmbedding,
-      verificationStatus = "VERIFIED",
-      verificationScore = 0.85,
-      reviewRequired = false,
-      staffRemarks = "",
-    },
-  ) => {
-    const booking = bookings.find(
-      (b) => b.id === bookingId || b.booking_id === bookingId,
-    );
-    const cleanBId = booking?.booking_id || booking?.id || bookingId;
-    const nowIso = new Date().toISOString();
-
-    const updatedRec = {
-      bookingId: cleanBId,
-      farmerId: booking?.farmerId || farmerProfile.farmerId,
-      arrivalPhotoReference: arrivalPhotoUrl,
-      arrivalFaceEmbedding: arrivalEmbedding,
-      verificationStatus,
-      verificationScore,
-      reviewRequired,
-      verifiedAt: nowIso,
-      staffRemarks,
-    };
-
-    setIdentityVerifications((prev) => {
-      const idx = prev.findIndex(
-        (v) => v.bookingId === cleanBId || v.booking_id === cleanBId,
-      );
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = { ...copy[idx], ...updatedRec };
-        return copy;
-      }
-      return [{ id: "v-" + Date.now(), ...updatedRec }, ...prev];
-    });
-
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === cleanBId || b.booking_id === cleanBId
-          ? {
-              ...b,
-              faceVerified: verificationStatus === "VERIFIED",
-              stage: b.stage === "BOOKED" ? "ARRIVED" : b.stage,
-              status: b.status === "BOOKED" ? "ARRIVED" : b.status,
-            }
-          : b,
-      ),
-    );
-
-    // Update Supabase DB identity_verifications table
-    try {
-      const { data: dbBooking } = await supabase
-        .from("bookings")
-        .select("id")
-        .eq("booking_id", cleanBId)
-        .maybeSingle();
-
-      const targetUuid = dbBooking?.id || cleanBId;
-
-      await supabase.from("identity_verifications").upsert([
-        {
-          booking_id: targetUuid,
-          farmer_id: booking?.farmerId,
-          arrival_photo_reference: arrivalPhotoUrl,
-          arrival_face_embedding: JSON.stringify(arrivalEmbedding || []),
-          verification_status: verificationStatus,
-          verification_score: verificationScore,
-          review_required: reviewRequired,
-          verified_at: nowIso,
-          arrival_captured_at: nowIso,
-        },
-      ]);
-
-      const prevBlock = auditChain[auditChain.length - 1];
-      const rawData = `${cleanBId}|IDENTITY_${verificationStatus}|${verificationScore}|${Date.now()}`;
-      const newHash = await generateSHA256(prevBlock.currentHash + rawData);
-
-      await supabase.from("audit_logs").insert([
-        {
-          booking_id: targetUuid,
-          event_name: `IDENTITY_VERIFICATION_${verificationStatus}`,
-          hash: newHash,
-          previous_hash: prevBlock.currentHash,
-        },
-      ]);
-
-      const auditBlock = {
-        blockIndex: auditChain.length + 1,
-        timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
-        stage: `IDENTITY_${verificationStatus}`,
-        bookingId: cleanBId,
-        farmerId: booking?.farmerId || farmerProfile.farmerId,
-        farmerName: booking?.farmerName || farmerProfile.name,
-        dataSummary: `1:1 Face Verification ${verificationStatus} (Score: ${verificationScore}) ${staffRemarks ? `• ${staffRemarks}` : ""}`,
-        prevHash: prevBlock.currentHash,
-        currentHash: newHash,
-        isTampered: false,
-      };
-      setAuditChain((prev) => [...prev, auditBlock]);
-    } catch (err) {
-      console.warn("Supabase arrival verification update notice:", err);
-    }
-
-    addNotification({
-      title: `Identity ${verificationStatus === "VERIFIED" ? "Verified ✓" : "Review Logged"}`,
-      message: `1:1 Face Verification ${verificationStatus} for Token/Booking #${booking?.tokenDisplay || cleanBId}.`,
-      type: verificationStatus === "VERIFIED" ? "success" : "warning",
-    });
-
-    return { success: true, verificationStatus, verificationScore };
   };
 
   // Feedback State & Anonymous Submission
@@ -1884,14 +1629,6 @@ export function AppProvider({ children }) {
       "Mandi Gate Token Arrival Confirmed",
     );
 
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId || b.booking_id === bookingId
-          ? { ...b, faceVerified: true }
-          : b,
-      ),
-    );
-
     addNotification({
       title: "Gate Arrival Confirmed!",
       message: `Farmer ${booking.farmerName} confirmed at Mandi Gate. Token #${booking.tokenDisplay} is now ARRIVED.`,
@@ -1900,8 +1637,6 @@ export function AppProvider({ children }) {
 
     return { success: true };
   };
-
-  const verifyFaceArrival = verifyGateArrival;
 
   // 10. Worker Approval / Rejection Logic
   const approveStage = async (bookingId, stageKey, remarks = "") => {
@@ -2295,7 +2030,7 @@ export function AppProvider({ children }) {
         setSelectedMandiId,
         timeSlots,
 
-        // Bookings & Identity Verification
+        // Bookings
         bookings,
         activeBookingId,
         setActiveBookingId,
@@ -2303,9 +2038,6 @@ export function AppProvider({ children }) {
         bookSlot,
         advanceBookingStage,
         verifyGateArrival,
-        verifyFaceArrival,
-        identityVerifications,
-        verifyArrivalIdentity,
         isDemoMode,
 
         // Worker & Officer Operations
