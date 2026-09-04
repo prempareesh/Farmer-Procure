@@ -229,42 +229,7 @@ export function AppProvider({ children }) {
   });
 
   // 4. Primary State Lists
-  const [farmersList, setFarmersList] = useState([
-    {
-      id: "usr-001",
-      farmerId: "FRM-2026-000123",
-      name: "Rameshwar Singh",
-      mobile: "9876543210",
-      aadhaar: "XXXX-XXXX-8912",
-      village: "Taraori",
-      district: "Karnal",
-      state: "Haryana",
-      address: "Plot #42, Main GT Road, Taraori Tehsil",
-      faceImage: "/hero_farmer.jpg",
-      bankAccount: "State Bank of India (Ending in 4092)",
-      ifsc: "SBIN0001234",
-      role: "farmer",
-      crops: INITIAL_CROPS,
-      history: [
-        {
-          season: "Rabi 2025",
-          crop: "Wheat",
-          quantity: 120,
-          mspPaid: "₹2,73,000",
-          status: "COMPLETED",
-          dbtRef: "DBT-2025-88124",
-        },
-        {
-          season: "Kharif 2025",
-          crop: "Paddy",
-          quantity: 85,
-          mspPaid: "₹1,87,000",
-          status: "COMPLETED",
-          dbtRef: "DBT-2025-44912",
-        },
-      ],
-    },
-  ]);
+  const [farmersList, setFarmersList] = useState([]);
 
   const [farmerProfile, setFarmerProfile] = useState(() => {
     try {
@@ -274,7 +239,7 @@ export function AppProvider({ children }) {
         if (parsed && (parsed.role === "farmer" || parsed.farmerId)) return parsed;
       }
     } catch {}
-    return farmersList[0];
+    return null;
   });
 
   useEffect(() => {
@@ -1520,10 +1485,45 @@ export function AppProvider({ children }) {
       throw new Error("Slot full. Please choose another slot.");
     }
 
-    const nextSeq =
-      bookings.filter((b) => b.centreCode === code || b.centreId === centre.id)
-        .length + 1;
-    const tokenDisplay = `${prefix}-${String(nextSeq).padStart(3, "0")}`; // e.g. PS-001, PS-002
+    // Server-Authoritative Daily Monotonic Token Sequence Query
+    let nextSeq = 1;
+    try {
+      const { data: existingTokens } = await supabase
+        .from("tokens")
+        .select("queue_position, token_number")
+        .eq("centre_code", code)
+        .eq("date", bookingData.date);
+
+      if (existingTokens && existingTokens.length > 0) {
+        const positions = existingTokens.map((t) => {
+          if (t.queue_position && !isNaN(Number(t.queue_position))) {
+            return Number(t.queue_position);
+          }
+          const numMatch = String(t.token_number || "").match(/\d+/);
+          return numMatch ? parseInt(numMatch[0], 10) : 0;
+        });
+        nextSeq = Math.max(0, ...positions) + 1;
+      } else {
+        // Fallback check against local bookings for date & centre
+        const sameDateCodeBookings = bookings.filter(
+          (b) =>
+            (b.centreCode === code || b.centreId === centre.id) &&
+            (b.date === bookingData.date || b.slot_date === bookingData.date),
+        );
+        if (sameDateCodeBookings.length > 0) {
+          const localPositions = sameDateCodeBookings.map((b) => {
+            if (b.tokenSeq) return Number(b.tokenSeq);
+            const numMatch = String(b.tokenDisplay || "").match(/\d+/);
+            return numMatch ? parseInt(numMatch[0], 10) : 0;
+          });
+          nextSeq = Math.max(0, ...localPositions) + 1;
+        }
+      }
+    } catch (err) {
+      console.warn("Database token sequence query fallback:", err);
+    }
+
+    const tokenDisplay = `${prefix}-${String(nextSeq).padStart(3, "0")}`; // e.g. PS-001, PS-002, PS-003
     const newBookingId = `BK-2026-${String(Math.floor(100000 + Math.random() * 900000))}`;
     const qrData = `AGRI-PROCURE-${farmerProfile.farmerId}-${tokenDisplay}-${bookingData.crop.replace(/\s+/g, "")}`;
 
