@@ -941,10 +941,13 @@ export function AppProvider({ children }) {
             status === "TIMED_OUT" ||
             status === "CLOSED"
           ) {
-            console.warn(`[SUBSCRIPTION_STATUS] Realtime channel disconnected (${status}). Reconnecting...`);
+            console.warn(
+              `[SUBSCRIPTION_STATUS] Realtime channel disconnected (${status}). Reconnecting...`,
+            );
             setTimeout(() => {
               initializeSystem();
-            }, 1000);
+              subscribeRealtime();
+            }, 2000);
           }
         });
 
@@ -953,8 +956,15 @@ export function AppProvider({ children }) {
     }
 
     initializeSystem();
+    activeChannel = subscribeRealtime();
+
+    // 10-Second Heartbeat Synchronization for Fail-Safe Multi-Device Accuracy
+    const syncInterval = setInterval(() => {
+      initializeSystem();
+    }, 10000);
 
     return () => {
+      clearInterval(syncInterval);
       if (activeChannel) {
         try {
           supabase.removeChannel(activeChannel);
